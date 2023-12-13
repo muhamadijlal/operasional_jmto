@@ -1,0 +1,44 @@
+{
+    "menu": [
+        {
+            "name": "Dashboards",
+            "icon": "menu-icon tf-icons ti ti-smart-home",
+            "slug": "dashboard",
+            "url": "admin/dashboard"
+        },
+        {
+            "name": "Tarif",
+            "icon": "menu-icon tf-icons ti ti-file",
+            "slug": "dasar-tarif",
+            "submenu": [
+
+                {
+                    "url": "admin/dasar-tarif",
+                    "icon": "menu-icon tf-icons ti ti-pencil",
+                    "name": "Dasar Tarif",
+                    "slug": "dasar-tarif"
+                },
+                {
+                    "url": "admin/manajemen-tarif",
+                    "icon": "menu-icon tf-icons ti ti-pencil",
+                    "name": "Manajemen Tarif",
+                    "slug": "Manajemen Tarif"
+                }
+            ]
+        },
+        {
+            "name": "Petugas",
+            "icon": "menu-icon tf-icons ti ti-user",
+            "slug": "Petugas",
+            "submenu": [
+
+                {
+                    "url": "admin/petugas",
+                    "icon": "menu-icon tf-icons ti ti-users",
+                    "name": "List Petugas",
+                    "slug": "List Petugas"
+                }
+            ]
+        }
+    ]
+}
