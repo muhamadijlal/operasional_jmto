@@ -91,17 +91,6 @@
             </div>
             @endif
 
-            {{-- <?php if(isset($BtnSuccess)){ ?><a href="{{ $BtnSuccess['url'] }}"
-            class="btn btn-secondary add-new btn-success" tabindex="0" aria-controls="tbl_list" type="button"
-            data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><?= $BtnSuccess['name'] ?></a><?php } ?>
-            <?php if(isset($BtnInfo)){ ?><a href="{{ $BtnInfo['url'] }}"
-                class="btn btn-secondary add-new btn-info"><?= $BtnInfo['name'] ?></a><?php } ?>
-            <?php if(isset($BtnPrimary)){ ?><a href="{{ $BtnPrimary['url'] }}"
-                class="btn btn-secondary add-new btn-primary"><?= $BtnPrimary['name'] ?></a><?php } ?>
-            <?php if(isset($BtnWarning)){ ?><a href="{{ $BtnWarning['url'] }}"
-                class="btn btn-secondary add-new btn-warning"><?= $BtnWarning['name'] ?></a><?php } ?>
-            <?php if(isset($BtnDanger)){ ?><a href="{{ $BtnDanger['url'] }}"
-                class="btn btn-secondary add-new btn-danger"><?= $BtnDanger['name'] ?></a><?php } ?> --}}
 
 
             <button class="btn btn-info add-new " id="btnAddTarif"> <i class="fa fa-plus"></i> Tambah Tarif</button>
@@ -119,10 +108,6 @@
                         <?php } ?>
                 </tr>
             </table>
-
-            {{-- <table id="tbl_list_close" class="datatables-basic table">
-            </table> --}}
-
 
         </div>
     </div>
@@ -392,7 +377,7 @@
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label for="gerbangEditmodal">Nama Gerbang :</label>
-                           <input type="hidden" name="idTarif" id="idTarif">
+                            <input type="hidden" name="idTarif" id="idTarif">
                             <select class="form-control" id="gerbangEditmodal" name="gerbangEditmodal"
                                 readonly="readonly">
                             </select>
@@ -634,6 +619,40 @@
 </div>
 
 
+<div class="modal" id="modalDetailInvestor">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="tableDetailInvestor">
+                        <thead>
+                            <tr>
+                                <td>Investor</td>
+                                <td>Golongan 1</td>
+                                <td>Golongan 2</td>
+                                <td>Golongan 3</td>
+                                <td>Golongan 4</td>
+                                <td>Golongan 5</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @endsection
 
 {{-- @extends('admin.modal.manajemen_tarif') --}}
@@ -659,10 +678,6 @@
 
 
 <script type="text/javascript">
-    // function cacheInput(e) {
-    //     localStorage.setItem(e.attributes["name"].value, e.value)
-    // }
-
     $(document).ready(function () {
 
         function sweetAlert(title, text, icon) {
@@ -686,46 +701,9 @@
 
         var dt_filter_table = $('.datatables-basic');
         var dataObject = eval('<?php echo json_encode($Cloums); ?>');
-        // $('.datatables-basic thead tr').clone(true).appendTo('.datatables-basic thead');
-        // $('.datatables-basic thead tr:eq(1) th').each(function (i) {
-        //     var title = $(this).text();
-
-        //     $(this).html('<input id="Search_' + title + '" name="Search_' + title +
-        //         '" type="text" oninput="cacheInput(this)" class="form-control" placeholder="Search ' +
-        //         title + '" />');
-        //     $localdata = localStorage.getItem('Search_' + title);
-        //     if ($localdata) {
-        //         document.getElementById('Search_' + title).value = $localdata;
-        //     }
-        //     $('input', this).on('keyup change', function () {
-        //         if (dt_filter.column(i).search() !== this.value) {
-        //             dt_filter.column(i).search(this.value).draw();
-        //         }
-        //     });
-        // });
 
 
         $('.datatables-basic-open thead tr').clone(true).appendTo('.datatables-basic-open thead');
-
-
-        $('.datatables-basic-open thead tr:eq(1) th').each(function (i) {
-            var title = $(this).text();
-
-            $(this).html('<input id="Search_' + title + '" name="Search_' + title +
-                '" type="text" oninput="cacheInput(this)" class="form-control" placeholder="Search" />'
-            );
-
-            $localdata = localStorage.getItem('Search_' + title);
-            if ($localdata) {
-                document.getElementById('Search_' + title).value = $localdata;
-            }
-
-            $('input', this).on('keyup change', function () {
-                if (dt_filter_table.column(i).search() !== this.value) {
-                    dt_filter_table.column(i).search(this.value).draw();
-                }
-            });
-        });
 
         $('#gerbang').on('change', function () {
 
@@ -734,10 +712,8 @@
                 $('#tbl_list').DataTable().destroy();
             }
 
-
             var selectedVal = $("#gerbang option:selected").text();
             selectedVal = selectedVal.split('-').pop().split(')')[0]; // returns 'two'
-
 
             dt_filter = $('#tbl_list').DataTable({
                 processing: true,
@@ -772,8 +748,8 @@
                     '<"col-sm-12 col-md-6"p>' +
                     '>',
                 language: {
-                    emptyTable: "Tidak ada data yang tersedia"
-                    // Atur pesan lain sesuai kebutuhan Anda
+                    emptyTable: "Tidak ada data yang tersedia",
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
                 },
                 buttons: [{
                     extend: 'collection',
@@ -827,52 +803,8 @@
 
             });
 
-
-
-
-
-
-            document.getElementById('loading-screen').style.display = 'block';
-            setTimeout(function () {
-                document.getElementById('loading-screen').style.display = 'none';
-            }, 1000);
         });
 
-        $("#form-tambah-edit-DaftarTarif").submit(function (e) {
-            e.preventDefault()
-            var selectedVal = $("#gerbang option:selected").text();
-            selectedVal = selectedVal.split('-').pop().split(')')[0]; // returns 'two'
-
-
-            var url = '{{ url()->current() }}' + '/tambah';
-            var formData = new FormData($("#form-tambah-edit-DaftarTarif")[0]);
-            formData.append('_token', '{{ csrf_token() }}');
-            $.ajax({
-                url: url,
-                method: "POST",
-                data: formData,
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function (response) {
-
-                    $("#DaftarTarifModal").modal('hide');
-                    $("#form-tambah-edit-DaftarTarif").trigger('reset');
-                    document.getElementById('loading-screen').style.display =
-                        'block';
-                    setTimeout(function () {
-                        dt_filter.ajax.reload();
-                        document.getElementById('loading-screen').style
-                            .display = 'none';
-                        sweetAlert('Berhasil!',
-                            'Data Berhasil Ditambahkan!', 'success')
-                    }, 1000);
-
-                }
-            });
-
-
-        });
 
         $('.datatables-basic').on('click', '.delete', function () {
             var url = '{{ url()->current() }}/delete/' + $(this).data('url') + '/' + $('#gerbang')
@@ -1132,113 +1064,6 @@
 
                     $("#modalEditTarifClose").modal('show')
 
-                    // $('#dasartarifmodal').find('option').remove().end();
-                    // $('#gerbangmodal').find('option').remove().end();
-                    // $("#id").val(response.model.id);
-                    // $('#jenis').find('option').remove().end();
-
-                    // var option = '';
-                    // var gerbang = $("#gerbang").val();
-
-                    // $.ajax({
-                    //     url: '/admin/get-dasar-tarif',
-                    //     async: false,
-                    //     method: "POST",
-                    //     data: {
-                    //         gerbang: gerbang,
-                    //         _token: '{{ csrf_token() }}'
-                    //     },
-                    //     dataType: "JSON",
-                    //     success: function (data) {
-                    //         //console.log(data);
-                    //         //console.log(data[0].id_daftar_tarif);
-
-                    //         $.each(data, function (i, item) {
-
-                    //             var selected = '';
-                    //             console.log(response.model
-                    //                 .id_dasar_tarif)
-                    //             console.log(data[i].id_dasar_tarif)
-                    //             if (response.model.id_dasar_tarif ==
-                    //                 data[i].id_dasar_tarif) {
-                    //                 selected = "selected";
-                    //             }
-
-                    //             option += '<option value="' + data[
-                    //                     i].id_dasar_tarif + '" ' +
-                    //                 selected + '>' + data[i]
-                    //                 .dasar_tarif + '</option>'
-                    //             //console.log(option);
-                    //             //console.log(response[i].dasar_tarif);
-                    //         });
-                    //     }
-
-
-                    // });
-
-                    // $('#dasartarifmodal').append(option);
-
-                    // var optionValue = $("#gerbang option:selected").val();
-                    // var optionText = $("#gerbang option:selected").text();
-                    // $('#gerbangmodal').append(
-                    //     `<option value="${optionValue}"> ${optionText}</option>`);
-
-                    // $("#waktu").val(response.model.tgl_berlaku);
-                    // $("#jagorawigol1").val(response.model.gol1);
-                    // $("#totalgol1").val(response.model.gol1)
-
-                    // $("#jagorawigol2").val(response.model.gol2);
-                    // $("#totalgol2").val(response.model.gol2)
-
-                    // $("#jagorawigol3").val(response.model.gol3);
-                    // $("#totalgol3").val(response.model.gol3)
-
-                    // $("#jagorawigol4").val(response.model.gol4);
-                    // $("#totalgol4").val(response.model.gol4)
-
-                    // $("#jagorawigol5").val(response.model.gol5);
-                    // $("#totalgol5").val(response.model.gol5)
-                    // $("#judulModalTarif").html('Edit Daftar Tarif');
-                    // $("#DaftarTarifModal").modal('show');
-                    // $("#asal_gerbang").hide();
-                    // $("#asal_gerbang_update").hide();
-
-                    // $("#jenis").hide();
-                    // $("#asd1").hide();
-                    // $("#asd2").hide();
-                    // $("#asq").hide();
-
-
-                    // inventor = JSON.parse(response.model.bagi_hasil)
-                    // totalInven1 = JSON.parse(response.model.gol1_d)
-                    // totalInven2 = JSON.parse(response.model.gol2_d)
-                    // totalInven3 = JSON.parse(response.model.gol3_d)
-                    // totalInven4 = JSON.parse(response.model.gol4_d)
-                    // totalInven5 = JSON.parse(response.model.gol5_d)
-
-                    // $("#investor1").val(inventor[0]);
-                    // $("#investor2").val(inventor[0]);
-                    // $("#investor3").val(inventor[0]);
-                    // $("#investor4").val(inventor[0]);
-                    // $("#investor5").val(inventor[0]);
-                    // $("#total_investor1").val(totalInven1[0]);
-                    // $("#total_investor2").val(totalInven2[0]);
-                    // $("#total_investor3").val(totalInven3[0]);
-                    // $("#total_investor4").val(totalInven4[0]);
-                    // $("#total_investor5").val(totalInven5[0]);
-
-
-                    // $.each(inventor, function (i, item) {
-
-                    //     if (i > 0) {
-                    //         tambahInvestor(1, inventor[i], totalInven1[i])
-                    //         tambahInvestor(2, inventor[i], totalInven2[i])
-                    //         tambahInvestor(3, inventor[i], totalInven3[i])
-                    //         tambahInvestor(4, inventor[i], totalInven4[i])
-                    //         tambahInvestor(5, inventor[i], totalInven5[i])
-                    //     }
-
-                    // })
 
                 }
 
@@ -1377,6 +1202,7 @@
 
 
         $('#btnSimpanTarifExit').click(function () {
+
             var gerbangmodal = $('#gerbangmodal').val()
             var asal_gerbang = $('#asal_gerbang').val()
             var dasartarifmodal = $('#dasartarifmodal').val()
@@ -1387,90 +1213,46 @@
             var totalgol3 = $('#totalgol3').val()
             var totalgol4 = $('#totalgol4').val()
             var totalgol5 = $('#totalgol5').val()
-            var totalInvestorValues1 = $('input[name="totalinvestor1[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal1 = totalInvestorValues1.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var totalInvestorValues2 = $('input[name="totalinvestor2[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal2 = totalInvestorValues2.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var totalInvestorValues3 = $('input[name="totalinvestor3[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal3 = totalInvestorValues3.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var totalInvestorValues4 = $('input[name="totalinvestor4[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal4 = totalInvestorValues4.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var totalInvestorValues5 = $('input[name="totalinvestor5[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal5 = totalInvestorValues5.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var investor1 = $('input[name="investor1[]"]').map(function () {
-                return $(this).val();
-            }).get();
-            var investor2 = $('input[name="investor2[]"]').map(function () {
-                return $(this).val();
-            }).get();
-            var investor3 = $('input[name="investor3[]"]').map(function () {
-                return $(this).val();
-            }).get();
-            var investor4 = $('input[name="investor4[]"]').map(function () {
-                return $(this).val();
-            }).get();
-            var investor5 = $('input[name="investor5[]"]').map(function () {
-                return $(this).val();
-            }).get();
+            var totalInvestorValues1 = getNumeric('input[name="totalinvestor1[]"]')
+            var sumTotal1 = sumNumeric(totalInvestorValues1)
+            var totalInvestorValues2 = getNumeric('input[name="totalinvestor2[]"]')
+            var sumTotal2 = sumNumeric(totalInvestorValues2)
+            var totalInvestorValues3 = getNumeric('input[name="totalinvestor3[]"]')
+            var sumTotal3 = sumNumeric(totalInvestorValues3)
+            var totalInvestorValues4 = getNumeric('input[name="totalinvestor4[]"]')
+            var sumTotal4 = sumNumeric(totalInvestorValues4)
+            var totalInvestorValues5 = getNumeric('input[name="totalinvestor5[]"]')
+            var sumTotal5 = sumNumeric(totalInvestorValues5)
+            var investor1 = getString('input[name="investor1[]"]')
+            var investor2 = getString('input[name="investor2[]"]')
+            var investor3 = getString('input[name="investor3[]"]')
+            var investor4 = getString('input[name="investor4[]"]')
+            var investor5 = getString('input[name="investor5[]"]')
 
 
 
-            if (gerbangmodal == '') {
-                sweetAlert('Gagal!', 'Nama Gerbang Harus Di isi', 'error')
-            } else if (asal_gerbang == '') {
-                sweetAlert('Gagal!', 'Asal Gerbang Harus Di isi', 'error')
-            } else if (dasartarifmodal == '') {
-                sweetAlert('Gagal!', 'Dasar Tarif Harus Di isi', 'error')
-            } else if (jenis == '') {
-                sweetAlert('Gagal!', 'Jenis Harus Di isi', 'error')
-            } else if (waktu == '') {
-                sweetAlert('Gagal!', 'Waktu Berlaku Harus Di isi', 'error')
-            } else if (totalgol1 == '') {
-                sweetAlert('Gagal!', 'Gol 1 Harus Di isi', 'error')
-            } else if (totalgol2 == '') {
-                sweetAlert('Gagal!', 'Gol 2 Harus Di isi', 'error')
-            } else if (totalgol3 == '') {
-                sweetAlert('Gagal!', 'Gol 3 Harus Di isi', 'error')
-            } else if (totalgol4 == '') {
-                sweetAlert('Gagal!', 'Gol 4 Harus Di isi', 'error')
-            } else if (totalgol5 == '') {
-                sweetAlert('Gagal!', 'Gol 5 Harus Di isi', 'error')
-            } else if (totalgol1 != sumTotal1) {
-                sweetAlert('Gagal!', 'Tarif GOl 1 tidak Sesuai dengan Total Nominal Investor GOL 1',
-                    'error')
-            } else if (totalgol2 != sumTotal2) {
-                sweetAlert('Gagal!', 'Tarif GOl 2 tidak Sesuai dengan Total Nominal Investor GOL 2',
-                    'error')
-            } else if (totalgol3 != sumTotal3) {
-                sweetAlert('Gagal!', 'Tarif GOl 3 tidak Sesuai dengan Total Nominal Investor GOL 3',
-                    'error')
-            } else if (totalgol4 != sumTotal4) {
-                sweetAlert('Gagal!', 'Tarif GOl 4 tidak Sesuai dengan Total Nominal Investor GOL 4',
-                    'error')
-            } else if (totalgol5 != sumTotal5) {
-                sweetAlert('Gagal!', 'Tarif GOl 5 tidak Sesuai dengan Total Nominal Investor GOL 5',
-                    'error')
-            } else {
+            if (
+                validateField(gerbangmodal, 'Nama Gerbang Harus Di isi') &&
+                validateField(asal_gerbang, 'Asal Gerbang Harus Di isi') &&
+                validateField(dasartarifmodal, 'Dasar TarifHarus Di isi') &&
+                validateField(jenis, 'Jenis Harus Di isi') &&
+                validateField(waktu, 'Waktu Berlaku Harus Di isi') &&
+                validateField(totalgol1, 'Gol 1 Harus Di isi') &&
+                validateField(totalgol2, 'Gol 2 Harus Di isi') &&
+                validateField(totalgol3, 'Gol 3 Harus Di isi') &&
+                validateField(totalgol4, 'Gol 4 Harus Di isi') &&
+                validateField(totalgol5, 'Gol 5 Harus Di isi') &&
+                validateSum(totalgol1, sumTotal1,
+                    'Tarif GOl 1 tidak Sesuai dengan Total Nominal Investor GOL 1') &&
+                validateSum(totalgol2, sumTotal2,
+                    'Tarif GOl 2 tidak Sesuai dengan Total Nominal Investor GOL 2') &&
+                validateSum(totalgol3, sumTotal3,
+                    'Tarif GOl 3 tidak Sesuai dengan Total Nominal Investor GOL 3') &&
+                validateSum(totalgol4, sumTotal4,
+                    'Tarif GOl 4 tidak Sesuai dengan Total Nominal Investor GOL 4') &&
+                validateSum(totalgol5, sumTotal5,
+                    'Tarif GOl 5 tidak Sesuai dengan Total Nominal Investor GOL 5')
+            ) {
                 var formData = new FormData();
                 formData.append('gerbangmodal', gerbangmodal);
                 formData.append('asal_gerbang', asal_gerbang);
@@ -1526,14 +1308,13 @@
 
                     }
                 });
-
             }
 
         })
 
-        
+
         $('#btnEditTarifExit').click(function () {
-            
+
             var id = $('#idTarif').val()
             var gerbangmodal = $('#gerbangEditmodal').val()
             var asal_gerbang = $('#asal_edit_gerbang').val()
@@ -1545,90 +1326,46 @@
             var totalgol3 = $('#totalEditgol3').val()
             var totalgol4 = $('#totalEditgol4').val()
             var totalgol5 = $('#totalEditgol5').val()
-            var totalInvestorValues1 = $('input[name="totalinvestor_edit1[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal1 = totalInvestorValues1.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var totalInvestorValues2 = $('input[name="totalinvestor_edit2[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal2 = totalInvestorValues2.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var totalInvestorValues3 = $('input[name="totalinvestor_edit3[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal3 = totalInvestorValues3.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var totalInvestorValues4 = $('input[name="totalinvestor_edit4[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal4 = totalInvestorValues4.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var totalInvestorValues5 = $('input[name="totalinvestor_edit5[]"]').map(function () {
-                return parseFloat($(this).val()) || 0;
-            }).get();
-            var sumTotal5 = totalInvestorValues5.reduce(function (accumulator, currentValue) {
-                return accumulator + currentValue;
-            }, 0);
-            var investor1 = $('input[name="investor_edit1[]"]').map(function () {
-                return $(this).val();
-            }).get();
-            var investor2 = $('input[name="investor_edit2[]"]').map(function () {
-                return $(this).val();
-            }).get();
-            var investor3 = $('input[name="investor_edit3[]"]').map(function () {
-                return $(this).val();
-            }).get();
-            var investor4 = $('input[name="investor_edit4[]"]').map(function () {
-                return $(this).val();
-            }).get();
-            var investor5 = $('input[name="investor_edit5[]"]').map(function () {
-                return $(this).val();
-            }).get();
+            var totalInvestorValues1 = getNumeric('input[name="totalinvestor_edit1[]"]')
+            var sumTotal1 = sumNumeric(totalInvestorValues1)
+            var totalInvestorValues2 = getNumeric('input[name="totalinvestor_edit2[]"]')
+            var sumTotal2 = sumNumeric(totalInvestorValues2)
+            var totalInvestorValues3 = getNumeric('input[name="totalinvestor_edit3[]"]')
+            var sumTotal3 = sumNumeric(totalInvestorValues3)
+            var totalInvestorValues4 = getNumeric('input[name="totalinvestor_edit4[]"]')
+            var sumTotal4 = sumNumeric(totalInvestorValues4)
+            var totalInvestorValues5 = getNumeric('input[name="totalinvestor_edit5[]"]')
+            var sumTotal5 = sumNumeric(totalInvestorValues5)
+            var investor1 = getString('input[name="investor_edit1[]"]')
+            var investor2 = getString('input[name="investor_edit2[]"]')
+            var investor3 = getString('input[name="investor_edit3[]"]')
+            var investor4 = getString('input[name="investor_edit4[]"]')
+            var investor5 = getString('input[name="investor_edit5[]"]')
 
 
 
-            if (gerbangmodal == '') {
-                sweetAlert('Gagal!', 'Nama Gerbang Harus Di isi', 'error')
-            } else if (asal_gerbang == '') {
-                sweetAlert('Gagal!', 'Asal Gerbang Harus Di isi', 'error')
-            } else if (dasartarifmodal == '') {
-                sweetAlert('Gagal!', 'Dasar Tarif Harus Di isi', 'error')
-            } else if (jenis == '') {
-                sweetAlert('Gagal!', 'Jenis Harus Di isi', 'error')
-            } else if (waktu == '') {
-                sweetAlert('Gagal!', 'Waktu Berlaku Harus Di isi', 'error')
-            } else if (totalgol1 == '') {
-                sweetAlert('Gagal!', 'Gol 1 Harus Di isi', 'error')
-            } else if (totalgol2 == '') {
-                sweetAlert('Gagal!', 'Gol 2 Harus Di isi', 'error')
-            } else if (totalgol3 == '') {
-                sweetAlert('Gagal!', 'Gol 3 Harus Di isi', 'error')
-            } else if (totalgol4 == '') {
-                sweetAlert('Gagal!', 'Gol 4 Harus Di isi', 'error')
-            } else if (totalgol5 == '') {
-                sweetAlert('Gagal!', 'Gol 5 Harus Di isi', 'error')
-            } else if (totalgol1 != sumTotal1) {
-                sweetAlert('Gagal!', 'Tarif GOl 1 tidak Sesuai dengan Total Nominal Investor GOL 1',
-                    'error')
-            } else if (totalgol2 != sumTotal2) {
-                sweetAlert('Gagal!', 'Tarif GOl 2 tidak Sesuai dengan Total Nominal Investor GOL 2',
-                    'error')
-            } else if (totalgol3 != sumTotal3) {
-                sweetAlert('Gagal!', 'Tarif GOl 3 tidak Sesuai dengan Total Nominal Investor GOL 3',
-                    'error')
-            } else if (totalgol4 != sumTotal4) {
-                sweetAlert('Gagal!', 'Tarif GOl 4 tidak Sesuai dengan Total Nominal Investor GOL 4',
-                    'error')
-            } else if (totalgol5 != sumTotal5) {
-                sweetAlert('Gagal!', 'Tarif GOl 5 tidak Sesuai dengan Total Nominal Investor GOL 5',
-                    'error')
-            } else {
+            if (
+                validateField(gerbangmodal, 'Nama Gerbang Harus Di isi') &&
+                validateField(asal_gerbang, 'Asal Gerbang Harus Di isi') &&
+                validateField(dasartarifmodal, 'Dasar TarifHarus Di isi') &&
+                validateField(jenis, 'Jenis Harus Di isi') &&
+                validateField(waktu, 'Waktu Berlaku Harus Di isi') &&
+                validateField(totalgol1, 'Gol 1 Harus Di isi') &&
+                validateField(totalgol2, 'Gol 2 Harus Di isi') &&
+                validateField(totalgol3, 'Gol 3 Harus Di isi') &&
+                validateField(totalgol4, 'Gol 4 Harus Di isi') &&
+                validateField(totalgol5, 'Gol 5 Harus Di isi') &&
+                validateSum(totalgol1, sumTotal1,
+                    'Tarif GOl 1 tidak Sesuai dengan Total Nominal Investor GOL 1') &&
+                validateSum(totalgol2, sumTotal2,
+                    'Tarif GOl 2 tidak Sesuai dengan Total Nominal Investor GOL 2') &&
+                validateSum(totalgol3, sumTotal3,
+                    'Tarif GOl 3 tidak Sesuai dengan Total Nominal Investor GOL 3') &&
+                validateSum(totalgol4, sumTotal4,
+                    'Tarif GOl 4 tidak Sesuai dengan Total Nominal Investor GOL 4') &&
+                validateSum(totalgol5, sumTotal5,
+                    'Tarif GOl 5 tidak Sesuai dengan Total Nominal Investor GOL 5')
+            ) {
                 var formData = new FormData();
                 formData.append('id', id);
                 formData.append('gerbangmodal', gerbangmodal);
@@ -1704,60 +1441,45 @@
 
 
 
+        function validateField(fieldValue, errorMessage) {
+            if (fieldValue === '') {
+                sweetAlert('Gagal!', errorMessage, 'error');
+                return false;
+            }
+            return true;
+        }
 
+        function validateSum(fieldValue1, fieldValue2, errorMessage) {
+            if (fieldValue1 != fieldValue2) {
+                sweetAlert('Gagal!', errorMessage, 'error');
+                return false;
+            }
+            return true;
+        }
+
+        function getNumeric(selector) {
+            return $(selector).map(function () {
+                return parseFloat($(this).val()) || 0;
+            }).get();
+        }
+
+        function getString(selector) {
+            return $(selector).map(function () {
+                return $(this).val();
+            }).get();
+        }
+
+        function sumNumeric(values) {
+            return values.reduce(function (accumulator, currentValue) {
+                return accumulator + currentValue;
+            }, 0);
+        }
 
 
 
 
     });
 
-    function sum_gol(id) {
-        switch (id) {
-            case 1:
-                var jgrw = $('#jagorawigol1').val() == '' ? 0 : $('#jagorawigol1').val();
-
-
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol1').val(result);
-                }
-                break;
-            case 2:
-                var jgrw = $('#jagorawigol2').val() == '' ? 0 : $('#jagorawigol2').val();
-
-
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol2').val(result);
-                }
-                break;
-            case 3:
-                var jgrw = $('#jagorawigol3').val() == '' ? 0 : $('#jagorawigol3').val();
-
-
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol3').val(result);
-                }
-                break;
-            case 4:
-                var jgrw = $('#jagorawigol4').val() == '' ? 0 : $('#jagorawigol4').val();
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol4').val(result);
-                }
-                break;
-            case 5:
-                var jgrw = $('#jagorawigol5').val() == '' ? 0 : $('#jagorawigol5').val();
-
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol5').val(result);
-                }
-                break;
-        }
-
-    }
 
     function tambahInvestor(tabIndex, value = null, totalinven = null) {
         // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
