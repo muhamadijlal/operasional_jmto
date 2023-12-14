@@ -13,4 +13,5 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'tbl_pegawai';
+    protected $primaryKey = 'npp_no';
 }
