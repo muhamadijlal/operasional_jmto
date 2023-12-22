@@ -49,6 +49,9 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
             Route::get('/', [ManajemenTarifCT::class, 'indexclose']);
             Route::post('tambah', [ManajemenTarifCT::class, 'tambahExit']);
             Route::post('update', [ManajemenTarifCT::class, 'updateExit']);
+
+            Route::get('export/{id_gerbang}', [ManajemenTarifCT::class, 'exportClose']);
+
             Route::get('delete/{id_tarif}/{id_gerbang}', [ManajemenTarifCT::class, 'delete']);
             Route::get('edit/{id_tarif}/{id_gerbang}', [ManajemenTarifCT::class, 'edit']);
             Route::get('get-investor-by-id/{id}/{id_gerbang}', [ManajemenTarifCT::class, 'GetInvestor']);

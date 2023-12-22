@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\tbl_gerbang;
 use App\Models\tbl_tarif_exit;
 use App\Models\tbl_tarif_open;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Config;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
@@ -482,7 +483,8 @@ class ManajemenTarifCT extends Controller
 
     public function tambahExit(Request $request)
     {
-        // dd($request->all());
+
+
 
         try {
             $gerbang = tbl_gerbang::where('gerbang_id', $request->gerbangmodal)->first();
@@ -516,7 +518,7 @@ class ManajemenTarifCT extends Controller
         $model->tgl_berlaku = $request->waktu;
         $model->id_dasar_tarif = $request->dasartarifmodal;
         $model->aktif = 1;
-        $model->tarif_inv = $request->investor1;
+        $model->tarif_inv = str_replace('"', '', $request->investor1);
         // $model->bagi_hasil = $this->array_string2($request->investor1);
         $model->save();
 
@@ -566,6 +568,7 @@ class ManajemenTarifCT extends Controller
         }
 
         // dd($model->tarif_inv);
+        // dd($model->tarif_inv);
 
         return response()->json(compact('model'));
     }
@@ -604,7 +607,7 @@ class ManajemenTarifCT extends Controller
         $model->tgl_berlaku = $request->waktu;
         $model->id_dasar_tarif = $request->dasartarifmodal;
         $model->aktif = 1;
-        $model->tarif_inv = $request->investor1;
+        $model->tarif_inv = str_replace('"', '', $request->investor1);
         // $model->bagi_hasil = $this->array_string2($request->investor1);
         $model->save();
 
@@ -629,5 +632,73 @@ class ManajemenTarifCT extends Controller
             $model = tbl_tarif_exit::where('id', $id)->first();
         }
         return response()->json(compact('model'));
+    }
+
+    function split_array($string)
+    {
+        // Menghilangkan kurung siku di awal dan akhir string
+        $cleanedString = trim($string, "[]");
+
+        // Memisahkan string menjadi array berdasarkan koma
+        $arrayValue = explode(',', $cleanedString);
+
+        // Membersihkan elemen array dari spasi tambahan
+        $arrayValue = array_map('trim', $arrayValue);
+
+        return $arrayValue;
+    }
+
+
+    public function exportClose($id_gerbang)
+    {
+
+        $gerbang = tbl_gerbang::where('gerbang_id', $id_gerbang)->first();
+
+        Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
+        Config::set('database.connections.mysql2.host', $gerbang->host);
+        Config::set('database.connections.mysql2.port', $gerbang->port);
+        Config::set('database.connections.mysql2.database', $gerbang->database);
+        Config::set('database.connections.mysql2.username', $gerbang->user);
+        Config::set('database.connections.mysql2.password', $gerbang->pass);
+
+        $model = tbl_tarif_exit::query();
+        $model->join('tbl_gerbang as gerbang', 'gerbang.gerbang_id', '=', 'tbl_tarif_exit.gerbang_id')
+            ->join('tbl_gerbang as gerbang_asal', 'gerbang_asal.gerbang_id', '=', 'tbl_tarif_exit.asal_gerbang')
+            ->leftjoin('tbl_dasar_tarif', 'tbl_dasar_tarif.id_dasar_tarif', '=', 'tbl_tarif_exit.id_dasar_tarif');
+
+        $model->select([
+            'tbl_tarif_exit.id',
+            'gerbang.gerbang_nama as gerbang1',
+            'gerbang_asal.gerbang_nama as asalGerbang',
+            'tbl_tarif_exit.jenis',
+            'tbl_dasar_tarif.dasar_tarif',
+            'tbl_dasar_tarif.mulai_berlaku',
+            'tbl_tarif_exit.gol1',
+            'tbl_tarif_exit.gol1_d',
+            'tbl_tarif_exit.gol2',
+            'tbl_tarif_exit.gol2_d',
+            'tbl_tarif_exit.gol3',
+            'tbl_tarif_exit.gol3_d',
+            'tbl_tarif_exit.gol4',
+            'tbl_tarif_exit.gol4_d',
+            'tbl_tarif_exit.gol5',
+            'tbl_tarif_exit.gol5_d',
+            'tbl_tarif_exit.tarif_inv',
+            'tbl_tarif_exit.tgl_berlaku',
+        ]);
+
+
+        $data = $model->get();
+        // dd($this->split_array($data[0]->tarif));
+        $array = [
+            'data' => $data,
+            'gerbang' => $gerbang
+        ];
+
+        $pdf = Pdf::loadView('admin.pdfClose', $array)->setPaper('a4', 'landscape');
+
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="exported-pdf.pdf"');
     }
 }

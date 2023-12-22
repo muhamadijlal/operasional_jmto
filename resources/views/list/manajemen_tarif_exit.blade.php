@@ -95,6 +95,7 @@
 
             <button class="btn btn-info add-new " id="btnAddTarif"> <i class="fa fa-plus"></i> Tambah Tarif</button>
             <button class="btn btn-secondary  " id="btnRefeshDasarTarif"> <i class="fa fa-refresh"></i> Refresh</button>
+            <button class="btn btn-primary  " id="btnExportTarif"> <i class="fa fa-print"></i> Export</button>
             <br>
             <br>
 
@@ -863,8 +864,8 @@
                 cache: false,
                 processData: false,
                 success: function (response) {
-                    console.log(response.model.tarif_inv)
-                    inventor = JSON.parse(response.model.tarif_inv)
+
+                    inventor = split_array(response.model.tarif_inv)
                     totalInven1 = JSON.parse(response.model.gol1_d)
                     totalInven2 = JSON.parse(response.model.gol2_d)
                     totalInven3 = JSON.parse(response.model.gol3_d)
@@ -891,6 +892,13 @@
 
         })
 
+        function split_array(string){
+
+            var cleanedString = string.slice(1, -1);
+            var arrayValue = cleanedString.split(',');
+            return arrayValue
+        }
+
         $('.datatables-basic').on('click', '.btnEditTarif', function () {
 
             var url = '{{ url()->current() }}/edit/' + $(this).data('url') + '/' + $('#gerbang').val();
@@ -909,6 +917,7 @@
                 success: function (response) {
 
                     var data = response.model
+
 
                     // id
 
@@ -1030,8 +1039,8 @@
 
                     // investor
 
-                    var fixedJsonString = data.tarif_inv.replace(/'/g, '"');
-                    var inventor = JSON.parse(fixedJsonString);
+                    // var fixedJsonString = data.tarif_inv.replace(/'/g, '"');
+                    var inventor = split_array(data.tarif_inv);
                     totalInven1 = JSON.parse(data.gol1_d)
                     totalInven2 = JSON.parse(data.gol2_d)
                     totalInven3 = JSON.parse(data.gol3_d)
@@ -1292,16 +1301,16 @@
 
                             $("#modalTambahTarifClose").modal('hide')
                             dt_filter.ajax.reload();
-                            document.getElementById('loading-screen').style
-                                .display = 'none';
+                            // document.getElementById('loading-screen').style
+                            //     .display = 'none';
                             sweetAlert('Berhasil!',
                                 response.message, 'success')
 
                         } else {
                             $("#modalTambahTarifClose").modal('hide')
                             dt_filter.ajax.reload();
-                            document.getElementById('loading-screen').style
-                                .display = 'none';
+                            // document.getElementById('loading-screen').style
+                            //     .display = 'none';
                             sweetAlert('Gagal!',
                                 response.message, 'error')
                         }
@@ -1438,6 +1447,59 @@
                 }, 1000);
             }
         });
+
+        $('#btnExportTarif').click(function(){
+            var gerbang = $('#gerbang').val()
+            // var gerbang = '01'
+            if ( gerbang == null) {
+                sweetAlert('Gagal!', 'Gagal Export Data, Gerbang Belum Dipilih!', 'error')
+            } else {
+                $.ajax({
+                type: "GET",
+                url: '/admin/manajemen-tarif/close/export/' + gerbang,
+                xhrFields: {
+                    responseType: 'blob' // Set responseType to 'blob'
+                },
+                beforeSend: function () {
+                    document.getElementById('loading-screen').style.display =
+                            'block';
+                },
+                success: function (response) {
+                    // Buat objek blob dari respons
+                    var blob = new Blob([response], {
+                        type: 'application/pdf'
+                    });
+
+                    // Buat URL objek blob
+                    var blobUrl = URL.createObjectURL(blob);
+
+                    // Buat elemen <a> untuk mengunduh file
+                    var link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = 'Rekap_tari.pdf';
+
+                    // Sisipkan elemen <a> ke dokumen dan klik otomatis
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // Hapus elemen <a> setelah di-klik
+                    document.body.removeChild(link);
+                    
+                    document.getElementById('loading-screen').style
+                        .display =
+                        'none';
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    // Handle the error
+                    console.error(errorThrown);
+                    
+                    document.getElementById('loading-screen').style
+                        .display =
+                        'none';
+                }
+            });
+            }
+        })
 
 
 
