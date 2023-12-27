@@ -754,55 +754,7 @@ var investorCountEdit = {};
                     emptyTable: "Tidak ada data yang tersedia",
                     processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
                 },
-                buttons: [{
-                    extend: 'collection',
-                    className: 'btn btn-label-primary dropdown-toggle mx-3',
-                    text: '<i class="ti ti-logout rotate-n90 me-2"></i>Export',
-                    buttons: [{
-                            extend: 'print',
-                            text: '<i class="ti ti-printer me-2" ></i>Print',
-                            className: 'dropdown-item',
-                            customize: function (win) {
-                                //customize print view for dark
-                                $(win.document.body)
-                                    .css('color', config.colors.headingColor)
-                                    .css('border-color', config.colors
-                                        .borderColor)
-                                    .css('background-color', config.colors
-                                        .body);
-                                $(win.document.body)
-                                    .find('table')
-                                    .addClass('compact')
-                                    .css('color', 'inherit')
-                                    .css('border-color', 'inherit')
-                                    .css('background-color', 'inherit');
-                            }
-                        },
-                        {
-                            extend: 'csv',
-                            text: '<i class="ti ti-file-text me-2" ></i>Csv',
-                            className: 'dropdown-item',
-                        },
-                        {
-                            extend: 'excel',
-                            text: '<i class="ti ti-file-spreadsheet me-2"></i>Excel',
-                            className: 'dropdown-item',
 
-                        },
-                        {
-                            extend: 'pdf',
-                            text: '<i class="ti ti-file-text me-2"></i>Pdf',
-                            className: 'dropdown-item',
-
-                        },
-                        {
-                            extend: 'copy',
-                            text: '<i class="ti ti-copy me-1" ></i>Copy',
-                            className: 'dropdown-item',
-
-                        }
-                    ]
-                }],
 
             });
 
