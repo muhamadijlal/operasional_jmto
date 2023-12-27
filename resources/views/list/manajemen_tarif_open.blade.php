@@ -637,7 +637,7 @@
                 cache: true
             },
             placeholder: 'Pilih Gerbang',
-            minimumInputLength: 1 // Jumlah karakter minimum yang harus dimasukkan sebelum AJAX diaktifkan
+
         });
 
         $('#btnAddTarif').click(function () {
@@ -849,67 +849,83 @@
 
     }
 
-    function tambahInvestor(tabIndex, value = null, totalinven = null) {
-        // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
-        var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
+    var investorCount = 1; // Inisialisasi hitungan investor
 
-        // Buat elemen form group untuk input investor
-        var formGroup = document.createElement('div');
-        formGroup.className = 'form-group dataInventor';
+function tambahInvestor(tabIndex, value = null, totalinven = null) {
+    // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
+    var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
 
-        // Label untuk input investor
-        var label = document.createElement('label');
-        label.textContent = 'Investor';
-        label.setAttribute('for', 'investor');
+    // Buat elemen form group untuk input investor
+    var formGroup = document.createElement('div');
+    formGroup.className = 'form-group dataInventor';
 
-        // Input untuk investor
-        var input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'form-control';
-        input.name = 'investor' + tabIndex + '[]';
-        input.id = 'investor' + tabIndex;
-        if (value != null) {
-            input.value = value
-        }
+    // Label untuk input investor
+    var label = document.createElement('label');
+    label.textContent = 'Investor ' + investorCount;
+    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCount);
 
-        // Tombol "Delete" untuk menghapus investor
-        var deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
-        deleteButton.type = 'button';
-
-        var hr = document.createElement('hr');
-
-        // Tambahkan event listener untuk tombol "Delete"
-        deleteButton.addEventListener('click', function () {
-            // Hapus elemen form group saat tombol "Delete" diklik
-            formGroup.remove();
-        });
-
-        // Total Investor
-        var totalLabel = document.createElement('label');
-        totalLabel.textContent = 'Total Investor';
-        totalLabel.setAttribute('for', 'total_investor');
-
-        var totalInput = document.createElement('input');
-        totalInput.type = 'number';
-        totalInput.className = 'form-control';
-        totalInput.name = 'totalinvestor' + tabIndex + '[]';
-        totalInput.id = 'total_investor' + tabIndex;
-        totalInput.value = totalinven
-
-        // Tambahkan elemen-elemen ini ke dalam tab-pane
-
-        formGroup.appendChild(hr);
-        formGroup.appendChild(label);
-        formGroup.appendChild(input);
-        formGroup.appendChild(totalLabel);
-        formGroup.appendChild(totalInput);
-        tabPane.appendChild(formGroup);
-        formGroup.appendChild(deleteButton);
-
-        formGroup.appendChild(hr); // Tambahkan tombol "Delete"
+    // Input untuk investor
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control';
+    input.name = 'investor' + tabIndex + '[]';
+    input.id = 'investor' + tabIndex + '_' + investorCount;
+    if (value != null) {
+        input.value = value;
     }
+
+    // Tombol "Delete" untuk menghapus investor
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
+    deleteButton.type = 'button';
+
+    var hr = document.createElement('hr');
+
+    // Tambahkan event listener untuk tombol "Delete"
+    deleteButton.addEventListener('click', function () {
+        // Hapus elemen form group saat tombol "Delete" diklik
+        formGroup.remove();
+
+        // Kurangi nilai investorCount
+        investorCount--;
+        // Pastikan nilai investorCount tidak kurang dari 1
+        investorCount = Math.max(investorCount, 1);
+
+        // Update label investor sesuai dengan nilai terbaru
+        label.textContent = 'Investor ' + investorCount;
+        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCount);
+        input.id = 'investor' + tabIndex + '_' + investorCount;
+        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCount);
+        totalInput.id = 'total_investor' + tabIndex + '_' + investorCount;
+    });
+
+    // Total Investor
+    var totalLabel = document.createElement('label');
+    totalLabel.textContent = 'Total Investor';
+    totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCount);
+
+    var totalInput = document.createElement('input');
+    totalInput.type = 'number';
+    totalInput.className = 'form-control';
+    totalInput.name = 'totalinvestor' + tabIndex + '[]';
+    totalInput.id = 'total_investor' + tabIndex + '_' + investorCount;
+    totalInput.value = totalinven;
+
+    // Tambahkan elemen-elemen ini ke dalam tab-pane
+    formGroup.appendChild(hr);
+    formGroup.appendChild(label);
+    formGroup.appendChild(input);
+    formGroup.appendChild(totalLabel);
+    formGroup.appendChild(totalInput);
+    tabPane.appendChild(formGroup);
+    formGroup.appendChild(deleteButton);
+
+    formGroup.appendChild(hr); // Tambahkan tombol "Delete"
+
+    investorCount++; // Inkrementasi hitungan investor
+}
+
 
     function formatRupiah(angka) {
         var reverse = angka.toString().split('').reverse().join('');

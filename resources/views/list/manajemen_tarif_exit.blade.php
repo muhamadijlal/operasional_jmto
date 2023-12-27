@@ -210,7 +210,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestor(1)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor1[]" id="investor1">
                                 </div>
                                 <div class="form-group mt-3">
@@ -242,7 +242,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestor(2)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor2[]" id="investor2">
                                 </div>
                                 <div class="form-group mt-3">
@@ -275,7 +275,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestor(3)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor3[]" id="investor3">
                                 </div>
                                 <div class="form-group mt-3">
@@ -309,7 +309,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestor(4)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor4[]" id="investor4">
                                 </div>
                                 <div class="form-group mt-3">
@@ -341,7 +341,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestor(5)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor5[]" id="investor5">
                                 </div>
                                 <div class="form-group mt-3">
@@ -463,7 +463,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(1)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor_edit1[]" id="investor_edit1">
                                 </div>
                                 <div class="form-group mt-3">
@@ -495,7 +495,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(2)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor_edit2[]" id="investor_edit2">
                                 </div>
                                 <div class="form-group mt-3">
@@ -528,7 +528,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(3)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor_edit3[]" id="investor_edit3">
                                 </div>
                                 <div class="form-group mt-3">
@@ -562,7 +562,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(4)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor_edit4[]" id="investor_edit4">
                                 </div>
                                 <div class="form-group mt-3">
@@ -594,7 +594,7 @@
 
                                 <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(5)">Tambah Investor</a>
                                 <div class="form-group mt-3">
-                                    <label for="investor">investor</label>
+                                    <label for="investor">investor 1</label>
                                     <input type="text" class="form-control" name="investor_edit5[]" id="investor_edit5">
                                 </div>
                                 <div class="form-group mt-3">
@@ -679,6 +679,8 @@
 
 
 <script type="text/javascript">
+var investorCounts = {};
+var investorCountEdit = {};
     $(document).ready(function () {
 
         function sweetAlert(title, text, icon) {
@@ -1059,6 +1061,8 @@
                     $("#total_investor_edit4").val(totalInven4[0]);
                     $("#total_investor_edit5").val(totalInven5[0]);
 
+
+                    investorCountEdit = {}
                     $.each(inventor, function (i, item) {
 
                         if (i > 0) {
@@ -1104,12 +1108,12 @@
                 cache: true
             },
             placeholder: 'Pilih Gerbang',
-            minimumInputLength: 1 // Jumlah karakter minimum yang harus dimasukkan sebelum AJAX diaktifkan
         });
 
 
 
         $('#btnAddTarif').click(function () {
+            investorCounts = {};
 
             if ($('#gerbang').val() == null) {
                 sweetAlert('Gagal!', 'Gagal Tambah Data, Gerbang Belum Dipilih!', 'error')
@@ -1543,69 +1547,97 @@
     });
 
 
-    function tambahInvestor(tabIndex, value = null, totalinven = null) {
-        // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
-        var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
+// Objek untuk menyimpan investorCount untuk setiap tabIndex
 
-        // Buat elemen form group untuk input investor
-        var formGroup = document.createElement('div');
-        formGroup.className = 'form-group dataInventor';
 
-        // Label untuk input investor
-        var label = document.createElement('label');
-        label.textContent = 'Investor';
-        label.setAttribute('for', 'investor');
-
-        // Input untuk investor
-        var input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'form-control';
-        input.name = 'investor' + tabIndex + '[]';
-        input.id = 'investor' + tabIndex;
-        if (value != null) {
-            input.value = value
-        }
-
-        // Tombol "Delete" untuk menghapus investor
-        var deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
-        deleteButton.type = 'button';
-
-        var hr = document.createElement('hr');
-
-        // Tambahkan event listener untuk tombol "Delete"
-        deleteButton.addEventListener('click', function () {
-            // Hapus elemen form group saat tombol "Delete" diklik
-            formGroup.remove();
-        });
-
-        // Total Investor
-        var totalLabel = document.createElement('label');
-        totalLabel.textContent = 'Total Investor';
-        totalLabel.setAttribute('for', 'total_investor');
-
-        var totalInput = document.createElement('input');
-        totalInput.type = 'number';
-        totalInput.className = 'form-control';
-        totalInput.name = 'totalinvestor' + tabIndex + '[]';
-        totalInput.id = 'total_investor' + tabIndex;
-        totalInput.value = totalinven
-
-        // Tambahkan elemen-elemen ini ke dalam tab-pane
-
-        formGroup.appendChild(hr);
-        formGroup.appendChild(label);
-        formGroup.appendChild(input);
-        formGroup.appendChild(totalLabel);
-        formGroup.appendChild(totalInput);
-        tabPane.appendChild(formGroup);
-        formGroup.appendChild(deleteButton);
-
-        formGroup.appendChild(hr); // Tambahkan tombol "Delete"
+function tambahInvestor(tabIndex, value = null, totalinven = null) {
+    // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
+    if (!investorCounts.hasOwnProperty(tabIndex)) {
+        investorCounts[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
     }
 
+    // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
+    var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
+
+    // Buat elemen form group untuk input investor
+    var formGroup = document.createElement('div');
+    formGroup.className = 'form-group dataInventor';
+
+    // Label untuk input investor
+    var label = document.createElement('label');
+    label.textContent = 'Investor ' + investorCounts[tabIndex];
+    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
+
+    // Input untuk investor
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control';
+    input.name = 'investor' + tabIndex + '[]';
+    input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
+    if (value != null) {
+        input.value = value;
+    }
+
+    // Tombol "Delete" untuk menghapus investor
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
+    deleteButton.type = 'button';
+
+    var hr = document.createElement('hr');
+
+    // Tambahkan event listener untuk tombol "Delete"
+    deleteButton.addEventListener('click', function () {
+        // Hapus elemen form group saat tombol "Delete" diklik
+        formGroup.remove();
+
+        // Kurangi nilai investorCount
+        investorCounts[tabIndex]--;
+        // Pastikan nilai investorCount tidak kurang dari 2
+        investorCounts[tabIndex] = Math.max(investorCounts[tabIndex], 2);
+
+        // Update label investor sesuai dengan nilai terbaru
+        label.textContent = 'Investor ' + investorCounts[tabIndex];
+        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
+        input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
+        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+        totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
+    });
+
+    // Total Investor
+    var totalLabel = document.createElement('label');
+    totalLabel.textContent = 'Total Investor';
+    totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+
+    var totalInput = document.createElement('input');
+    totalInput.type = 'number';
+    totalInput.className = 'form-control';
+    totalInput.name = 'totalinvestor' + tabIndex + '[]';
+    totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
+    totalInput.value = totalinven;
+
+    // Tambahkan elemen-elemen ini ke dalam tab-pane
+    formGroup.appendChild(hr);
+    formGroup.appendChild(label);
+    formGroup.appendChild(input);
+    formGroup.appendChild(totalLabel);
+    formGroup.appendChild(totalInput);
+    tabPane.appendChild(formGroup);
+    formGroup.appendChild(deleteButton);
+
+    formGroup.appendChild(hr); // Tambahkan tombol "Delete"
+
+    investorCounts[tabIndex]++; // Inkrementasi hitungan investor untuk tabIndex tertentu
+}
+
+
+
     function tambahInvestorEdit(tabIndex, value = null, totalinven = null) {
+       
+           // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
+        if (!investorCountEdit.hasOwnProperty(tabIndex)) {
+            investorCountEdit[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
+        }
         // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
         var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane-edit');
 
@@ -1613,20 +1645,20 @@
         var formGroup = document.createElement('div');
         formGroup.className = 'form-group dataInventor';
 
-        // Label untuk input investor
-        var label = document.createElement('label');
-        label.textContent = 'Investor';
-        label.setAttribute('for', 'investor');
+    // Label untuk input investor
+    var label = document.createElement('label');
+    label.textContent = 'Investor ' + investorCountEdit[tabIndex];
+    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
 
-        // Input untuk investor
-        var input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'form-control';
-        input.name = 'investor_edit' + tabIndex + '[]';
-        input.id = 'investor_edit' + tabIndex;
-        if (value != null) {
-            input.value = value
-        }
+ // Input untuk investor
+ var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control';
+    input.name = 'investor_edit' + tabIndex + '[]';
+    input.id = 'investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
+    if (value != null) {
+        input.value = value;
+    }
 
         // Tombol "Delete" untuk menghapus investor
         var deleteButton = document.createElement('button');
@@ -1636,24 +1668,35 @@
 
         var hr = document.createElement('hr');
 
-        // Tambahkan event listener untuk tombol "Delete"
-        deleteButton.addEventListener('click', function () {
-            // Hapus elemen form group saat tombol "Delete" diklik
-            formGroup.remove();
-        });
+ // Tambahkan event listener untuk tombol "Delete"
+ deleteButton.addEventListener('click', function () {
+        // Hapus elemen form group saat tombol "Delete" diklik
+        formGroup.remove();
+
+        // Kurangi nilai investorCount
+        investorCountEdit[tabIndex]--;
+        // Pastikan nilai investorCount tidak kurang dari 2
+        investorCountEdit[tabIndex] = Math.max(investorCountEdit[tabIndex], 2);
+
+        // Update label investor sesuai dengan nilai terbaru
+        label.textContent = 'Investor ' + investorCountEdit[tabIndex];
+        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+        input.id = 'investor' + tabIndex + '_' + investorCountEdit[tabIndex];
+        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+        totalInput.id = 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex];
+    });
 
         // Total Investor
         var totalLabel = document.createElement('label');
         totalLabel.textContent = 'Total Investor';
-        totalLabel.setAttribute('for', 'total_investor');
+        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
 
         var totalInput = document.createElement('input');
-        totalInput.type = 'number';
-        totalInput.className = 'form-control';
-        totalInput.name = 'totalinvestor_edit' + tabIndex + '[]';
-        totalInput.id = 'total_investor_edit' + tabIndex;
-        totalInput.value = totalinven
-
+    totalInput.type = 'number';
+    totalInput.className = 'form-control';
+    totalInput.name = 'totalinvestor_edit' + tabIndex + '[]';
+    totalInput.id = 'total_investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
+    totalInput.value = totalinven;
         // Tambahkan elemen-elemen ini ke dalam tab-pane
 
         formGroup.appendChild(hr);
@@ -1665,6 +1708,7 @@
         formGroup.appendChild(deleteButton);
 
         formGroup.appendChild(hr); // Tambahkan tombol "Delete"
+        investorCountEdit[tabIndex]++; // Inkrementasi hitungan investor untuk tabIndex tertentu
     }
 
     function formatRupiah(angka) {

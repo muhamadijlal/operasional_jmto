@@ -8,23 +8,23 @@ $(document).ready(function () {
 
     var dt_filter_table = $('.datatables-basic');
 
-    $('.datatables-basic thead tr').clone(true).appendTo('.datatables-basic thead');
-    $('.datatables-basic thead tr:eq(1) th').each(function (i) {
-        var title = $(this).text();
+    // $('.datatables-basic thead tr').clone(true).appendTo('.datatables-basic thead');
+    // $('.datatables-basic thead tr:eq(1) th').each(function (i) {
+    //     var title = $(this).text();
 
-        $(this).html('<input id="Search_' + title + '" name="Search_' + title +
-            '" type="text" oninput="cacheInput(this)" class="form-control" placeholder="Search" />'
-        );
-        $localdata = localStorage.getItem('Search_' + title);
-        if ($localdata) {
-            document.getElementById('Search_' + title).value = $localdata;
-        }
-        $('input', this).on('keyup change', function () {
-            if (dt_filter.column(i).search() !== this.value) {
-                dt_filter.column(i).search(this.value).draw();
-            }
-        });
-    });
+    //     $(this).html('<input id="Search_' + title + '" name="Search_' + title +
+    //         '" type="text" oninput="cacheInput(this)" class="form-control" placeholder="Search" />'
+    //     );
+    //     $localdata = localStorage.getItem('Search_' + title);
+    //     if ($localdata) {
+    //         document.getElementById('Search_' + title).value = $localdata;
+    //     }
+    //     $('input', this).on('keyup change', function () {
+    //         if (dt_filter.column(i).search() !== this.value) {
+    //             dt_filter.column(i).search(this.value).draw();
+    //         }
+    //     });
+    // });
 
 
     var dt_filter = $('#tbl_list').DataTable({
@@ -212,9 +212,26 @@ $(document).ready(function () {
             cache: true
         },
         placeholder: 'Pilih Gerbang',
-        minimumInputLength: 1 ,
 
     });
+
+    // $.ajax({
+    //     type: "GET",
+    //     url: '/admin/get-gerbang-data',
+    //     success: function(response){
+    //         console.log(response)
+    //         $('#gerbang').html('<option value="">Pilih Gerbang</option>');
+    //         var lenData   = response.length;
+    //         var a;
+    //         for(a=0; a<lenData; a++){
+
+    //                 $('#gerbang').append('<option value="'+ response[a].gerbang_id +'">'+ response[a].gerbang_nama +'</option>');
+
+    //         }
+    //     },error: function(textStatus, errorThrown) { 
+           
+    //     }
+    // })
 
     $('#btnAddDasarTarif').click(function () {
 

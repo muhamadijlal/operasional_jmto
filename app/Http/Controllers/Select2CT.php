@@ -13,35 +13,36 @@ class Select2CT extends Controller
 
     public function getGerbang(Request $request)
     {
-        if ($request->has('q')) {
-            $cari = $request->q;
-            $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%')")
-                ->limit(30)
-                ->get();
-            return response()->json($data);
-        }
+        // if ($request->has('q')) {
+        $cari = $request->q;
+        $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%')")
+            ->orderBy('gerbang_nama', 'asc')
+            ->get();
+        return response()->json($data);
+
+        // $data = tbl_gerbang::all();
+        // return response()->json($data);
+        // }
     }
 
     public function getGerbangOpen(Request $request)
     {
-        if ($request->has('q')) {
-            $cari = $request->q;
-            $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%') AND (jenis_gerbang='0' OR jenis_gerbang='4' )")
-                ->limit(30)
-                ->get();
-            return response()->json($data);
-        }
+
+        $cari = $request->q;
+        $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%') AND (jenis_gerbang='0' OR jenis_gerbang='4' )")
+            ->orderBy('gerbang_nama', 'asc')
+            ->get();
+        return response()->json($data);
     }
 
     public function getGerbangExit(Request $request)
     {
-        if ($request->has('q')) {
-            $cari = $request->q;
-            $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%') AND (jenis_gerbang='1' OR jenis_gerbang='2' OR jenis_gerbang='3' )")
-                ->limit(30)
-                ->get();
-            return response()->json($data);
-        }
+
+        $cari = $request->q;
+        $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%') AND (jenis_gerbang='1' OR jenis_gerbang='2' OR jenis_gerbang='3' )")
+            ->orderBy('gerbang_nama', 'asc')
+            ->get();
+        return response()->json($data);
     }
 
 

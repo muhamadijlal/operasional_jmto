@@ -9,6 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Config;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ManajemenTarifCT extends Controller
 {
@@ -123,11 +124,11 @@ class ManajemenTarifCT extends Controller
                 'tbl_tarif_open.id',
                 'tbl_gerbang.gerbang_nama',
                 'tbl_dasar_tarif.dasar_tarif',
-                'tbl_tarif_open.gol1',
-                'tbl_tarif_open.gol2',
-                'tbl_tarif_open.gol3',
-                'tbl_tarif_open.gol4',
-                'tbl_tarif_open.gol5',
+                DB::raw("FORMAT(tbl_tarif_open.gol1, 0, 'id_ID') as gol1"), // Format gol1 ke format rupiah
+                DB::raw("FORMAT(tbl_tarif_open.gol2, 0, 'id_ID') as gol2"), // Format gol2 ke format rupiah
+                DB::raw("FORMAT(tbl_tarif_open.gol3, 0, 'id_ID') as gol3"), // Format gol3 ke format rupiah
+                DB::raw("FORMAT(tbl_tarif_open.gol4, 0, 'id_ID') as gol4"), // Format gol4 ke format rupiah
+                DB::raw("FORMAT(tbl_tarif_open.gol5, 0, 'id_ID') as gol5"),
                 'tbl_tarif_open.tgl_berlaku',
             ];
             $model->select($selectOpen);
@@ -211,6 +212,9 @@ class ManajemenTarifCT extends Controller
 
     public function indexclose(Request $request)
     {
+
+
+
         $selectedGerbang = $request->input('gerbang');
         $gerbang = tbl_gerbang::where('gerbang_id', $selectedGerbang)->first();
 
@@ -235,11 +239,11 @@ class ManajemenTarifCT extends Controller
                 'gerbang_asal.gerbang_nama as asalGerbang',
                 'tbl_tarif_exit.jenis',
                 'tbl_dasar_tarif.dasar_tarif',
-                'tbl_tarif_exit.gol1',
-                'tbl_tarif_exit.gol2',
-                'tbl_tarif_exit.gol3',
-                'tbl_tarif_exit.gol4',
-                'tbl_tarif_exit.gol5',
+                DB::raw("FORMAT(tbl_tarif_exit.gol1, 0, 'id_ID') as gol1"), // Format gol1 ke format rupiah
+                DB::raw("FORMAT(tbl_tarif_exit.gol2, 0, 'id_ID') as gol2"), // Format gol2 ke format rupiah
+                DB::raw("FORMAT(tbl_tarif_exit.gol3, 0, 'id_ID') as gol3"), // Format gol3 ke format rupiah
+                DB::raw("FORMAT(tbl_tarif_exit.gol4, 0, 'id_ID') as gol4"), // Format gol4 ke format rupiah
+                DB::raw("FORMAT(tbl_tarif_exit.gol5, 0, 'id_ID') as gol5"),
                 'tbl_tarif_exit.tgl_berlaku',
             ]);
 
