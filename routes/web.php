@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminCT;
 use App\Http\Controllers\AuthCT;
 use App\Http\Controllers\DasarTarifCT;
 use App\Http\Controllers\ManajemenTarifCT;
+use App\Http\Controllers\PetugasCT;
 use App\Http\Controllers\Select2CT;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,8 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
             Route::get('delete/{id_tarif}/{id_gerbang}', [ManajemenTarifCT::class, 'delete']);
             Route::get('edit/{id_tarif}/{id_gerbang}', [ManajemenTarifCT::class, 'edit']);
             Route::get('get-investor-by-id/{id}/{id_gerbang}', [ManajemenTarifCT::class, 'GetInvestor']);
+
+            Route::post('update', [ManajemenTarifCT::class, 'update']);
         });
         Route::group(['prefix' => 'close'], function () {
             Route::get('/', [ManajemenTarifCT::class, 'indexclose']);
@@ -62,6 +65,11 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
 
     Route::group(['prefix' => 'manajemen-tarif'], function () {
         Route::get('/', [ManajemenTarifCT::class, 'index']);
+    });
+
+    Route::group(['prefix' => 'petugas'], function () {
+        Route::get('buat-petugas', [PetugasCT::class, 'BuatPetugas']);
+        Route::post('buat-petugas/tambah', [PetugasCT::class, 'BuatPetugasTambah']);
     });
 
     Route::get('get-gerbang-data', [Select2CT::class, 'getGerbang']);

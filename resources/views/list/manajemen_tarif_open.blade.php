@@ -91,21 +91,11 @@
             </div>
             @endif
 
-            {{-- <?php if(isset($BtnSuccess)){ ?><a href="{{ $BtnSuccess['url'] }}"
-            class="btn btn-secondary add-new btn-success" tabindex="0" aria-controls="tbl_list" type="button"
-            data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser"><?= $BtnSuccess['name'] ?></a><?php } ?>
-            <?php if(isset($BtnInfo)){ ?><a href="{{ $BtnInfo['url'] }}"
-                class="btn btn-secondary add-new btn-info"><?= $BtnInfo['name'] ?></a><?php } ?>
-            <?php if(isset($BtnPrimary)){ ?><a href="{{ $BtnPrimary['url'] }}"
-                class="btn btn-secondary add-new btn-primary"><?= $BtnPrimary['name'] ?></a><?php } ?>
-            <?php if(isset($BtnWarning)){ ?><a href="{{ $BtnWarning['url'] }}"
-                class="btn btn-secondary add-new btn-warning"><?= $BtnWarning['name'] ?></a><?php } ?>
-            <?php if(isset($BtnDanger)){ ?><a href="{{ $BtnDanger['url'] }}"
-                class="btn btn-secondary add-new btn-danger"><?= $BtnDanger['name'] ?></a><?php } ?> --}}
 
 
             <button class="btn btn-info add-new " id="btnAddTarif"> <i class="fa fa-plus"></i> Tambah Tarif</button>
             <button class="btn btn-secondary  " id="btnRefeshDasarTarif"> <i class="fa fa-refresh"></i> Refresh</button>
+            {{-- <button class="btn btn-primary  " id="btnExportTarif"> <i class="fa fa-print"></i> Export</button> --}}
             <br>
             <br>
 
@@ -120,16 +110,553 @@
                 </tr>
             </table>
 
-            {{-- <table id="tbl_list_close" class="datatables-basic table">
-            </table> --}}
-
-
         </div>
     </div>
 </div>
+
+
+<div class="modal" id="modalTambahTarifClose" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Tarif Close</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="gerbangmodal">Nama Gerbang :</label>
+                            <select class="form-control" id="gerbangmodal" name="gerbangmodal" readonly="readonly">
+                            </select>
+                        </div>
+                    </div>
+                    {{-- <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="asal_gerbang">Asal Gerbang :</label>
+                            <br>
+                            <select style="width: 100%" class="form-control select2" id="asal_gerbang"
+                                style="z-index: 1" name="asal_gerbang">
+                            </select>
+                        </div>
+                    </div> --}}
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="dasartarifmodal">Dasar Tarif :</label>
+                            <select class="form-control" id="dasartarifmodal" name="dasartarifmodal" required>
+                            </select>
+                        </div>
+                    </div>
+                    {{-- <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="jenis">Jenis Transaksi :</label>
+                            <select class="form-control" id="jenis" name="jenis">
+                            </select>
+                        </div>
+                    </div> --}}
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="waktu">Waktu Berlaku :</label>
+                            <input type="text" class="form-control" name="waktu" id="waktu" aria-describedby="waktu"
+                                placeholder="Waktu Berlaku" required>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 mt-4">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="gol1-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol1-tab-pane" type="button" role="tab"
+                                    aria-controls="gol1-tab-pane" aria-selected="true">Golongan 1</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gol2-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol2-tab-pane" type="button" role="tab"
+                                    aria-controls="gol2-tab-pane" aria-selected="false">Golongan 2</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gol3-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol3-tab-pane" type="button" role="tab"
+                                    aria-controls="gol3-tab-pane" aria-selected="false">Golongan 3</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gol4-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol4-tab-pane" type="button" role="tab"
+                                    aria-controls="gol4-tab-pane" aria-selected="false">Golongan 4</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gol5-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol5-tab-pane" type="button" role="tab"
+                                    aria-controls="gol5-tab-pane" aria-selected="false">Golongan 5</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="gol1-tab-pane" role="tabpanel"
+                                aria-labelledby="gol1-tab" tabindex="0">
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalgol1"> Gol 1
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalgol1" id="totalgol1"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestor(1)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor1[]" id="investor1">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor1[]"
+                                        id="total_investor1">
+                                </div>
+                                <hr>
+
+                            </div>
+                            <div class="tab-pane fade show " id="gol2-tab-pane" role="tabpanel"
+                                aria-labelledby="gol2-tab" tabindex="0">
+
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalgol2"> Gol 2
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalgol2" id="totalgol2"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestor(2)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor2[]" id="investor2">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor2[]"
+                                        id="total_investor2">
+                                </div>
+                                <hr>
+
+                            </div>
+
+                            <div class="tab-pane fade show " id="gol3-tab-pane" role="tabpanel"
+                                aria-labelledby="gol3-tab" tabindex="0">
+
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalgol3"> Gol 3
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalgol3" id="totalgol3"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestor(3)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor3[]" id="investor3">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor3[]"
+                                        id="total_investor3">
+                                </div>
+                                <hr>
+
+
+                            </div>
+                            <div class="tab-pane fade show " id="gol4-tab-pane" role="tabpanel"
+                                aria-labelledby="gol4-tab" tabindex="0">
+
+
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalgol4"> Gol 4
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalgol4" id="totalgol4"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestor(4)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor4[]" id="investor4">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor4[]"
+                                        id="total_investor4">
+                                </div>
+                                <hr>
+
+                            </div>
+                            <div class="tab-pane fade show " id="gol5-tab-pane" role="tabpanel"
+                                aria-labelledby="gol5-tab" tabindex="0">
+
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalgol5"> Gol 5
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalgol5" id="totalgol5"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestor(5)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor5[]" id="investor5">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor5[]"
+                                        id="total_investor5">
+                                </div>
+                                <hr>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" id="btnSimpanTarifExit" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalEditTarifClose" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Tarif Close</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="gerbangEditmodal">Nama Gerbang :</label>
+                            <input type="hidden" name="idTarif" id="idTarif">
+                            <select class="form-control" id="gerbangEditmodal" name="gerbangEditmodal"
+                                readonly="readonly">
+                            </select>
+                        </div>
+                    </div>
+                    {{-- <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="asal_edit_gerbang">Asal Gerbang :</label>
+                            <br>
+                            <select style="width: 100%" class="form-control select2" id="asal_edit_gerbang"
+                                style="z-index: 1" name="asal_edit_gerbang">
+                            </select>
+                        </div>
+                    </div> --}}
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="dasartarifeditmodal">Dasar Tarif :</label>
+                            <select class="form-control" id="dasartarifeditmodal" name="dasartarifeditmodal" required>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="jenisEdit">Jenis Transaksi :</label>
+                            <select class="form-control" id="jenisEdit" name="jenisEdit">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="waktuEdit">Waktu Berlaku :</label>
+                            <input type="text" class="form-control" name="waktuEdit" id="waktuEdit"
+                                aria-describedby="waktu" placeholder="Waktu Berlaku" required>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 mt-4">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="gol1-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol1-tab-pane-edit" type="button" role="tab"
+                                    aria-controls="gol1-tab-pane-edit" aria-selected="true">Golongan 1</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gol2-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol2-tab-pane-edit" type="button" role="tab"
+                                    aria-controls="gol2-tab-pane-edit" aria-selected="false">Golongan 2</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gol3-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol3-tab-pane-edit" type="button" role="tab"
+                                    aria-controls="gol3-tab-pane-edit" aria-selected="false">Golongan 3</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gol4-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol4-tab-pane-edit" type="button" role="tab"
+                                    aria-controls="gol4-tab-pane-edit" aria-selected="false">Golongan 4</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gol5-tab" data-bs-toggle="tab"
+                                    data-bs-target="#gol5-tab-pane-edit" type="button" role="tab"
+                                    aria-controls="gol5-tab-pane-edit" aria-selected="false">Golongan 5</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="gol1-tab-pane-edit" role="tabpanel"
+                                aria-labelledby="gol1-tab" tabindex="0">
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalEditgol1"> Gol 1
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalEditgol1" id="totalEditgol1"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(1)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor_edit1[]" id="investor_edit1">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor_edit1[]"
+                                        id="total_investor_edit1">
+                                </div>
+                                <hr>
+
+                            </div>
+                            <div class="tab-pane fade show " id="gol2-tab-pane-edit" role="tabpanel"
+                                aria-labelledby="gol2-tab" tabindex="0">
+
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalEditgol2"> Gol 2
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalEditgol2" id="totalEditgol2"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(2)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor_edit2[]" id="investor_edit2">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor_edit2[]"
+                                        id="total_investor_edit2">
+                                </div>
+                                <hr>
+
+                            </div>
+
+                            <div class="tab-pane fade show " id="gol3-tab-pane-edit" role="tabpanel"
+                                aria-labelledby="gol3-tab" tabindex="0">
+
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalEditgol3"> Gol 3
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalEditgol3" id="totalEditgol3"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(3)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor_edit3[]" id="investor_edit3">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor_edit3[]"
+                                        id="total_investor_edit3">
+                                </div>
+                                <hr>
+
+
+                            </div>
+                            <div class="tab-pane fade show " id="gol4-tab-pane-edit" role="tabpanel"
+                                aria-labelledby="gol4-tab" tabindex="0">
+
+
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalEditgol4"> Gol 4
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalEditgol4" id="totalEditgol4"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(4)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor_edit4[]" id="investor_edit4">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor_edit4[]"
+                                        id="total_investor_edit4">
+                                </div>
+                                <hr>
+
+                            </div>
+                            <div class="tab-pane fade show " id="gol5-tab-pane-edit" role="tabpanel"
+                                aria-labelledby="gol5-tab" tabindex="0">
+
+
+                                <b>Harga</b>
+                                <hr>
+                                <div class="form-group">
+                                    <label class="col-sm-3" for="totalEditgol5"> Gol 5
+                                        :</label>
+                                    <div class="form-group col-sm-9">
+                                        <input type="text" class="form-control" name="totalEditgol5" id="totalEditgol5"
+                                            placeholder="">
+                                    </div>
+                                </div>
+
+                                <br>
+                                <b>investor</b>
+                                <hr>
+
+                                <a class="btn btn-primary" href="#" onclick="tambahInvestorEdit(5)">Tambah Investor</a>
+                                <div class="form-group mt-3">
+                                    <label for="investor">investor 1</label>
+                                    <input type="text" class="form-control" name="investor_edit5[]" id="investor_edit5">
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label for="total_investor">Total investor</label>
+                                    <input type="number" class="form-control" name="totalinvestor_edit5[]"
+                                        id="total_investor_edit5">
+                                </div>
+                                <hr>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" id="btnEditTarifExit" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="modalDetailInvestor">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="tableDetailInvestor">
+                        <thead>
+                            <tr>
+                                <td>Investor</td>
+                                <td>Golongan 1</td>
+                                <td>Golongan 2</td>
+                                <td>Golongan 3</td>
+                                <td>Golongan 4</td>
+                                <td>Golongan 5</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @endsection
 
-@extends('admin.modal.manajemen_tarif')
+{{-- @extends('admin.modal.manajemen_tarif') --}}
 
 
 @push('scripts')
@@ -152,10 +679,8 @@
 
 
 <script type="text/javascript">
-    // function cacheInput(e) {
-    //     localStorage.setItem(e.attributes["name"].value, e.value)
-    // }
-
+var investorCounts = {};
+var investorCountEdit = {};
     $(document).ready(function () {
 
         function sweetAlert(title, text, icon) {
@@ -179,46 +704,9 @@
 
         var dt_filter_table = $('.datatables-basic');
         var dataObject = eval('<?php echo json_encode($Cloums); ?>');
-        // $('.datatables-basic thead tr').clone(true).appendTo('.datatables-basic thead');
-        // $('.datatables-basic thead tr:eq(1) th').each(function (i) {
-        //     var title = $(this).text();
-
-        //     $(this).html('<input id="Search_' + title + '" name="Search_' + title +
-        //         '" type="text" oninput="cacheInput(this)" class="form-control" placeholder="Search ' +
-        //         title + '" />');
-        //     $localdata = localStorage.getItem('Search_' + title);
-        //     if ($localdata) {
-        //         document.getElementById('Search_' + title).value = $localdata;
-        //     }
-        //     $('input', this).on('keyup change', function () {
-        //         if (dt_filter.column(i).search() !== this.value) {
-        //             dt_filter.column(i).search(this.value).draw();
-        //         }
-        //     });
-        // });
 
 
         $('.datatables-basic-open thead tr').clone(true).appendTo('.datatables-basic-open thead');
-
-
-        $('.datatables-basic-open thead tr:eq(1) th').each(function (i) {
-            var title = $(this).text();
-
-            $(this).html('<input id="Search_' + title + '" name="Search_' + title +
-                '" type="text" oninput="cacheInput(this)" class="form-control" placeholder="Search" />'
-            );
-
-            $localdata = localStorage.getItem('Search_' + title);
-            if ($localdata) {
-                document.getElementById('Search_' + title).value = $localdata;
-            }
-
-            $('input', this).on('keyup change', function () {
-                if (dt_filter_table.column(i).search() !== this.value) {
-                    dt_filter_table.column(i).search(this.value).draw();
-                }
-            });
-        });
 
         $('#gerbang').on('change', function () {
 
@@ -227,10 +715,8 @@
                 $('#tbl_list').DataTable().destroy();
             }
 
-
             var selectedVal = $("#gerbang option:selected").text();
             selectedVal = selectedVal.split('-').pop().split(')')[0]; // returns 'two'
-
 
             dt_filter = $('#tbl_list').DataTable({
                 processing: true,
@@ -240,6 +726,7 @@
                     type: 'GET',
                     data: function (d) {
                         d.gerbang = $('#gerbang').val();
+                        d.search = $('input[type="search"]').val()
                     },
                     error: function (xhr, error, code) {}
 
@@ -256,116 +743,17 @@
                     [10, 25, 50, -1],
                     ['10 rows', '25 rows', '50 rows', 'Show all']
                 ],
-                dom: '<"row mx-2"' +
-                    '<"col-md-2"<"me-3"l>>' +
-                    '<"col-md-10"<"dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center justify-content-end flex-md-row flex-column mb-3 mb-md-0"fB>>' +
-                    '>t' +
-                    '<"row mx-2"' +
-                    '<"col-sm-12 col-md-6"i>' +
-                    '<"col-sm-12 col-md-6"p>' +
-                    '>',
+            
                 language: {
-                    emptyTable: "Tidak ada data yang tersedia"
-                    // Atur pesan lain sesuai kebutuhan Anda
+                    emptyTable: "Tidak ada data yang tersedia",
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
                 },
-                buttons: [{
-                    extend: 'collection',
-                    className: 'btn btn-label-primary dropdown-toggle mx-3',
-                    text: '<i class="ti ti-logout rotate-n90 me-2"></i>Export',
-                    buttons: [{
-                            extend: 'print',
-                            text: '<i class="ti ti-printer me-2" ></i>Print',
-                            className: 'dropdown-item',
-                            customize: function (win) {
-                                //customize print view for dark
-                                $(win.document.body)
-                                    .css('color', config.colors.headingColor)
-                                    .css('border-color', config.colors
-                                        .borderColor)
-                                    .css('background-color', config.colors
-                                        .body);
-                                $(win.document.body)
-                                    .find('table')
-                                    .addClass('compact')
-                                    .css('color', 'inherit')
-                                    .css('border-color', 'inherit')
-                                    .css('background-color', 'inherit');
-                            }
-                        },
-                        {
-                            extend: 'csv',
-                            text: '<i class="ti ti-file-text me-2" ></i>Csv',
-                            className: 'dropdown-item',
-                        },
-                        {
-                            extend: 'excel',
-                            text: '<i class="ti ti-file-spreadsheet me-2"></i>Excel',
-                            className: 'dropdown-item',
 
-                        },
-                        {
-                            extend: 'pdf',
-                            text: '<i class="ti ti-file-text me-2"></i>Pdf',
-                            className: 'dropdown-item',
-
-                        },
-                        {
-                            extend: 'copy',
-                            text: '<i class="ti ti-copy me-1" ></i>Copy',
-                            className: 'dropdown-item',
-
-                        }
-                    ]
-                }],
 
             });
 
-
-
-
-
-
-            document.getElementById('loading-screen').style.display = 'block';
-            setTimeout(function () {
-                document.getElementById('loading-screen').style.display = 'none';
-            }, 1000);
         });
 
-        $("#form-tambah-edit-DaftarTarif").submit(function (e) {
-            e.preventDefault()
-            var selectedVal = $("#gerbang option:selected").text();
-            selectedVal = selectedVal.split('-').pop().split(')')[0]; // returns 'two'
-
-
-            var url = '{{ url()->current() }}' + '/tambah';
-            var formData = new FormData($("#form-tambah-edit-DaftarTarif")[0]);
-            formData.append('_token', '{{ csrf_token() }}');
-            $.ajax({
-                url: url,
-                method: "POST",
-                data: formData,
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function (response) {
-
-                    $("#DaftarTarifModal").modal('hide');
-                    $("#form-tambah-edit-DaftarTarif").trigger('reset');
-                    document.getElementById('loading-screen').style.display =
-                        'block';
-                    setTimeout(function () {
-                        dt_filter.ajax.reload();
-                        document.getElementById('loading-screen').style
-                            .display = 'none';
-                        sweetAlert('Berhasil!',
-                            'Data Berhasil Ditambahkan!', 'success')
-                    }, 1000);
-
-                }
-            });
-
-
-        });
 
         $('.datatables-basic').on('click', '.delete', function () {
             var url = '{{ url()->current() }}/delete/' + $(this).data('url') + '/' + $('#gerbang')
@@ -391,18 +779,20 @@
                         cache: false,
                         processData: false,
                         success: function (response) {
-    
-                            document.getElementById('loading-screen').style.display =
+
+                            document.getElementById('loading-screen').style
+                                .display =
                                 'block';
                             setTimeout(function () {
                                 dt_filter.ajax.reload();
-                                document.getElementById('loading-screen').style
+                                document.getElementById('loading-screen')
+                                    .style
                                     .display = 'none';
                                 sweetAlert('Berhasil!',
                                     'Data Berhasil Dihapus!', 'success')
                             }, 1000);
                         }
-    
+
                     });
                 }
 
@@ -422,8 +812,8 @@
                 cache: false,
                 processData: false,
                 success: function (response) {
-                    console.log(response.model.tarif_inv)
-                    inventor = JSON.parse(response.model.tarif_inv)
+
+                    inventor = split_array(response.model.tarif_inv)
                     totalInven1 = JSON.parse(response.model.gol1_d)
                     totalInven2 = JSON.parse(response.model.gol2_d)
                     totalInven3 = JSON.parse(response.model.gol3_d)
@@ -450,6 +840,13 @@
 
         })
 
+        function split_array(string){
+
+            var cleanedString = string.slice(1, -1);
+            var arrayValue = cleanedString.split(',');
+            return arrayValue
+        }
+
         $('.datatables-basic').on('click', '.btnEditTarif', function () {
 
             var url = '{{ url()->current() }}/edit/' + $(this).data('url') + '/' + $('#gerbang').val();
@@ -467,14 +864,62 @@
                 processData: false,
                 success: function (response) {
 
-                    $('#dasartarifmodal').find('option').remove().end();
-                    $('#gerbangmodal').find('option').remove().end();
-                    $("#id").val(response.model.id);
-                    $('#jenis').find('option').remove().end();
+                    var data = response.model
 
-                    var option = '';
+
+                    // id
+
+                    $("#idTarif").val(data.id)
+                    // gerbang
+                    $('#gerbangEditmodal').find('option').remove().end()
+                    var optionValue = $("#gerbang option:selected").val();
+                    var optionText = $("#gerbang option:selected").text();
+                    $('#gerbangEditmodal').append(
+                        `<option value="${optionValue}"> ${optionText}</option>`);
+
+
+                    // asal gerbang
+                    $('#asal_edit_gerbang').find('option').remove().end()
+                    var optionAsalGerbang =
+                        '<option value=""  > Pilih Gerbang Asal</option>';
+                    $.ajax({
+                        url: '/admin/get-gerbang-ajax/' + optionValue,
+                        async: false,
+                        method: "GET",
+
+                        dataType: "JSON",
+                        success: function (dataAsalGerbang) {
+
+                            $.each(dataAsalGerbang, function (i, item) {
+
+                                if (dataAsalGerbang[i].gerbang_id ==
+                                    data.asal_gerbang) {
+                                    optionAsalGerbang +=
+                                        '<option selected value="' +
+                                        dataAsalGerbang[i]
+                                        .gerbang_id + '"  >' +
+                                        dataAsalGerbang[i]
+                                        .gerbang_nama + '</option>'
+
+                                } else {
+                                    optionAsalGerbang +=
+                                        '<option  value="' +
+                                        dataAsalGerbang[i]
+                                        .gerbang_id + '"  >' +
+                                        dataAsalGerbang[i]
+                                        .gerbang_nama + '</option>'
+                                }
+                            });
+                        }
+                    });
+                    $('#asal_edit_gerbang').append(optionAsalGerbang)
+
+
+                    // dasarTarif
+                    $('#dasartarifeditmodal').find('option').remove().end();
                     var gerbang = $("#gerbang").val();
-
+                    var optionDasarTarif =
+                        '<option value=""  > Pilih  Dasar Tarif</option>';
                     $.ajax({
                         url: '/admin/get-dasar-tarif',
                         async: false,
@@ -484,96 +929,100 @@
                             _token: '{{ csrf_token() }}'
                         },
                         dataType: "JSON",
-                        success: function (data) {
-                            //console.log(data);
-                            //console.log(data[0].id_daftar_tarif);
+                        success: function (dataDasarTarif) {
+                            $.each(dataDasarTarif, function (i, item) {
+                                if (dataDasarTarif[i].id_dasar_tarif ==
+                                    data
+                                    .id_dasar_tarif) {
 
-                            $.each(data, function (i, item) {
+                                    optionDasarTarif +=
+                                        '<option selected value="' +
+                                        dataDasarTarif[i]
+                                        .id_dasar_tarif + '"  >' +
+                                        dataDasarTarif[
+                                            i]
+                                        .dasar_tarif + '</option>'
 
-                                var selected = '';
-                                console.log(response.model
-                                    .id_dasar_tarif)
-                                console.log(data[i].id_dasar_tarif)
-                                if (response.model.id_dasar_tarif ==
-                                    data[i].id_dasar_tarif) {
-                                    selected = "selected";
+                                } else {
+
+                                    optionDasarTarif +=
+                                        '<option value="' +
+                                        dataDasarTarif[i]
+                                        .id_dasar_tarif + '"  >' +
+                                        dataDasarTarif[
+                                            i]
+                                        .dasar_tarif + '</option>'
+
                                 }
-
-                                option += '<option value="' + data[
-                                        i].id_dasar_tarif + '" ' +
-                                    selected + '>' + data[i]
-                                    .dasar_tarif + '</option>'
-                                //console.log(option);
-                                //console.log(response[i].dasar_tarif);
                             });
+
                         }
-
-
                     });
+                    $('#dasartarifeditmodal').append(optionDasarTarif);
 
-                    $('#dasartarifmodal').append(option);
+                    // jenis
+                    $('#jenis').find('option').remove().end();
+                    var optionJenis = '<option value="" > Pilih  Jenis</option>'
 
-                    var optionValue = $("#gerbang option:selected").val();
-                    var optionText = $("#gerbang option:selected").text();
-                    $('#gerbangmodal').append(
-                        `<option value="${optionValue}"> ${optionText}</option>`);
+                    optionJenis += (data.jenis == 'khl') ?
+                        "<option selected value='khl' >khl</option>" :
+                        "<option value='khl' >khl</option>"
+                    optionJenis += (data.jenis == 'ags') ?
+                        "<option selected value='ags' >ags</option>" :
+                        "<option value='ags' >ags</option>"
+                    optionJenis += (data.jenis == 'normal') ?
+                        "<option selected value='normal' >normal</option>" :
+                        "<option value='normal' >normal</option>"
+                    $('#jenisEdit').append(optionJenis)
 
-                    $("#waktu").val(response.model.tgl_berlaku);
-                    $("#jagorawigol1").val(response.model.gol1);
-                    $("#totalgol1").val(response.model.gol1)
+                    // waktu
+                    $("#waktuEdit").val(data.tgl_berlaku)
 
-                    $("#jagorawigol2").val(response.model.gol2);
-                    $("#totalgol2").val(response.model.gol2)
+                    // total
+                    $("#totalEditgol1").val(data.gol1)
+                    $("#totalEditgol2").val(data.gol2)
+                    $("#totalEditgol3").val(data.gol3)
+                    $("#totalEditgol4").val(data.gol4)
+                    $("#totalEditgol5").val(data.gol5)
 
-                    $("#jagorawigol3").val(response.model.gol3);
-                    $("#totalgol3").val(response.model.gol3)
+                    // investor
 
-                    $("#jagorawigol4").val(response.model.gol4);
-                    $("#totalgol4").val(response.model.gol4)
-
-                    $("#jagorawigol5").val(response.model.gol5);
-                    $("#totalgol5").val(response.model.gol5)
-                    $("#judulModalTarif").html('Edit Daftar Tarif');
-                    $("#DaftarTarifModal").modal('show');
-                    $("#asal_gerbang").hide();
-                    $("#asal_gerbang_update").hide();
-
-                    $("#jenis").hide();
-                    $("#asd1").hide();
-                    $("#asd2").hide();
-                    $("#asq").hide();
-
-
-                    inventor = JSON.parse(response.model.bagi_hasil)
-                    totalInven1 = JSON.parse(response.model.gol1_d)
-                    totalInven2 = JSON.parse(response.model.gol2_d)
-                    totalInven3 = JSON.parse(response.model.gol3_d)
-                    totalInven4 = JSON.parse(response.model.gol4_d)
-                    totalInven5 = JSON.parse(response.model.gol5_d)
-
-                    $("#investor1").val(inventor[0]);
-                    $("#investor2").val(inventor[0]);
-                    $("#investor3").val(inventor[0]);
-                    $("#investor4").val(inventor[0]);
-                    $("#investor5").val(inventor[0]);
-                    $("#total_investor1").val(totalInven1[0]);
-                    $("#total_investor2").val(totalInven2[0]);
-                    $("#total_investor3").val(totalInven3[0]);
-                    $("#total_investor4").val(totalInven4[0]);
-                    $("#total_investor5").val(totalInven5[0]);
+                    // var fixedJsonString = data.tarif_inv.replace(/'/g, '"');
+                    var inventor = split_array(data.tarif_inv);
+                    totalInven1 = JSON.parse(data.gol1_d)
+                    totalInven2 = JSON.parse(data.gol2_d)
+                    totalInven3 = JSON.parse(data.gol3_d)
+                    totalInven4 = JSON.parse(data.gol4_d)
+                    totalInven5 = JSON.parse(data.gol5_d)
 
 
+                    $("#investor_edit1").val(inventor[0]);
+                    $("#investor_edit2").val(inventor[0]);
+                    $("#investor_edit3").val(inventor[0]);
+                    $("#investor_edit4").val(inventor[0]);
+                    $("#investor_edit5").val(inventor[0]);
+                    $("#total_investor_edit1").val(totalInven1[0]);
+                    $("#total_investor_edit2").val(totalInven2[0]);
+                    $("#total_investor_edit3").val(totalInven3[0]);
+                    $("#total_investor_edit4").val(totalInven4[0]);
+                    $("#total_investor_edit5").val(totalInven5[0]);
+
+
+                    investorCountEdit = {}
                     $.each(inventor, function (i, item) {
 
                         if (i > 0) {
-                            tambahInvestor(1, inventor[i], totalInven1[i])
-                            tambahInvestor(2, inventor[i], totalInven2[i])
-                            tambahInvestor(3, inventor[i], totalInven3[i])
-                            tambahInvestor(4, inventor[i], totalInven4[i])
-                            tambahInvestor(5, inventor[i], totalInven5[i])
+                            tambahInvestorEdit(1, inventor[i], totalInven1[i])
+                            tambahInvestorEdit(2, inventor[i], totalInven2[i])
+                            tambahInvestorEdit(3, inventor[i], totalInven3[i])
+                            tambahInvestorEdit(4, inventor[i], totalInven4[i])
+                            tambahInvestorEdit(5, inventor[i], totalInven5[i])
                         }
 
                     })
+
+                    $("#modalEditTarifClose").modal('show')
+
 
                 }
 
@@ -586,38 +1035,6 @@
 
         })
 
-
-        // $('.datatables-basic').on('click', '.confirm', function () {
-        //     var url = $(this).data('url');
-        //     Swal.fire({
-        //         title: 'Peringatan?',
-        //         text: "Apakah Anda Yakin Mengubah Data Ini??",
-        //         icon: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonText: 'Ya!',
-        //         cancelButtonText: 'Batal',
-        //         customClass: {
-        //             confirmButton: 'btn btn-primary me-3',
-        //             cancelButton: 'btn btn-label-secondary'
-        //         },
-        //         buttonsStyling: false
-        //     }).then(function (result) {
-        //         if (result.value) {
-        //             Swal.fire({
-        //                 title: 'Berhasil!',
-        //                 text: 'Data Berhasil Diupdate!',
-        //                 icon: 'success',
-        //                 customClass: {
-        //                     confirmButton: 'btn btn-primary'
-        //                 },
-        //                 buttonsStyling: false
-        //             });
-        //             window.location.href = url;
-        //         }
-
-
-        //     });
-        // })
 
         $('#gerbang').select2({
             ajax: {
@@ -637,34 +1054,48 @@
                 cache: true
             },
             placeholder: 'Pilih Gerbang',
-
         });
 
+
+
         $('#btnAddTarif').click(function () {
+            investorCounts = {};
 
             if ($('#gerbang').val() == null) {
                 sweetAlert('Gagal!', 'Gagal Tambah Data, Gerbang Belum Dipilih!', 'error')
             } else {
-                $('#gerbangmodal').find('option').remove().end();
-                $("#form-tambah-Tarif").trigger('reset');
-                $("#gerbangmodal").val($("#gerbang").val());
-
-                $(".dataInventor").remove();
 
 
-                // $("#id").val(0);
+                // gerbang
+                $('#gerbangmodal').find('option').remove().end()
+                var optionValue = $("#gerbang option:selected").val();
+                var optionText = $("#gerbang option:selected").text();
+                $('#gerbangmodal').append(`<option value="${optionValue}"> ${optionText}</option>`);
 
-                var selectedVal = $("#gerbang option:selected").text();
-                selectedVal = selectedVal.split('-').pop().split(')')[0]; // returns 'two'
-                var gerbang = $("#gerbang").val();
 
+                // asal gerbang
+                // $('#asal_gerbang').find('option').remove().end()
+                // var optionAsalGerbang = '<option value="" Selected > Pilih Gerbang Asal</option>';
+                // $.ajax({
+                //     url: '/admin/get-gerbang-ajax/' + optionValue,
+                //     async: false,
+                //     method: "GET",
+                //     dataType: "JSON",
+                //     success: function (response) {
 
-                $("#asal_gerbang_update").hide();
-                $("#asq").hide();
-                var option = '';
-                $('#gerbangmodal').find('option').remove().end();
+                //         $.each(response, function (i, item) {
+                //             optionAsalGerbang += '<option value="' + response[i]
+                //                 .gerbang_id + '"  >' + response[i]
+                //                 .gerbang_nama + '</option>'
+                //         });
+                //     }
+                // });
+                // $('#asal_gerbang').append(optionAsalGerbang);
+
+                // dasarTarif
                 $('#dasartarifmodal').find('option').remove().end();
-                $("#form-tambah-edit-DaftarTarif").trigger('reset');
+                var gerbang = $("#gerbang").val();
+                var optionDasarTarif = '<option value="" Selected > Pilih  Dasar Tarif</option>';
                 $.ajax({
                     url: '/admin/get-dasar-tarif',
                     async: false,
@@ -678,37 +1109,275 @@
 
                         $.each(response, function (i, item) {
 
-                            option += '<option value="' + response[i]
+                            optionDasarTarif += '<option value="' + response[i]
                                 .id_dasar_tarif + '"  >' + response[i]
                                 .dasar_tarif + '</option>'
-                            //console.log(option);
-                            //console.log(response[i].dasar_tarif);
                         });
                     }
-
                 });
+                $('#dasartarifmodal').append(optionDasarTarif);
+
+                // jenis
+                // $('#jenis').find('option').remove().end();
+                // var optionJenis = '<option value="" Selected > Pilih  Jenis</option>'
+                // optionJenis += "<option value='khl' >khl</option>"
+                // optionJenis += "<option value='ags' >ags</option>"
+                // optionJenis += "<option value='normal' >normal</option>"
+                // $('#jenis').append(optionJenis)
 
 
-                $("#gerbangmodal").val($("#gerbang").val());
-                $("#id").val(0);
-                var optionValue = $("#gerbang option:selected").val();
-                var optionText = $("#gerbang option:selected").text();
-                $('#gerbangmodal').append(`<option value="${optionValue}"> ${optionText}</option>`);
-                $('#dasartarifmodal').append(option);
-                $("#DaftarTarif-modal-tittle").html('Tambah Tarif');
-                $("#DaftarTarifModal").modal('show');
-                $("#asal_gerbang").hide();
-                $("#jenis").hide();
-                $("#asd1").hide();
-                $("#asd2").hide();
+                // waktu
+                $("#waktu").val('')
+
+                // investor
+                $(".dataInventor").remove();
+                $('#investor1').val('')
+                $('#total_investor1').val('')
+                $('#investor2').val('')
+                $('#total_investor2').val('')
+                $('#investor3').val('')
+                $('#total_investor3').val('')
+                $('#investor4').val('')
+                $('#total_investor4').val('')
+                $('#investor5').val('')
+                $('#total_investor5').val('')
 
 
+
+                // harga
+                $('#totalgol1').val('')
+                $('#totalgol2').val('')
+                $('#totalgol3').val('')
+                $('#totalgol4').val('')
+                $('#totalgol5').val('')
+
+                $("#modalTambahTarifClose").modal('show')
             }
 
 
 
         });
 
+
+        $('#btnSimpanTarifExit').click(function () {
+
+            var gerbangmodal = $('#gerbangmodal').val()
+            // var asal_gerbang = $('#asal_gerbang').val()
+            var dasartarifmodal = $('#dasartarifmodal').val()
+            // var jenis = $('#jenis').val()
+            var waktu = $('#waktu').val()
+            var totalgol1 = $('#totalgol1').val()
+            var totalgol2 = $('#totalgol2').val()
+            var totalgol3 = $('#totalgol3').val()
+            var totalgol4 = $('#totalgol4').val()
+            var totalgol5 = $('#totalgol5').val()
+            var totalInvestorValues1 = getNumeric('input[name="totalinvestor1[]"]')
+            var sumTotal1 = sumNumeric(totalInvestorValues1)
+            var totalInvestorValues2 = getNumeric('input[name="totalinvestor2[]"]')
+            var sumTotal2 = sumNumeric(totalInvestorValues2)
+            var totalInvestorValues3 = getNumeric('input[name="totalinvestor3[]"]')
+            var sumTotal3 = sumNumeric(totalInvestorValues3)
+            var totalInvestorValues4 = getNumeric('input[name="totalinvestor4[]"]')
+            var sumTotal4 = sumNumeric(totalInvestorValues4)
+            var totalInvestorValues5 = getNumeric('input[name="totalinvestor5[]"]')
+            var sumTotal5 = sumNumeric(totalInvestorValues5)
+            var investor1 = getString('input[name="investor1[]"]')
+            var investor2 = getString('input[name="investor2[]"]')
+            var investor3 = getString('input[name="investor3[]"]')
+            var investor4 = getString('input[name="investor4[]"]')
+            var investor5 = getString('input[name="investor5[]"]')
+
+
+
+            if (
+                validateField(gerbangmodal, 'Nama Gerbang Harus Di isi') &&
+                // validateField(asal_gerbang, 'Asal Gerbang Harus Di isi') &&
+                validateField(dasartarifmodal, 'Dasar TarifHarus Di isi') &&
+                // validateField(jenis, 'Jenis Harus Di isi') &&
+                validateField(waktu, 'Waktu Berlaku Harus Di isi') &&
+                validateField(totalgol1, 'Gol 1 Harus Di isi') &&
+                validateField(totalgol2, 'Gol 2 Harus Di isi') &&
+                validateField(totalgol3, 'Gol 3 Harus Di isi') &&
+                validateField(totalgol4, 'Gol 4 Harus Di isi') &&
+                validateField(totalgol5, 'Gol 5 Harus Di isi') &&
+                validateSum(totalgol1, sumTotal1,
+                    'Tarif GOl 1 tidak Sesuai dengan Total Nominal Investor GOL 1') &&
+                validateSum(totalgol2, sumTotal2,
+                    'Tarif GOl 2 tidak Sesuai dengan Total Nominal Investor GOL 2') &&
+                validateSum(totalgol3, sumTotal3,
+                    'Tarif GOl 3 tidak Sesuai dengan Total Nominal Investor GOL 3') &&
+                validateSum(totalgol4, sumTotal4,
+                    'Tarif GOl 4 tidak Sesuai dengan Total Nominal Investor GOL 4') &&
+                validateSum(totalgol5, sumTotal5,
+                    'Tarif GOl 5 tidak Sesuai dengan Total Nominal Investor GOL 5')
+            ) {
+                var formData = new FormData();
+                formData.append('gerbangmodal', gerbangmodal);
+                // formData.append('asal_gerbang', asal_gerbang);
+                formData.append('dasartarifmodal', dasartarifmodal);
+                // formData.append('jenis', jenis);
+                formData.append('waktu', waktu);
+                formData.append('totalgol1', totalgol1);
+                formData.append('totalgol2', totalgol2);
+                formData.append('totalgol3', totalgol3);
+                formData.append('totalgol4', totalgol4);
+                formData.append('totalgol5', totalgol5);
+                formData.append('totalInvestorValues1', JSON.stringify(totalInvestorValues1));
+                formData.append('totalInvestorValues2', JSON.stringify(totalInvestorValues2));
+                formData.append('totalInvestorValues3', JSON.stringify(totalInvestorValues3));
+                formData.append('totalInvestorValues4', JSON.stringify(totalInvestorValues4));
+                formData.append('totalInvestorValues5', JSON.stringify(totalInvestorValues5));
+                formData.append('investor1', JSON.stringify(investor1));
+                formData.append('investor2', JSON.stringify(investor2));
+                formData.append('investor3', JSON.stringify(investor3));
+                formData.append('investor4', JSON.stringify(investor4));
+                formData.append('investor5', JSON.stringify(investor5));
+                formData.append('_token', '{{ csrf_token() }}');
+
+                $.ajax({
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    url: baseUrl + '/tambah',
+                    async: false,
+                    beforeSend: function () {
+                        document.getElementById('loading-screen').style.display =
+                            'block';
+                    },
+                    success: function (response) {
+                        if (response.code == 200) {
+
+                            $("#modalTambahTarifClose").modal('hide')
+                            dt_filter.ajax.reload();
+                            document.getElementById('loading-screen').style
+                                .display = 'none';
+                            sweetAlert('Berhasil!',
+                                response.message, 'success')
+
+                        } else {
+                            $("#modalTambahTarifClose").modal('hide')
+                            dt_filter.ajax.reload();
+                            document.getElementById('loading-screen').style
+                                .display = 'none';
+                            sweetAlert('Gagal!',
+                                response.message, 'error')
+                        }
+
+                    }
+                });
+            }
+
+        })
+
+
+        $('#btnEditTarifExit').click(function () {
+
+            var id = $('#idTarif').val()
+            var gerbangmodal = $('#gerbangEditmodal').val()
+            var dasartarifmodal = $('#dasartarifeditmodal').val()
+            var waktu = $('#waktuEdit').val()
+            var totalgol1 = $('#totalEditgol1').val()
+            var totalgol2 = $('#totalEditgol2').val()
+            var totalgol3 = $('#totalEditgol3').val()
+            var totalgol4 = $('#totalEditgol4').val()
+            var totalgol5 = $('#totalEditgol5').val()
+            var totalInvestorValues1 = getNumeric('input[name="totalinvestor_edit1[]"]')
+            var sumTotal1 = sumNumeric(totalInvestorValues1)
+            var totalInvestorValues2 = getNumeric('input[name="totalinvestor_edit2[]"]')
+            var sumTotal2 = sumNumeric(totalInvestorValues2)
+            var totalInvestorValues3 = getNumeric('input[name="totalinvestor_edit3[]"]')
+            var sumTotal3 = sumNumeric(totalInvestorValues3)
+            var totalInvestorValues4 = getNumeric('input[name="totalinvestor_edit4[]"]')
+            var sumTotal4 = sumNumeric(totalInvestorValues4)
+            var totalInvestorValues5 = getNumeric('input[name="totalinvestor_edit5[]"]')
+            var sumTotal5 = sumNumeric(totalInvestorValues5)
+            var investor1 = getString('input[name="investor_edit1[]"]')
+            var investor2 = getString('input[name="investor_edit2[]"]')
+            var investor3 = getString('input[name="investor_edit3[]"]')
+            var investor4 = getString('input[name="investor_edit4[]"]')
+            var investor5 = getString('input[name="investor_edit5[]"]')
+
+
+
+            if (
+                validateField(gerbangmodal, 'Nama Gerbang Harus Di isi') &&
+                validateField(dasartarifmodal, 'Dasar TarifHarus Di isi') &&
+                validateField(waktu, 'Waktu Berlaku Harus Di isi') &&
+                validateField(totalgol1, 'Gol 1 Harus Di isi') &&
+                validateField(totalgol2, 'Gol 2 Harus Di isi') &&
+                validateField(totalgol3, 'Gol 3 Harus Di isi') &&
+                validateField(totalgol4, 'Gol 4 Harus Di isi') &&
+                validateField(totalgol5, 'Gol 5 Harus Di isi') &&
+                validateSum(totalgol1, sumTotal1,
+                    'Tarif GOl 1 tidak Sesuai dengan Total Nominal Investor GOL 1') &&
+                validateSum(totalgol2, sumTotal2,
+                    'Tarif GOl 2 tidak Sesuai dengan Total Nominal Investor GOL 2') &&
+                validateSum(totalgol3, sumTotal3,
+                    'Tarif GOl 3 tidak Sesuai dengan Total Nominal Investor GOL 3') &&
+                validateSum(totalgol4, sumTotal4,
+                    'Tarif GOl 4 tidak Sesuai dengan Total Nominal Investor GOL 4') &&
+                validateSum(totalgol5, sumTotal5,
+                    'Tarif GOl 5 tidak Sesuai dengan Total Nominal Investor GOL 5')
+            ) {
+                var formData = new FormData();
+                formData.append('id', id);
+                formData.append('gerbangmodal', gerbangmodal);
+                formData.append('dasartarifmodal', dasartarifmodal);
+                formData.append('waktu', waktu);
+                formData.append('totalgol1', totalgol1);
+                formData.append('totalgol2', totalgol2);
+                formData.append('totalgol3', totalgol3);
+                formData.append('totalgol4', totalgol4);
+                formData.append('totalgol5', totalgol5);
+                formData.append('totalInvestorValues1', JSON.stringify(totalInvestorValues1));
+                formData.append('totalInvestorValues2', JSON.stringify(totalInvestorValues2));
+                formData.append('totalInvestorValues3', JSON.stringify(totalInvestorValues3));
+                formData.append('totalInvestorValues4', JSON.stringify(totalInvestorValues4));
+                formData.append('totalInvestorValues5', JSON.stringify(totalInvestorValues5));
+                formData.append('investor1', JSON.stringify(investor1));
+                formData.append('investor2', JSON.stringify(investor2));
+                formData.append('investor3', JSON.stringify(investor3));
+                formData.append('investor4', JSON.stringify(investor4));
+                formData.append('investor5', JSON.stringify(investor5));
+                formData.append('_token', '{{ csrf_token() }}');
+
+                $.ajax({
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    url: baseUrl + '/update',
+                    async: false,
+                    beforeSend: function () {
+                        document.getElementById('loading-screen').style.display =
+                            'block';
+                    },
+                    success: function (response) {
+                        if (response.code == 200) {
+
+                            $("#modalEditTarifClose").modal('hide')
+                            dt_filter.ajax.reload();
+                            document.getElementById('loading-screen').style
+                                .display = 'none';
+                            sweetAlert('Berhasil!',
+                                response.message, 'success')
+
+                        } else {
+                            $("#modalEditTarifClose").modal('hide')
+                            dt_filter.ajax.reload();
+                            document.getElementById('loading-screen').style
+                                .display = 'none';
+                            sweetAlert('Gagal!',
+                                response.message, 'error')
+                        }
+
+                    }
+                });
+
+            }
+
+        })
 
         $('#btnRefeshDasarTarif').click(function () {
             if ($('#gerbang').val() == null) {
@@ -722,136 +1391,110 @@
             }
         });
 
+        $('#btnExportTarif').click(function(){
+            var gerbang = $('#gerbang').val()
+            // var gerbang = '01'
+            if ( gerbang == null) {
+                sweetAlert('Gagal!', 'Gagal Export Data, Gerbang Belum Dipilih!', 'error')
+            } else {
+                $.ajax({
+                type: "GET",
+                url: '/admin/manajemen-tarif/close/export/' + gerbang,
+                xhrFields: {
+                    responseType: 'blob' // Set responseType to 'blob'
+                },
+                beforeSend: function () {
+                    document.getElementById('loading-screen').style.display =
+                            'block';
+                },
+                success: function (response) {
+                    // Buat objek blob dari respons
+                    var blob = new Blob([response], {
+                        type: 'application/pdf'
+                    });
+
+                    // Buat URL objek blob
+                    var blobUrl = URL.createObjectURL(blob);
+
+                    // Buat elemen <a> untuk mengunduh file
+                    var link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = 'Rekap_tari.pdf';
+
+                    // Sisipkan elemen <a> ke dokumen dan klik otomatis
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // Hapus elemen <a> setelah di-klik
+                    document.body.removeChild(link);
+                    
+                    document.getElementById('loading-screen').style
+                        .display =
+                        'none';
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    // Handle the error
+                    console.error(errorThrown);
+                    
+                    document.getElementById('loading-screen').style
+                        .display =
+                        'none';
+                }
+            });
+            }
+        })
 
 
 
+        function validateField(fieldValue, errorMessage) {
+            if (fieldValue === '') {
+                sweetAlert('Gagal!', errorMessage, 'error');
+                return false;
+            }
+            return true;
+        }
 
-        // $("#form-tambah-edit-DasarTarif").validate()
-        // $("#form-edit-DasarTarif").validate()
+        function validateSum(fieldValue1, fieldValue2, errorMessage) {
+            if (fieldValue1 != fieldValue2) {
+                sweetAlert('Gagal!', errorMessage, 'error');
+                return false;
+            }
+            return true;
+        }
 
-        // $("#form-tambah-edit-DasarTarif").submit(function (e) {
-        //     e.preventDefault()
-        //     var url = '{{ url()->current() }}/tambah';
-        //     var formData = new FormData($("#form-tambah-edit-DasarTarif")[0]);
+        function getNumeric(selector) {
+            return $(selector).map(function () {
+                return parseFloat($(this).val()) || 0;
+            }).get();
+        }
 
-        //     // Tambahkan token CSRF ke dalam formData
-        //     formData.append('_token', '{{ csrf_token() }}');
+        function getString(selector) {
+            return $(selector).map(function () {
+                return $(this).val();
+            }).get();
+        }
 
-        //     $.ajax({
-        //         url: url,
-        //         method: "POST",
-        //         data: formData,
-        //         contentType: false,
-        //         cache: false,
-        //         processData: false,
-        //         success: function (response) {
+        function sumNumeric(values) {
+            return values.reduce(function (accumulator, currentValue) {
+                return accumulator + currentValue;
+            }, 0);
+        }
 
-        //             $("#DasarTarifModal").modal('hide');
-        //             $("#form-tambah-edit-DasarTarif").trigger('reset');
-
-        //             document.getElementById('loading-screen').style.display = 'block';
-        //             setTimeout(function () {
-        //                 dt_filter.ajax.reload();
-        //                 document.getElementById('loading-screen').style.display =
-        //                     'none';
-        //                 sweetAlert('Berhasil!', 'Data Berhasil Ditambahkan!',
-        //                     'success')
-        //             }, 1000);
-        //         }
-
-        //     });
-
-        // });
-
-        // $("#form-edit-DasarTarif").submit(function (e) {
-        //     e.preventDefault()
-        //     var url = '{{ url()->current() }}/update';
-        //     var formData = new FormData($("#form-edit-DasarTarif")[0]);
-
-        //     // Tambahkan token CSRF ke dalam formData
-        //     formData.append('_token', '{{ csrf_token() }}');
-
-        //     $.ajax({
-        //         url: url,
-        //         method: "POST",
-        //         data: formData,
-        //         contentType: false,
-        //         cache: false,
-        //         processData: false,
-        //         success: function (response) {
-        //             //console.log(response);
-        //             $("#DasarTarifModalEdit").modal('hide');
-        //             $("#form-edit-DasarTarif").trigger('reset');
-
-        //             document.getElementById('loading-screen').style.display = 'block';
-        //             setTimeout(function () {
-        //                 dt_filter.ajax.reload();
-        //                 document.getElementById('loading-screen').style.display =
-        //                     'none';
-        //                 sweetAlert('Berhasil!', 'Data Berhasil Diedit!', 'success')
-        //             }, 1000);
-
-        //         }
-
-        //     });
-
-        // });
 
 
 
     });
 
-    function sum_gol(id) {
-        switch (id) {
-            case 1:
-                var jgrw = $('#jagorawigol1').val() == '' ? 0 : $('#jagorawigol1').val();
 
+// Objek untuk menyimpan investorCount untuk setiap tabIndex
 
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol1').val(result);
-                }
-                break;
-            case 2:
-                var jgrw = $('#jagorawigol2').val() == '' ? 0 : $('#jagorawigol2').val();
-
-
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol2').val(result);
-                }
-                break;
-            case 3:
-                var jgrw = $('#jagorawigol3').val() == '' ? 0 : $('#jagorawigol3').val();
-
-
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol3').val(result);
-                }
-                break;
-            case 4:
-                var jgrw = $('#jagorawigol4').val() == '' ? 0 : $('#jagorawigol4').val();
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol4').val(result);
-                }
-                break;
-            case 5:
-                var jgrw = $('#jagorawigol5').val() == '' ? 0 : $('#jagorawigol5').val();
-
-                var result = parseFloat(jgrw);
-                if (!isNaN(result)) {
-                    $('#totalgol5').val(result);
-                }
-                break;
-        }
-
-    }
-
-    var investorCount = 1; // Inisialisasi hitungan investor
 
 function tambahInvestor(tabIndex, value = null, totalinven = null) {
+    // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
+    if (!investorCounts.hasOwnProperty(tabIndex)) {
+        investorCounts[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
+    }
+
     // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
     var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
 
@@ -861,15 +1504,15 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
 
     // Label untuk input investor
     var label = document.createElement('label');
-    label.textContent = 'Investor ' + investorCount;
-    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCount);
+    label.textContent = 'Investor ' + investorCounts[tabIndex];
+    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
 
     // Input untuk investor
     var input = document.createElement('input');
     input.type = 'text';
     input.className = 'form-control';
     input.name = 'investor' + tabIndex + '[]';
-    input.id = 'investor' + tabIndex + '_' + investorCount;
+    input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
     if (value != null) {
         input.value = value;
     }
@@ -888,28 +1531,28 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
         formGroup.remove();
 
         // Kurangi nilai investorCount
-        investorCount--;
-        // Pastikan nilai investorCount tidak kurang dari 1
-        investorCount = Math.max(investorCount, 1);
+        investorCounts[tabIndex]--;
+        // Pastikan nilai investorCount tidak kurang dari 2
+        investorCounts[tabIndex] = Math.max(investorCounts[tabIndex], 2);
 
         // Update label investor sesuai dengan nilai terbaru
-        label.textContent = 'Investor ' + investorCount;
-        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCount);
-        input.id = 'investor' + tabIndex + '_' + investorCount;
-        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCount);
-        totalInput.id = 'total_investor' + tabIndex + '_' + investorCount;
+        label.textContent = 'Investor ' + investorCounts[tabIndex];
+        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
+        input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
+        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+        totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
     });
 
     // Total Investor
     var totalLabel = document.createElement('label');
     totalLabel.textContent = 'Total Investor';
-    totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCount);
+    totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
 
     var totalInput = document.createElement('input');
     totalInput.type = 'number';
     totalInput.className = 'form-control';
     totalInput.name = 'totalinvestor' + tabIndex + '[]';
-    totalInput.id = 'total_investor' + tabIndex + '_' + investorCount;
+    totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
     totalInput.value = totalinven;
 
     // Tambahkan elemen-elemen ini ke dalam tab-pane
@@ -923,9 +1566,89 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
 
     formGroup.appendChild(hr); // Tambahkan tombol "Delete"
 
-    investorCount++; // Inkrementasi hitungan investor
+    investorCounts[tabIndex]++; // Inkrementasi hitungan investor untuk tabIndex tertentu
 }
 
+
+
+    function tambahInvestorEdit(tabIndex, value = null, totalinven = null) {
+       
+           // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
+        if (!investorCountEdit.hasOwnProperty(tabIndex)) {
+            investorCountEdit[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
+        }
+        // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
+        var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane-edit');
+
+        // Buat elemen form group untuk input investor
+        var formGroup = document.createElement('div');
+        formGroup.className = 'form-group dataInventor';
+
+    // Label untuk input investor
+    var label = document.createElement('label');
+    label.textContent = 'Investor ' + investorCountEdit[tabIndex];
+    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+
+ // Input untuk investor
+ var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control';
+    input.name = 'investor_edit' + tabIndex + '[]';
+    input.id = 'investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
+    if (value != null) {
+        input.value = value;
+    }
+
+        // Tombol "Delete" untuk menghapus investor
+        var deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
+        deleteButton.type = 'button';
+
+        var hr = document.createElement('hr');
+
+ // Tambahkan event listener untuk tombol "Delete"
+ deleteButton.addEventListener('click', function () {
+        // Hapus elemen form group saat tombol "Delete" diklik
+        formGroup.remove();
+
+        // Kurangi nilai investorCount
+        investorCountEdit[tabIndex]--;
+        // Pastikan nilai investorCount tidak kurang dari 2
+        investorCountEdit[tabIndex] = Math.max(investorCountEdit[tabIndex], 2);
+
+        // Update label investor sesuai dengan nilai terbaru
+        label.textContent = 'Investor ' + investorCountEdit[tabIndex];
+        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+        input.id = 'investor' + tabIndex + '_' + investorCountEdit[tabIndex];
+        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+        totalInput.id = 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex];
+    });
+
+        // Total Investor
+        var totalLabel = document.createElement('label');
+        totalLabel.textContent = 'Total Investor';
+        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+
+        var totalInput = document.createElement('input');
+    totalInput.type = 'number';
+    totalInput.className = 'form-control';
+    totalInput.name = 'totalinvestor_edit' + tabIndex + '[]';
+    totalInput.id = 'total_investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
+    totalInput.value = totalinven;
+        // Tambahkan elemen-elemen ini ke dalam tab-pane
+
+        formGroup.appendChild(hr);
+        formGroup.appendChild(label);
+        formGroup.appendChild(input);
+        formGroup.appendChild(totalLabel);
+        formGroup.appendChild(totalInput);
+        tabPane.appendChild(formGroup);
+        formGroup.appendChild(deleteButton);
+
+        formGroup.appendChild(hr); // Tambahkan tombol "Delete"
+        investorCountEdit[tabIndex]++; // Inkrementasi hitungan investor untuk tabIndex tertentu
+    }
 
     function formatRupiah(angka) {
         var reverse = angka.toString().split('').reverse().join('');

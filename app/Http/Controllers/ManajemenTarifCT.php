@@ -257,7 +257,18 @@ class ManajemenTarifCT extends Controller
                     ';
 
                     return $btn;
-                })->make();
+                })
+                ->filter(function ($instance) use ($request) {
+
+
+                    if (!empty($request->get('search'))) {
+                        $instance->where(function ($w) use ($request) {
+                            $search = $request->get('search');
+                            $w->orWhere('gerbang_asal.gerbang_nama', 'LIKE', "%$search%");
+                        });
+                    }
+                })
+                ->make();
         }
         return view(
             'list.manajemen_tarif_exit',
@@ -376,112 +387,31 @@ class ManajemenTarifCT extends Controller
         }
 
 
-        if ($gerbang->jenis_gerbang == 1 || $gerbang->jenis_gerbang == 2 || $gerbang->jenis_gerbang == 3) {
+        $model = new tbl_tarif_open();
+        $model->ruas = $gerbang->ruas_id;
+        $model->gerbang_id = $request->gerbangmodal;
+        // $model->asal_gerbang = $request->asal_gerbang;
+        // $model->jenis = $request->jenis;
+        $model->gol1 = $request->totalgol1;
+        $model->gol1_d =  $request->totalInvestorValues1;
+        $model->gol2 = $request->totalgol2;
+        $model->gol2_d =  $request->totalInvestorValues2;
+        $model->gol3 = $request->totalgol3;
+        $model->gol3_d =  $request->totalInvestorValues3;
+        $model->gol4 = $request->totalgol4;
+        $model->gol4_d =  $request->totalInvestorValues4;
+        $model->gol5 = $request->totalgol5;
+        $model->gol5_d =  $request->totalInvestorValues5;
 
+        $model->tgl_berlaku = $request->waktu;
+        $model->id_dasar_tarif = $request->dasartarifmodal;
+        $model->aktif = 1;
+        $model->tarif_inv = str_replace('"', '', $request->investor1);
+        $model->bagi_hasil = str_replace('"', '', $request->investor1);
+        // $model->bagi_hasil = $this->array_string2($request->investor1);
+        $model->save();
 
-            try {
-                if ($request->id != 0) {
-                    $model =  tbl_tarif_exit::where('id', $request->id)->first();
-                    $model->ruas_id = $gerbang->ruas_id;
-                    $model->gerbang_id = $request->gerbangmodal;
-                    $model->asal_gerbang = $request->asal_gerbang_update;
-                    $model->jenis = $request->jenis;
-                    $model->gol1 = $request->totalgol1;
-                    $model->gol1_d =  $this->array_string($request->totalinvestor1);
-                    $model->gol2 = $request->totalgol2;
-                    $model->gol2_d = $this->array_string($request->totalinvestor2);
-                    $model->gol3 = $request->totalgol3;
-                    $model->gol3_d = $this->array_string($request->totalinvestor3);
-                    $model->gol4 = $request->totalgol4;
-                    $model->gol4_d = $this->array_string($request->totalinvestor4);
-                    $model->gol5 = $request->totalgol5;
-                    $model->gol5_d = $this->array_string($request->totalinvestor5);
-                    $model->tgl_berlaku = $request->waktu;
-                    $model->id_dasar_tarif = $request->dasartarifmodal;
-                    $model->aktif = 1;
-                    $model->tarif_inv = $this->array_string2($request->investor1);
-                    // $model->bagi_hasil = $this->array_string2($request->investor1);
-                    $model->save();
-                } else {
-
-                    $model = new tbl_tarif_exit;
-                    $model->ruas_id = $gerbang->ruas_id;
-                    $model->gerbang_id = $request->gerbangmodal;
-                    $model->asal_gerbang = $request->asal_gerbang;
-                    $model->jenis = $request->jenis;
-                    $model->gol1 = $request->totalgol1;
-                    $model->gol1_d =  $this->array_string($request->totalinvestor1);
-                    $model->gol2 = $request->totalgol2;
-                    $model->gol2_d = $this->array_string($request->totalinvestor2);
-                    $model->gol3 = $request->totalgol3;
-                    $model->gol3_d = $this->array_string($request->totalinvestor3);
-                    $model->gol4 = $request->totalgol4;
-                    $model->gol4_d = $this->array_string($request->totalinvestor4);
-                    $model->gol5 = $request->totalgol5;
-                    $model->gol5_d = $this->array_string($request->totalinvestor5);
-                    $model->tgl_berlaku = $request->waktu;
-                    $model->id_dasar_tarif = $request->dasartarifmodal;
-                    $model->aktif = 1;
-                    $model->tarif_inv = $this->array_string2($request->investor1);
-                    // $model->bagi_hasil = $this->array_string2($request->investor1);
-                    $model->save();
-                }
-                return true;
-            } catch (\Throwable $th) {
-                dd($th);
-                // return response()->json(['message' => 'Error Add Data']);
-            }
-        } else {
-
-            // try {
-
-            //     if ($request->id != 0) {
-            //         $model = tbl_tarif_open::where('id', $request->id)->first();
-            //         $model->ruas = $gerbang->ruas_id;
-            //         $model->gerbang_id = $request->gerbangmodal;
-            //         $model->gol1 = $request->totalgol1;
-            //         $model->gol1_d =  $this->array_string($request->totalinvestor1);
-            //         $model->gol2 = $request->totalgol2;
-            //         $model->gol2_d = $this->array_string($request->totalinvestor2);
-            //         $model->gol3 = $request->totalgol3;
-            //         $model->gol3_d = $this->array_string($request->totalinvestor3);
-            //         $model->gol4 = $request->totalgol4;
-            //         $model->gol4_d = $this->array_string($request->totalinvestor4);
-            //         $model->gol5 = $request->totalgol5;
-            //         $model->gol5_d = $this->array_string($request->totalinvestor5);
-            //         $model->tgl_berlaku = $request->waktu;
-            //         $model->id_dasar_tarif = $request->dasartarifmodal;
-            //         $model->aktif = 1;
-            //         $model->tarif_inv = $this->array_string2($request->investor1);
-            //         $model->bagi_hasil = $this->array_string2($request->investor1);
-            //         $model->save();
-            //     } else {
-            //         $model = new tbl_tarif_open;
-            //         $model->ruas = $gerbang->ruas_id;
-            //         $model->gerbang_id = $request->gerbangmodal;
-            //         $model->gol1 = $request->totalgol1;
-            //         $model->gol1_d =  $this->array_string($request->totalinvestor1);
-            //         $model->gol2 = $request->totalgol2;
-            //         $model->gol2_d = $this->array_string($request->totalinvestor2);
-            //         $model->gol3 = $request->totalgol3;
-            //         $model->gol3_d = $this->array_string($request->totalinvestor3);
-            //         $model->gol4 = $request->totalgol4;
-            //         $model->gol4_d = $this->array_string($request->totalinvestor4);
-            //         $model->gol5 = $request->totalgol5;
-            //         $model->gol5_d = $this->array_string($request->totalinvestor5);
-            //         $model->tgl_berlaku = $request->waktu;
-            //         $model->id_dasar_tarif = $request->dasartarifmodal;
-            //         $model->aktif = 1;
-            //         $model->tarif_inv = $this->array_string2($request->investor1);
-            //         $model->bagi_hasil = $this->array_string2($request->investor1);
-            //         $model->save();
-            //     }
-
-            //     return true;
-            // } catch (\Throwable $th) {
-            //     return response()->json(['message' => 'Error Add Data']);
-            // }
-        }
+        return response()->json(['code' => 200, 'message' => 'Success Add Data']);
     }
 
 
@@ -575,6 +505,46 @@ class ManajemenTarifCT extends Controller
         // dd($model->tarif_inv);
 
         return response()->json(compact('model'));
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            $gerbang = tbl_gerbang::where('gerbang_id', $request->gerbangmodal)->first();
+
+            Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
+            Config::set('database.connections.mysql2.host', $gerbang->host);
+            Config::set('database.connections.mysql2.port', $gerbang->port);
+            Config::set('database.connections.mysql2.database', $gerbang->database);
+            Config::set('database.connections.mysql2.username', $gerbang->user);
+            Config::set('database.connections.mysql2.password', $gerbang->pass);
+        } catch (\Throwable $th) {
+            return response()->json(['code' => 400, 'message' => 'Error Database']);
+        }
+
+        $model =  tbl_tarif_open::find($request->id);
+        $model->ruas = $gerbang->ruas_id;
+        $model->gerbang_id = $request->gerbangmodal;
+        $model->gol1 = $request->totalgol1;
+        $model->gol1_d =  $request->totalInvestorValues1;
+        $model->gol2 = $request->totalgol2;
+        $model->gol2_d =  $request->totalInvestorValues2;
+        $model->gol3 = $request->totalgol3;
+        $model->gol3_d =  $request->totalInvestorValues3;
+        $model->gol4 = $request->totalgol4;
+        $model->gol4_d =  $request->totalInvestorValues4;
+        $model->gol5 = $request->totalgol5;
+        $model->gol5_d =  $request->totalInvestorValues5;
+
+        $model->tgl_berlaku = $request->waktu;
+        $model->id_dasar_tarif = $request->dasartarifmodal;
+        $model->aktif = 1;
+        $model->tarif_inv = str_replace('"', '', $request->investor1);
+        $model->bagi_hasil = str_replace('"', '', $request->investor1);
+        // $model->bagi_hasil = $this->array_string2($request->investor1);
+        $model->save();
+
+        return response()->json(['code' => 200, 'message' => 'Success Edit Data']);
     }
 
     public function updateExit(Request $request)

@@ -259,6 +259,24 @@
                                             </li>
                                         </ul>
                                     </li>
+
+                                </ul>
+                            </li>
+
+                            <li class="menu-item {{ request()->is('admin/petugas/*') ? 'active' : '' }}">
+                                {{-- {{ isset($menu->submenu) ? 'menu-link menu-toggle' : 'menu-link' }} --}}
+                                <a href="#" class="menu-link menu-toggle" >
+                                  <i class="menu-icon tf-icons ti ti-user"></i>
+                                  <div>Petugas</div>
+                                </a>
+                                <ul class="menu-sub">
+                                    <li class="menu-item {{ request()->is('admin/petugas/buat-petugas') ? 'active' : '' }}">
+                                        <a href="/admin/petugas/buat-petugas" class="menu-link" >
+                                          <i class="menu-icon tf-icons ti ti-pencil"></i>
+                                          <div>Buat Petugas</div>
+                                        </a>
+                                    </li>
+
                                 </ul>
                             </li>
                             
