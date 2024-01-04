@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\tbl_dasar_tarif;
 use App\Models\tbl_gerbang;
 use App\Models\tbl_tarif_exit;
 use App\Models\tbl_tarif_open;
@@ -218,7 +219,9 @@ class ManajemenTarifCT extends Controller
         $selectedGerbang = $request->input('gerbang');
         $gerbang = tbl_gerbang::where('gerbang_id', $selectedGerbang)->first();
 
+
         if (request()->ajax()) {
+
             $gerbang = tbl_gerbang::where('gerbang_id', $selectedGerbang)->first();
 
             Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
@@ -626,7 +629,9 @@ class ManajemenTarifCT extends Controller
     public function exportClose($id_gerbang)
     {
 
-        $gerbang = tbl_gerbang::where('gerbang_id', $id_gerbang)->first();
+        $gerbang = tbl_gerbang::where('gerbang_id', $id_gerbang)
+            ->leftjoin('tbl_ruas', 'tbl_gerbang.ruas_id', '=', 'tbl_ruas.ruas_id')->first();
+
 
         Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
         Config::set('database.connections.mysql2.host', $gerbang->host);
@@ -635,10 +640,13 @@ class ManajemenTarifCT extends Controller
         Config::set('database.connections.mysql2.username', $gerbang->user);
         Config::set('database.connections.mysql2.password', $gerbang->pass);
 
+        $dasar_tarif = tbl_dasar_tarif::orderBy('mulai_berlaku', 'DESC')->first();
+
         $model = tbl_tarif_exit::query();
         $model->join('tbl_gerbang as gerbang', 'gerbang.gerbang_id', '=', 'tbl_tarif_exit.gerbang_id')
             ->join('tbl_gerbang as gerbang_asal', 'gerbang_asal.gerbang_id', '=', 'tbl_tarif_exit.asal_gerbang')
             ->leftjoin('tbl_dasar_tarif', 'tbl_dasar_tarif.id_dasar_tarif', '=', 'tbl_tarif_exit.id_dasar_tarif');
+        // ->leftjoin('tbl_ruas', 'gerbang.ruas_id', '=', 'tbl_ruas.ruas_id');
 
         $model->select([
             'tbl_tarif_exit.id',
@@ -659,15 +667,20 @@ class ManajemenTarifCT extends Controller
             'tbl_tarif_exit.gol5_d',
             'tbl_tarif_exit.tarif_inv',
             'tbl_tarif_exit.tgl_berlaku',
+            // 'tbl_ruas.ruas_nama'
         ]);
+
 
 
         $data = $model->get();
         // dd($this->split_array($data[0]->tarif));
         $array = [
             'data' => $data,
-            'gerbang' => $gerbang
+            'gerbang' => $gerbang,
+            'dasar_tarif' => $dasar_tarif
         ];
+
+
 
         $pdf = Pdf::loadView('admin.pdfClose', $array)->setPaper('a4', 'landscape');
 
