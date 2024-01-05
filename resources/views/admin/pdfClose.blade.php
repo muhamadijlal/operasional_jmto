@@ -73,7 +73,7 @@
                 <td>{{ $item2->asalGerbang }}</td>
                 <td>
                     <center>
-                    @if ($item2->jenis == 'ags' || $item2->jenis ==  'khl')
+                    @if ($item2->jenis == '2' || $item2->jenis ==  '3')
                         Ya
                     @else
                         Tidak

@@ -672,7 +672,6 @@ class ManajemenTarifCT extends Controller
         ]);
 
         $data = $model->get();
-
         // dd($this->split_array($data[0]->tarif));
         $array = [
             'data' => $data,
@@ -686,6 +685,6 @@ class ManajemenTarifCT extends Controller
 
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="exported-pdf.pdf"');
+            ->header('Content-Disposition', 'attachment; filename="Table Tarif GT ' . $gerbang->gerbang_nama . '.pdf"');
     }
 }

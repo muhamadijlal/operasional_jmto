@@ -1414,11 +1414,23 @@ var investorCountEdit = {};
                     document.getElementById('loading-screen').style.display =
                             'block';
                 },
-                success: function (response) {
+                success: function (response,status, xhr) {
+
+                    var contentDisposition = xhr.getResponseHeader('content-disposition');
+                    var fileName = '';
+
+                    if (contentDisposition) {
+                        var matches = contentDisposition.match(/filename="(.+)"/);
+                        if (matches && matches.length > 1) {
+                            fileName = matches[1];
+                        }
+                    }
+
                     // Buat objek blob dari respons
                     var blob = new Blob([response], {
                         type: 'application/pdf'
                     });
+                
 
                     // Buat URL objek blob
                     var blobUrl = URL.createObjectURL(blob);
@@ -1426,7 +1438,7 @@ var investorCountEdit = {};
                     // Buat elemen <a> untuk mengunduh file
                     var link = document.createElement('a');
                     link.href = blobUrl;
-                    link.download = 'Rekap_tari.pdf';
+                    link.download = fileName || 'Rekap_tarif.pdf';
 
                     // Sisipkan elemen <a> ke dokumen dan klik otomatis
                     document.body.appendChild(link);
