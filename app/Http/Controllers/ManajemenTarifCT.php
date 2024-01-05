@@ -6,6 +6,7 @@ use App\Models\tbl_dasar_tarif;
 use App\Models\tbl_gerbang;
 use App\Models\tbl_tarif_exit;
 use App\Models\tbl_tarif_open;
+use App\Models\View_tarif;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Config;
 use Yajra\DataTables\Facades\DataTables;
@@ -642,37 +643,36 @@ class ManajemenTarifCT extends Controller
 
         $dasar_tarif = tbl_dasar_tarif::orderBy('mulai_berlaku', 'DESC')->first();
 
-        $model = tbl_tarif_exit::query();
-        $model->join('tbl_gerbang as gerbang', 'gerbang.gerbang_id', '=', 'tbl_tarif_exit.gerbang_id')
-            ->join('tbl_gerbang as gerbang_asal', 'gerbang_asal.gerbang_id', '=', 'tbl_tarif_exit.asal_gerbang')
-            ->leftjoin('tbl_dasar_tarif', 'tbl_dasar_tarif.id_dasar_tarif', '=', 'tbl_tarif_exit.id_dasar_tarif');
+        $model = View_tarif::query();
+        $model->join('tbl_gerbang as gerbang', 'gerbang.gerbang_id', '=', 'view_tarif.gerbang_id')
+            ->join('tbl_gerbang as gerbang_asal', 'gerbang_asal.gerbang_id', '=', 'view_tarif.asal_gerbang')
+            ->leftjoin('tbl_dasar_tarif', 'tbl_dasar_tarif.id_dasar_tarif', '=', 'view_tarif.id_dasar_tarif');
         // ->leftjoin('tbl_ruas', 'gerbang.ruas_id', '=', 'tbl_ruas.ruas_id');
 
         $model->select([
-            'tbl_tarif_exit.id',
+            'view_tarif.id',
             'gerbang.gerbang_nama as gerbang1',
             'gerbang_asal.gerbang_nama as asalGerbang',
-            'tbl_tarif_exit.jenis',
+            'view_tarif.jenis',
             'tbl_dasar_tarif.dasar_tarif',
             'tbl_dasar_tarif.mulai_berlaku',
-            'tbl_tarif_exit.gol1',
-            'tbl_tarif_exit.gol1_d',
-            'tbl_tarif_exit.gol2',
-            'tbl_tarif_exit.gol2_d',
-            'tbl_tarif_exit.gol3',
-            'tbl_tarif_exit.gol3_d',
-            'tbl_tarif_exit.gol4',
-            'tbl_tarif_exit.gol4_d',
-            'tbl_tarif_exit.gol5',
-            'tbl_tarif_exit.gol5_d',
-            'tbl_tarif_exit.tarif_inv',
-            'tbl_tarif_exit.tgl_berlaku',
+            'view_tarif.gol1',
+            'view_tarif.gol1_d',
+            'view_tarif.gol2',
+            'view_tarif.gol2_d',
+            'view_tarif.gol3',
+            'view_tarif.gol3_d',
+            'view_tarif.gol4',
+            'view_tarif.gol4_d',
+            'view_tarif.gol5',
+            'view_tarif.gol5_d',
+            'view_tarif.tarif_inv',
+            'view_tarif.tgl_berlaku',
             // 'tbl_ruas.ruas_nama'
         ]);
 
-
-
         $data = $model->get();
+
         // dd($this->split_array($data[0]->tarif));
         $array = [
             'data' => $data,
