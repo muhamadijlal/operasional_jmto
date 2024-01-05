@@ -1045,7 +1045,7 @@ var investorCountEdit = {};
                     return {
                         results: $.map(data, function (item) {
                             return {
-                                text: item.gerbang_nama + '-' + item.jenis_gerbang,
+                                text: item.gerbang_nama ,
                                 id: item.gerbang_id,
                             };
                         }),
@@ -1417,14 +1417,14 @@ var investorCountEdit = {};
                 success: function (response,status, xhr) {
 
                     var contentDisposition = xhr.getResponseHeader('content-disposition');
-                    var fileName = '';
+                        var fileName = '';
 
-                    if (contentDisposition) {
-                        var matches = contentDisposition.match(/filename="(.+)"/);
-                        if (matches && matches.length > 1) {
-                            fileName = matches[1];
+                        if (contentDisposition) {
+                            var matches = contentDisposition.match(/filename="(.+)"/);
+                            if (matches && matches.length > 1) {
+                                fileName = matches[1];
+                            }
                         }
-                    }
 
                     // Buat objek blob dari respons
                     var blob = new Blob([response], {
