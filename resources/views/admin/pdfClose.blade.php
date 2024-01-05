@@ -11,7 +11,7 @@
     </center>
 
     <p>
-        Cabang : {{ $gerbang->ruas_nama }}
+        Ruas : {{ $gerbang->ruas_nama }}
         <br>
         Gerbang : {{ $gerbang->gerbang_nama }}
         <br>

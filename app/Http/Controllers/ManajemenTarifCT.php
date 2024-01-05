@@ -631,7 +631,9 @@ class ManajemenTarifCT extends Controller
     {
 
         $gerbang = tbl_gerbang::where('gerbang_id', $id_gerbang)
-            ->leftjoin('tbl_ruas', 'tbl_gerbang.ruas_id', '=', 'tbl_ruas.ruas_id')->first();
+            ->leftjoin('tbl_ruas', 'tbl_gerbang.ruas_id', '=', 'tbl_ruas.ruas_id')
+            ->select(['tbl_ruas.ruas_nama', 'tbl_gerbang.ruas_id', 'tbl_gerbang.host', 'tbl_gerbang.port', 'tbl_gerbang.database', 'tbl_gerbang.user', 'tbl_gerbang.pass', 'tbl_gerbang.gerbang_nama'])
+            ->first();
 
 
         Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
