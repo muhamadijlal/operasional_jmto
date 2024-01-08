@@ -29,7 +29,7 @@ class Select2CT extends Controller
     {
 
         $cari = $request->q;
-        $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%') AND status = '1' AND (jenis_gerbang='0' OR jenis_gerbang='4' )")
+        $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%') AND status = '1' AND (jenis_gerbang='0'OR jenis_gerbang='1'OR jenis_gerbang='2' OR jenis_gerbang='4' )")
             ->orderBy('gerbang_nama', 'asc')
             ->get();
         return response()->json($data);
