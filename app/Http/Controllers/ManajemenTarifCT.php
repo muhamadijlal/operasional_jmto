@@ -604,7 +604,8 @@ class ManajemenTarifCT extends Controller
         Config::set('database.connections.mysql2.password', $gerbang->pass);
 
 
-        if ($gerbang->jenis_gerbang == 0) {
+
+        if ($gerbang->jenis_gerbang == 0 || $gerbang->jenis_gerbang == 4) {
             $model = tbl_tarif_open::where('id', $id)->first();
         } else {
             $model = tbl_tarif_exit::where('id', $id)->first();
