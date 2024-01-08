@@ -193,7 +193,7 @@
                             <div class="tab-pane fade show active" id="gol1-tab-pane" role="tabpanel"
                                 aria-labelledby="gol1-tab" tabindex="0">
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalgol1"> Gol 1
@@ -214,8 +214,8 @@
                                     <input type="text" class="form-control" name="investor1[]" id="investor1">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor1[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor1[]"
                                         id="total_investor1">
                                 </div>
                                 <hr>
@@ -225,7 +225,7 @@
                                 aria-labelledby="gol2-tab" tabindex="0">
 
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalgol2"> Gol 2
@@ -246,8 +246,8 @@
                                     <input type="text" class="form-control" name="investor2[]" id="investor2">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor2[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor2[]"
                                         id="total_investor2">
                                 </div>
                                 <hr>
@@ -258,7 +258,7 @@
                                 aria-labelledby="gol3-tab" tabindex="0">
 
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalgol3"> Gol 3
@@ -279,8 +279,8 @@
                                     <input type="text" class="form-control" name="investor3[]" id="investor3">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor3[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor3[]"
                                         id="total_investor3">
                                 </div>
                                 <hr>
@@ -292,7 +292,7 @@
 
 
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalgol4"> Gol 4
@@ -313,8 +313,8 @@
                                     <input type="text" class="form-control" name="investor4[]" id="investor4">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor4[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor4[]"
                                         id="total_investor4">
                                 </div>
                                 <hr>
@@ -324,7 +324,7 @@
                                 aria-labelledby="gol5-tab" tabindex="0">
 
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalgol5"> Gol 5
@@ -345,8 +345,8 @@
                                     <input type="text" class="form-control" name="investor5[]" id="investor5">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor5[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor5[]"
                                         id="total_investor5">
                                 </div>
                                 <hr>
@@ -380,7 +380,7 @@
                             <label for="gerbangEditmodal">Nama Gerbang :</label>
                             <input type="hidden" name="idTarif" id="idTarif">
                             <select class="form-control" id="gerbangEditmodal" name="gerbangEditmodal"
-                                readonly="readonly">
+                                readonly="readonly" >
                             </select>
                         </div>
                     </div>
@@ -446,14 +446,14 @@
                             <div class="tab-pane fade show active" id="gol1-tab-pane-edit" role="tabpanel"
                                 aria-labelledby="gol1-tab" tabindex="0">
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalEditgol1"> Gol 1
                                         :</label>
                                     <div class="form-group col-sm-9">
                                         <input type="text" class="form-control" name="totalEditgol1" id="totalEditgol1"
-                                            placeholder="">
+                                            placeholder=""> 
                                     </div>
                                 </div>
 
@@ -467,7 +467,7 @@
                                     <input type="text" class="form-control" name="investor_edit1[]" id="investor_edit1">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
+                                    <label for="total_investor">Tarif investor</label>
                                     <input type="number" class="form-control" name="totalinvestor_edit1[]"
                                         id="total_investor_edit1">
                                 </div>
@@ -478,7 +478,7 @@
                                 aria-labelledby="gol2-tab" tabindex="0">
 
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalEditgol2"> Gol 2
@@ -499,8 +499,8 @@
                                     <input type="text" class="form-control" name="investor_edit2[]" id="investor_edit2">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor_edit2[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor_edit2[]"
                                         id="total_investor_edit2">
                                 </div>
                                 <hr>
@@ -511,7 +511,7 @@
                                 aria-labelledby="gol3-tab" tabindex="0">
 
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalEditgol3"> Gol 3
@@ -532,8 +532,8 @@
                                     <input type="text" class="form-control" name="investor_edit3[]" id="investor_edit3">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor_edit3[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor_edit3[]"
                                         id="total_investor_edit3">
                                 </div>
                                 <hr>
@@ -545,7 +545,7 @@
 
 
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalEditgol4"> Gol 4
@@ -566,8 +566,8 @@
                                     <input type="text" class="form-control" name="investor_edit4[]" id="investor_edit4">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor_edit4[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor_edit4[]"
                                         id="total_investor_edit4">
                                 </div>
                                 <hr>
@@ -577,7 +577,7 @@
                                 aria-labelledby="gol5-tab" tabindex="0">
 
 
-                                <b>Harga</b>
+                                <b>Tarif</b>
                                 <hr>
                                 <div class="form-group">
                                     <label class="col-sm-3" for="totalEditgol5"> Gol 5
@@ -598,8 +598,8 @@
                                     <input type="text" class="form-control" name="investor_edit5[]" id="investor_edit5">
                                 </div>
                                 <div class="form-group mt-3">
-                                    <label for="total_investor">Total investor</label>
-                                    <input type="number" class="form-control" name="totalinvestor_edit5[]"
+                                    <label for="total_investor">Tarif investor</label>
+                                    <input type="text" class="form-control" name="totalinvestor_edit5[]"
                                         id="total_investor_edit5">
                                 </div>
                                 <hr>
@@ -681,7 +681,22 @@
 <script type="text/javascript">
 var investorCounts = {};
 var investorCountEdit = {};
+
+function formatRibuan(input) {
+        // Menghapus semua karakter selain digit
+        var nilai = input.value.replace(/\D/g, '');
+
+        // Menambahkan pemisah ribuan dengan menggunakan locale 'id-ID' (Indonesia)
+        var nilaiFormatted = Number(nilai).toLocaleString('id-ID');
+
+        // Menetapkan nilai kembali ke input
+        input.value = nilaiFormatted;
+    }
     $(document).ready(function () {
+
+        
+
+        
 
         function sweetAlert(title, text, icon) {
             Swal.fire({
@@ -811,8 +826,13 @@ var investorCountEdit = {};
                 contentType: false,
                 cache: false,
                 processData: false,
+                beforeSend: function () {
+                        document.getElementById('loading-screen').style.display =
+                            'block';
+                    },
                 success: function (response) {
-
+                    document.getElementById('loading-screen').style.display =
+                            'none';
                     inventor = split_array(response.model.tarif_inv)
                     totalInven1 = JSON.parse(response.model.gol1_d)
                     totalInven2 = JSON.parse(response.model.gol2_d)
@@ -1045,7 +1065,7 @@ var investorCountEdit = {};
                     return {
                         results: $.map(data, function (item) {
                             return {
-                                text: item.gerbang_nama + '-' + item.jenis_gerbang,
+                                text: item.gerbang_nama,
                                 id: item.gerbang_id,
                             };
                         }),
@@ -1545,7 +1565,7 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
 
     // Total Investor
     var totalLabel = document.createElement('label');
-    totalLabel.textContent = 'Total Investor';
+    totalLabel.textContent = 'Tarif Investor';
     totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
 
     var totalInput = document.createElement('input');
@@ -1627,7 +1647,7 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
 
         // Total Investor
         var totalLabel = document.createElement('label');
-        totalLabel.textContent = 'Total Investor';
+        totalLabel.textContent = 'Tarif Investor';
         totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
 
         var totalInput = document.createElement('input');
