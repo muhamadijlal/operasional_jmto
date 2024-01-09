@@ -1,7 +1,7 @@
 
 <style>
     p,table{
-        font-size: 15px !important;
+        font-size: 11px !important;
     }
     
 </style>
@@ -55,18 +55,18 @@
             </tr>
             <tr style="font-weight: bold !important">
                 @foreach ($arrayValue as $item)
-                <td style="min-width: 50px; border: 1px solid black; "> <center>1</center></td>
-                <td style="min-width: 50px; border: 1px solid black; "> <center>2</center></td>
-                <td style="min-width: 50px; border: 1px solid black; "> <center>3</center></td>
-                <td style="min-width: 50px; border: 1px solid black; "> <center>4</center></td>
-                <td style="min-width: 50px; border: 1px solid black; "> <center>5</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>1</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>2</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>3</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>4</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>5</center></td>
                 @endforeach
     
-                <td style="min-width: 50px; border: 1px solid black; "> <center>1</center></td>
-                <td style="min-width: 50px; border: 1px solid black; "> <center>2</center></td>
-                <td style="min-width: 50px; border: 1px solid black; "> <center>3</center></td>
-                <td style="min-width: 50px; border: 1px solid black; "> <center>4</center></td>
-                <td style="min-width: 50px; border: 1px solid black; "> <center>5</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>1</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>2</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>3</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>4</center></td>
+                <td style="min-width: 10px; border: 1px solid black; "> <center>5</center></td>
     
             </tr>
             @foreach ($data as $item2)
@@ -82,18 +82,18 @@
                     </center>
                     </td>
                     @foreach ($arrayValue as $key => $value)
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format(json_decode($item2->gol1_d)[$key] ?? 0, 0, ',', '.') }}</td>
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format(json_decode($item2->gol2_d)[$key] ?? 0, 0, ',', '.') }}</td>
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format(json_decode($item2->gol3_d)[$key] ?? 0, 0, ',', '.') }}</td>
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format(json_decode($item2->gol4_d)[$key] ?? 0, 0, ',', '.') }}</td>
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format(json_decode($item2->gol5_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format(json_decode($item2->gol1_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format(json_decode($item2->gol2_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format(json_decode($item2->gol3_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format(json_decode($item2->gol4_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format(json_decode($item2->gol5_d)[$key] ?? 0, 0, ',', '.') }}</td>
                 @endforeach
     
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format($item2->gol1, 0, ',', '.') }}</td>
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format($item2->gol2, 0, ',', '.') }}</td>
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format($item2->gol3, 0, ',', '.') }}</td>
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format($item2->gol4, 0, ',', '.') }}</td>
-                    <td style="text-align:center;padding:5px;border: 1px solid black;">{{ number_format($item2->gol5, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format($item2->gol1, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format($item2->gol2, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format($item2->gol3, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format($item2->gol4, 0, ',', '.') }}</td>
+                    <td style="text-align:center;padding:1px;border: 1px solid black;">{{ number_format($item2->gol5, 0, ',', '.') }}</td>
     
                 </tr>
                 <tr>
