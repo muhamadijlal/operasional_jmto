@@ -96,6 +96,7 @@
             <button class="btn btn-info add-new " id="btnAddTarif"> <i class="fa fa-plus"></i> Tambah Tarif</button>
             <button class="btn btn-secondary  " id="btnRefeshDasarTarif"> <i class="fa fa-refresh"></i> Refresh</button>
             <button class="btn btn-primary  " id="btnExportTarif"> <i class="fa fa-print"></i> Export</button>
+            <button class="btn btn-link  " id="btnViewTarif"> <i class="fa fa-eye"></i> View Tarif</button>
             <br>
             <br>
 
@@ -653,6 +654,23 @@
     </div>
 </div>
 
+<div class="modal" id="modalViewTarif">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">View Tarif</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="tarifModalBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @endsection
 
@@ -679,8 +697,8 @@
 
 
 <script type="text/javascript">
-var investorCounts = {};
-var investorCountEdit = {};
+    var investorCounts = {};
+    var investorCountEdit = {};
     $(document).ready(function () {
 
         function sweetAlert(title, text, icon) {
@@ -743,7 +761,7 @@ var investorCountEdit = {};
                     [10, 25, 50, -1],
                     ['10 rows', '25 rows', '50 rows', 'Show all']
                 ],
-            
+
                 language: {
                     emptyTable: "Tidak ada data yang tersedia",
                     processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
@@ -840,7 +858,7 @@ var investorCountEdit = {};
 
         })
 
-        function split_array(string){
+        function split_array(string) {
 
             var cleanedString = string.slice(1, -1);
             var arrayValue = cleanedString.split(',');
@@ -1045,7 +1063,7 @@ var investorCountEdit = {};
                     return {
                         results: $.map(data, function (item) {
                             return {
-                                text: item.gerbang_nama ,
+                                text: item.gerbang_nama,
                                 id: item.gerbang_id,
                             };
                         }),
@@ -1397,26 +1415,59 @@ var investorCountEdit = {};
                 }, 1000);
             }
         });
+        $('#btnViewTarif').click(function () {
+            if ($('#gerbang').val() == null) {
+                sweetAlert('Gagal!', 'Gagal View Tarif, Gerbang Belum Dipilih!', 'error')
+            } else {
+                document.getElementById('loading-screen').style.display = 'block';
+                var gerbang = $('#gerbang').val()
+                $.ajax({
+                    url: '/admin/manajemen-tarif/close/view/' + gerbang,
+                    async: false,
+                    method: "GET",
+                    dataType: "JSON",
+                    // beforeSend: function () {
+                    //     document.getElementById('loading-screen').style.display = 'block';
+                    // },
+                    success: function (response) {
+                        document.getElementById('loading-screen').style.display = 'none';
 
-        $('#btnExportTarif').click(function(){
+                        // Sisipkan HTML tabel ke dalam modal
+                        $('#tarifModalBody').html(response.html);
+
+                        // Tampilkan modal
+                        $('#modalViewTarif').modal('show');
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error: ", error);
+                    }
+                });
+            }
+        });
+
+
+
+        $('#btnExportTarif').click(function () {
             var gerbang = $('#gerbang').val()
             // var gerbang = '01'
-            if ( gerbang == null) {
+            if (gerbang == null) {
                 sweetAlert('Gagal!', 'Gagal Export Data, Gerbang Belum Dipilih!', 'error')
             } else {
                 $.ajax({
-                type: "GET",
-                url: '/admin/manajemen-tarif/close/export/' + gerbang,
-                xhrFields: {
-                    responseType: 'blob' // Set responseType to 'blob'
-                },
-                beforeSend: function () {
-                    document.getElementById('loading-screen').style.display =
+                    type: "GET",
+                    url: '/admin/manajemen-tarif/close/export/' + gerbang,
+                    xhrFields: {
+                        responseType: 'blob' // Set responseType to 'blob'
+                    },
+                    beforeSend: function () {
+                        document.getElementById('loading-screen').style.display =
                             'block';
-                },
-                success: function (response,status, xhr) {
+                    },
+                    success: function (response, status, xhr) {
 
-                    var contentDisposition = xhr.getResponseHeader('content-disposition');
+                        var contentDisposition = xhr.getResponseHeader(
+                            'content-disposition');
                         var fileName = '';
 
                         if (contentDisposition) {
@@ -1426,40 +1477,40 @@ var investorCountEdit = {};
                             }
                         }
 
-                    // Buat objek blob dari respons
-                    var blob = new Blob([response], {
-                        type: 'application/pdf'
-                    });
-                
+                        // Buat objek blob dari respons
+                        var blob = new Blob([response], {
+                            type: 'application/pdf'
+                        });
 
-                    // Buat URL objek blob
-                    var blobUrl = URL.createObjectURL(blob);
 
-                    // Buat elemen <a> untuk mengunduh file
-                    var link = document.createElement('a');
-                    link.href = blobUrl;
-                    link.download = fileName || 'Rekap_tarif.pdf';
+                        // Buat URL objek blob
+                        var blobUrl = URL.createObjectURL(blob);
 
-                    // Sisipkan elemen <a> ke dokumen dan klik otomatis
-                    document.body.appendChild(link);
-                    link.click();
+                        // Buat elemen <a> untuk mengunduh file
+                        var link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = fileName || 'Rekap_tarif.pdf';
 
-                    // Hapus elemen <a> setelah di-klik
-                    document.body.removeChild(link);
-                    
-                    document.getElementById('loading-screen').style
-                        .display =
-                        'none';
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    // Handle the error
-                    console.error(errorThrown);
-                    
-                    document.getElementById('loading-screen').style
-                        .display =
-                        'none';
-                }
-            });
+                        // Sisipkan elemen <a> ke dokumen dan klik otomatis
+                        document.body.appendChild(link);
+                        link.click();
+
+                        // Hapus elemen <a> setelah di-klik
+                        document.body.removeChild(link);
+
+                        document.getElementById('loading-screen').style
+                            .display =
+                            'none';
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        // Handle the error
+                        console.error(errorThrown);
+
+                        document.getElementById('loading-screen').style
+                            .display =
+                            'none';
+                    }
+                });
             }
         })
 
@@ -1505,94 +1556,94 @@ var investorCountEdit = {};
     });
 
 
-// Objek untuk menyimpan investorCount untuk setiap tabIndex
+    // Objek untuk menyimpan investorCount untuk setiap tabIndex
 
 
-function tambahInvestor(tabIndex, value = null, totalinven = null) {
-    // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
-    if (!investorCounts.hasOwnProperty(tabIndex)) {
-        investorCounts[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
-    }
+    function tambahInvestor(tabIndex, value = null, totalinven = null) {
+        // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
+        if (!investorCounts.hasOwnProperty(tabIndex)) {
+            investorCounts[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
+        }
 
-    // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
-    var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
+        // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
+        var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
 
-    // Buat elemen form group untuk input investor
-    var formGroup = document.createElement('div');
-    formGroup.className = 'form-group dataInventor';
+        // Buat elemen form group untuk input investor
+        var formGroup = document.createElement('div');
+        formGroup.className = 'form-group dataInventor';
 
-    // Label untuk input investor
-    var label = document.createElement('label');
-    label.textContent = 'Investor ' + investorCounts[tabIndex];
-    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
-
-    // Input untuk investor
-    var input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'form-control';
-    input.name = 'investor' + tabIndex + '[]';
-    input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
-    if (value != null) {
-        input.value = value;
-    }
-
-    // Tombol "Delete" untuk menghapus investor
-    var deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
-    deleteButton.type = 'button';
-
-    var hr = document.createElement('hr');
-
-    // Tambahkan event listener untuk tombol "Delete"
-    deleteButton.addEventListener('click', function () {
-        // Hapus elemen form group saat tombol "Delete" diklik
-        formGroup.remove();
-
-        // Kurangi nilai investorCount
-        investorCounts[tabIndex]--;
-        // Pastikan nilai investorCount tidak kurang dari 2
-        investorCounts[tabIndex] = Math.max(investorCounts[tabIndex], 2);
-
-        // Update label investor sesuai dengan nilai terbaru
+        // Label untuk input investor
+        var label = document.createElement('label');
         label.textContent = 'Investor ' + investorCounts[tabIndex];
         label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
+
+        // Input untuk investor
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control';
+        input.name = 'investor' + tabIndex + '[]';
         input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
+        if (value != null) {
+            input.value = value;
+        }
+
+        // Tombol "Delete" untuk menghapus investor
+        var deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
+        deleteButton.type = 'button';
+
+        var hr = document.createElement('hr');
+
+        // Tambahkan event listener untuk tombol "Delete"
+        deleteButton.addEventListener('click', function () {
+            // Hapus elemen form group saat tombol "Delete" diklik
+            formGroup.remove();
+
+            // Kurangi nilai investorCount
+            investorCounts[tabIndex]--;
+            // Pastikan nilai investorCount tidak kurang dari 2
+            investorCounts[tabIndex] = Math.max(investorCounts[tabIndex], 2);
+
+            // Update label investor sesuai dengan nilai terbaru
+            label.textContent = 'Investor ' + investorCounts[tabIndex];
+            label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
+            input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
+            totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+            totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
+        });
+
+        // Total Investor
+        var totalLabel = document.createElement('label');
+        totalLabel.textContent = 'Tarif Investor';
         totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+
+        var totalInput = document.createElement('input');
+        totalInput.type = 'number';
+        totalInput.className = 'form-control';
+        totalInput.name = 'totalinvestor' + tabIndex + '[]';
         totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
-    });
+        totalInput.value = totalinven;
 
-    // Total Investor
-    var totalLabel = document.createElement('label');
-    totalLabel.textContent = 'Tarif Investor';
-    totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+        // Tambahkan elemen-elemen ini ke dalam tab-pane
+        formGroup.appendChild(hr);
+        formGroup.appendChild(label);
+        formGroup.appendChild(input);
+        formGroup.appendChild(totalLabel);
+        formGroup.appendChild(totalInput);
+        tabPane.appendChild(formGroup);
+        formGroup.appendChild(deleteButton);
 
-    var totalInput = document.createElement('input');
-    totalInput.type = 'number';
-    totalInput.className = 'form-control';
-    totalInput.name = 'totalinvestor' + tabIndex + '[]';
-    totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
-    totalInput.value = totalinven;
+        formGroup.appendChild(hr); // Tambahkan tombol "Delete"
 
-    // Tambahkan elemen-elemen ini ke dalam tab-pane
-    formGroup.appendChild(hr);
-    formGroup.appendChild(label);
-    formGroup.appendChild(input);
-    formGroup.appendChild(totalLabel);
-    formGroup.appendChild(totalInput);
-    tabPane.appendChild(formGroup);
-    formGroup.appendChild(deleteButton);
-
-    formGroup.appendChild(hr); // Tambahkan tombol "Delete"
-
-    investorCounts[tabIndex]++; // Inkrementasi hitungan investor untuk tabIndex tertentu
-}
+        investorCounts[tabIndex]++; // Inkrementasi hitungan investor untuk tabIndex tertentu
+    }
 
 
 
     function tambahInvestorEdit(tabIndex, value = null, totalinven = null) {
-       
-           // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
+
+        // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
         if (!investorCountEdit.hasOwnProperty(tabIndex)) {
             investorCountEdit[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
         }
@@ -1603,20 +1654,20 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
         var formGroup = document.createElement('div');
         formGroup.className = 'form-group dataInventor';
 
-    // Label untuk input investor
-    var label = document.createElement('label');
-    label.textContent = 'Investor ' + investorCountEdit[tabIndex];
-    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+        // Label untuk input investor
+        var label = document.createElement('label');
+        label.textContent = 'Investor ' + investorCountEdit[tabIndex];
+        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
 
- // Input untuk investor
- var input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'form-control';
-    input.name = 'investor_edit' + tabIndex + '[]';
-    input.id = 'investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
-    if (value != null) {
-        input.value = value;
-    }
+        // Input untuk investor
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control';
+        input.name = 'investor_edit' + tabIndex + '[]';
+        input.id = 'investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
+        if (value != null) {
+            input.value = value;
+        }
 
         // Tombol "Delete" untuk menghapus investor
         var deleteButton = document.createElement('button');
@@ -1626,23 +1677,23 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
 
         var hr = document.createElement('hr');
 
- // Tambahkan event listener untuk tombol "Delete"
- deleteButton.addEventListener('click', function () {
-        // Hapus elemen form group saat tombol "Delete" diklik
-        formGroup.remove();
+        // Tambahkan event listener untuk tombol "Delete"
+        deleteButton.addEventListener('click', function () {
+            // Hapus elemen form group saat tombol "Delete" diklik
+            formGroup.remove();
 
-        // Kurangi nilai investorCount
-        investorCountEdit[tabIndex]--;
-        // Pastikan nilai investorCount tidak kurang dari 2
-        investorCountEdit[tabIndex] = Math.max(investorCountEdit[tabIndex], 2);
+            // Kurangi nilai investorCount
+            investorCountEdit[tabIndex]--;
+            // Pastikan nilai investorCount tidak kurang dari 2
+            investorCountEdit[tabIndex] = Math.max(investorCountEdit[tabIndex], 2);
 
-        // Update label investor sesuai dengan nilai terbaru
-        label.textContent = 'Investor ' + investorCountEdit[tabIndex];
-        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
-        input.id = 'investor' + tabIndex + '_' + investorCountEdit[tabIndex];
-        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
-        totalInput.id = 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex];
-    });
+            // Update label investor sesuai dengan nilai terbaru
+            label.textContent = 'Investor ' + investorCountEdit[tabIndex];
+            label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+            input.id = 'investor' + tabIndex + '_' + investorCountEdit[tabIndex];
+            totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+            totalInput.id = 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex];
+        });
 
         // Total Investor
         var totalLabel = document.createElement('label');
@@ -1650,11 +1701,11 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
         totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
 
         var totalInput = document.createElement('input');
-    totalInput.type = 'number';
-    totalInput.className = 'form-control';
-    totalInput.name = 'totalinvestor_edit' + tabIndex + '[]';
-    totalInput.id = 'total_investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
-    totalInput.value = totalinven;
+        totalInput.type = 'number';
+        totalInput.className = 'form-control';
+        totalInput.name = 'totalinvestor_edit' + tabIndex + '[]';
+        totalInput.id = 'total_investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
+        totalInput.value = totalinven;
         // Tambahkan elemen-elemen ini ke dalam tab-pane
 
         formGroup.appendChild(hr);

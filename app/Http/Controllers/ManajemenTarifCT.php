@@ -690,4 +690,65 @@ class ManajemenTarifCT extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'attachment; filename="Table Tarif GT ' . $gerbang->gerbang_nama . '.pdf"');
     }
+
+    public function viewClose($id_gerbang)
+    {
+
+        $gerbang = tbl_gerbang::where('gerbang_id', $id_gerbang)
+            ->leftjoin('tbl_ruas', 'tbl_gerbang.ruas_id', '=', 'tbl_ruas.ruas_id')
+            ->select(['tbl_ruas.ruas_nama', 'tbl_gerbang.ruas_id', 'tbl_gerbang.host', 'tbl_gerbang.port', 'tbl_gerbang.database', 'tbl_gerbang.user', 'tbl_gerbang.pass', 'tbl_gerbang.gerbang_nama'])
+            ->first();
+
+
+        Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
+        Config::set('database.connections.mysql2.host', $gerbang->host);
+        Config::set('database.connections.mysql2.port', $gerbang->port);
+        Config::set('database.connections.mysql2.database', $gerbang->database);
+        Config::set('database.connections.mysql2.username', $gerbang->user);
+        Config::set('database.connections.mysql2.password', $gerbang->pass);
+
+        $dasar_tarif = tbl_dasar_tarif::orderBy('mulai_berlaku', 'DESC')->first();
+
+        $model = View_tarif::query();
+        $model->join('tbl_gerbang as gerbang', 'gerbang.gerbang_id', '=', 'view_tarif.gerbang_id')
+            ->join('tbl_gerbang as gerbang_asal', 'gerbang_asal.gerbang_id', '=', 'view_tarif.asal_gerbang')
+            ->leftjoin('tbl_dasar_tarif', 'tbl_dasar_tarif.id_dasar_tarif', '=', 'view_tarif.id_dasar_tarif');
+        // ->leftjoin('tbl_ruas', 'gerbang.ruas_id', '=', 'tbl_ruas.ruas_id');
+
+        $model->select([
+            'view_tarif.id',
+            'gerbang.gerbang_nama as gerbang1',
+            'gerbang_asal.gerbang_nama as asalGerbang',
+            'view_tarif.jenis',
+            'tbl_dasar_tarif.dasar_tarif',
+            'tbl_dasar_tarif.mulai_berlaku',
+            'view_tarif.gol1',
+            'view_tarif.gol1_d',
+            'view_tarif.gol2',
+            'view_tarif.gol2_d',
+            'view_tarif.gol3',
+            'view_tarif.gol3_d',
+            'view_tarif.gol4',
+            'view_tarif.gol4_d',
+            'view_tarif.gol5',
+            'view_tarif.gol5_d',
+            'view_tarif.tarif_inv',
+            'view_tarif.tgl_berlaku',
+            // 'tbl_ruas.ruas_nama'
+        ]);
+
+        $data = $model->get();
+
+        $returnHTML = view('admin.viewClose', compact('data', 'gerbang', 'dasar_tarif'))->render();
+        return response()->json(array('success' => true, 'html' => $returnHTML));
+
+
+        // return response()->json(compact('array'));
+
+        // $pdf = Pdf::loadView('admin.pdfClose', $array)->setPaper('a4', 'landscape');
+
+        // return response($pdf->output(), 200)
+        //     ->header('Content-Type', 'application/pdf')
+        //     ->header('Content-Disposition', 'attachment; filename="Table Tarif GT ' . $gerbang->gerbang_nama . '.pdf"');
+    }
 }

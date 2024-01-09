@@ -54,6 +54,7 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
             Route::post('update', [ManajemenTarifCT::class, 'updateExit']);
 
             Route::get('export/{id_gerbang}', [ManajemenTarifCT::class, 'exportClose']);
+            Route::get('view/{id_gerbang}', [ManajemenTarifCT::class, 'viewClose']);
 
             Route::get('delete/{id_tarif}/{id_gerbang}', [ManajemenTarifCT::class, 'delete']);
             Route::get('edit/{id_tarif}/{id_gerbang}', [ManajemenTarifCT::class, 'edit']);
@@ -70,6 +71,10 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
     Route::group(['prefix' => 'petugas'], function () {
         Route::get('buat-petugas', [PetugasCT::class, 'BuatPetugas']);
         Route::post('buat-petugas/tambah', [PetugasCT::class, 'BuatPetugasTambah']);
+        Route::get('buat-petugas/delete/{id}', [PetugasCT::class, 'BuatPetugasDelete']);
+        Route::get('buat-petugas/edit/{id}', [PetugasCT::class, 'BuatPetugasEdit']);
+        Route::post('buat-petugas/update/{id}', [PetugasCT::class, 'BuatPetugasUpdate']);
+        Route::get('buat-petugas/sycron', [PetugasCT::class, 'BuatPetugasSycron']);
     });
 
     Route::get('get-gerbang-data', [Select2CT::class, 'getGerbang']);
