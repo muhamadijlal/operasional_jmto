@@ -1,10 +1,10 @@
-
+{{-- 
 <style>
-    p,table{
+    #tarifModalBody p,table{
         font-size: 11px !important;
     }
     
-</style>
+</style> --}}
 
     <center>
             <p style="font-weight: bold !important">TARIF GERBANG SISTEM TERTUTUP</p>
@@ -19,7 +19,7 @@
         <br>
         Metoda Bayar : Tunai/Umum
     </p>
-    <div class="table-responsive">
+    <div class="table-responsive" style=" font-size: 11px !important;">
         <table border="1" style="border-collapse: collapse; width: 100%;">
             <tr style="font-weight: bold !important" >
                 <td rowspan="2" style="border: 1px solid black;" >Asal Gerbang</td>
