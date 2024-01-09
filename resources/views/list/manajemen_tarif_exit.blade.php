@@ -1420,29 +1420,36 @@
                 sweetAlert('Gagal!', 'Gagal View Tarif, Gerbang Belum Dipilih!', 'error')
             } else {
                 document.getElementById('loading-screen').style.display = 'block';
-                var gerbang = $('#gerbang').val()
-                $.ajax({
-                    url: '/admin/manajemen-tarif/close/view/' + gerbang,
-                    async: false,
-                    method: "GET",
-                    dataType: "JSON",
-                    // beforeSend: function () {
-                    //     document.getElementById('loading-screen').style.display = 'block';
-                    // },
-                    success: function (response) {
-                        document.getElementById('loading-screen').style.display = 'none';
 
-                        // Sisipkan HTML tabel ke dalam modal
-                        $('#tarifModalBody').html(response.html);
+                setTimeout(function () {
+                    var gerbang = $('#gerbang').val()
+                    $.ajax({
+                        url: '/admin/manajemen-tarif/close/view/' + gerbang,
+                        async: false,
+                        method: "GET",
+                        dataType: "JSON",
+                        beforeSend: function () {
+                            document.getElementById('loading-screen').style
+                                .display = 'block';
+                        },
+                        success: function (response) {
+                            document.getElementById('loading-screen').style
+                                .display = 'none';
 
-                        // Tampilkan modal
-                        $('#modalViewTarif').modal('show');
+                            // Sisipkan HTML tabel ke dalam modal
+                            $('#tarifModalBody').html(response.html);
 
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Error: ", error);
-                    }
-                });
+                            // Tampilkan modal
+                            $('#modalViewTarif').modal('show');
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error: ", error);
+                        }
+                    });
+                    document.getElementById('loading-screen').style.display = 'none';
+                }, 1000);
+
             }
         });
 
