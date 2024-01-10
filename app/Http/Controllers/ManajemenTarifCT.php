@@ -293,6 +293,12 @@ class ManajemenTarifCT extends Controller
                     ],
                     [
 
+                        'title' => 'Jenis',
+                        'data' => 'jenis',
+                        'name' => 'tbl_dasar_tarif.jenis',
+                    ],
+                    [
+
                         'title' => 'Dasar Tarif',
                         'data' => 'dasar_tarif',
                         'name' => 'tbl_dasar_tarif.dasar_tarif',
