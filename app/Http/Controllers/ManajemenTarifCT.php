@@ -301,37 +301,37 @@ class ManajemenTarifCT extends Controller
 
                         'title' => 'Golongan 1',
                         'data' => 'gol1',
-                        'name' => 'tbl_tarif_open.gol1',
+                        'name' => 'tbl_tarif_exit.gol1',
                     ],
                     [
 
                         'title' => 'Golongan 2',
                         'data' => 'gol2',
-                        'name' => 'tbl_tarif_open.gol2',
+                        'name' => 'tbl_tarif_exit.gol2',
                     ],
                     [
 
                         'title' => 'Golongan 3',
                         'data' => 'gol3',
-                        'name' => 'tbl_tarif_open.gol3',
+                        'name' => 'tbl_tarif_exit.gol3',
                     ],
                     [
 
                         'title' => 'Golongan 4',
                         'data' => 'gol4',
-                        'name' => 'tbl_tarif_open.gol4',
+                        'name' => 'tbl_tarif_exit.gol4',
                     ],
                     [
 
                         'title' => 'Golongan 5',
                         'data' => 'gol5',
-                        'name' => 'tbl_tarif_open.gol5',
+                        'name' => 'tbl_tarif_exit.gol5',
                     ],
                     [
 
                         'title' => 'Waktu Berlaku',
                         'data' => 'tgl_berlaku',
-                        'name' => 'tbl_tarif_open.tgl_berlaku',
+                        'name' => 'tbl_tarif_exit.tgl_berlaku',
                     ],
 
                     [
