@@ -23,8 +23,12 @@ Login
         <div class="d-flex col-12 col-lg-5 align-items-center p-sm-5 p-4">
             <div class="w-px-400 mx-auto">
 
-                <h3 class="mb-1 fw-bold">Login JMTO Operasional</h3>
-                <p class="mb-4">Ruas {{ $ruas->ruas_nama }}</p>
+                <h3 class="mb-1 fw-bold">
+                    Login JMTO Operasional
+                    <br>
+                    Ruas {{ $ruas->ruas_nama }}
+                </h3>
+
 
                 @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible" role="alert">
