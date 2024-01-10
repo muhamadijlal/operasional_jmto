@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginActionR;
+use App\Models\tbl_ruas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,8 +11,9 @@ class AuthCT extends Controller
 {
     public function login()
     {
+        $ruas = tbl_ruas::first();
 
-        return view('auth.login');
+        return view('auth.login', compact('ruas'));
     }
 
 
@@ -33,7 +35,7 @@ class AuthCT extends Controller
 
             return redirect('admin/dashboard');
         } else {
-            return back()->with(['error' => 'Email / Password yang anda masukan salah'])->withInput($request->all());
+            return back()->with(['error' => 'NPP / Password yang anda masukan salah'])->withInput($request->all());
         }
     }
 

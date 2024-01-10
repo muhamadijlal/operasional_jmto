@@ -24,7 +24,7 @@ Login
             <div class="w-px-400 mx-auto">
 
                 <h3 class="mb-1 fw-bold">Login JMTO Operasional</h3>
-                {{-- <p class="mb-4">Second Text</p> --}}
+                <p class="mb-4">Ruas {{ $ruas->ruas_nama }}</p>
 
                 @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible" role="alert">
