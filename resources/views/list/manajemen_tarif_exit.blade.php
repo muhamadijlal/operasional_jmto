@@ -97,6 +97,7 @@
             <button class="btn btn-secondary  " id="btnRefeshDasarTarif"> <i class="fa fa-refresh"></i> Refresh</button>
             <button class="btn btn-primary  " id="btnExportTarif"> <i class="fa fa-print"></i> Export</button>
             <button class="btn btn-link  " id="btnViewTarif"> <i class="fa fa-eye"></i> View Tarif</button>
+            <button id="btnImportTarif" class="btn btn-warning  "> <i class="fa fa-print"></i> Import Tarif</button>
             <br>
             <br>
 
@@ -671,6 +672,62 @@
     </div>
 </div>
 
+<div class="modal" id="modalImportTarifClose" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Import Tarif Close</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <a target="_blank" href="{{ asset("assets/template/Template_Tarif.xlsx") }}"
+                    class="btn btn-info btn-sm"> <i class="fa fa-download"></i> Donwload Template</a>
+                <br>
+                <br>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="gerbangmodalImport">Nama Gerbang :</label>
+                            <select class="form-control" id="gerbangmodalImport" name="gerbangmodalImport"
+                                readonly="readonly">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="dasartarifmodalImport">Dasar Tarif :</label>
+                            <select class="form-control" id="dasartarifmodalImport" name="dasartarifmodalImport"
+                                required>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="waktuImport">Waktu Berlaku :</label>
+                            <input type="text" class="form-control" name="waktuImport" id="waktuImport"
+                                aria-describedby="waktuImport" placeholder="Waktu Berlaku" required>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group mb-3">
+                            <label for="file">File :</label>
+                            <input type="file" class="form-control" name="file" id="file" aria-describedby="file"
+                                placeholder="file " required>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" id="btnSimpanImportTarifExit" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @endsection
 
@@ -718,6 +775,12 @@
             format: 'Y-m-d H:i:s',
             theme: 'white'
         });
+        $("#waktuImport").datetimepicker({
+            format: 'Y-m-d H:i:s',
+            theme: 'white'
+        });
+
+
 
 
         var dt_filter_table = $('.datatables-basic');
@@ -1557,6 +1620,122 @@
             }, 0);
         }
 
+        $('#btnImportTarif').click(function () {
+            console.log("tes");
+
+            if ($('#gerbang').val() == null) {
+                sweetAlert('Gagal!', 'Gagal Tambah Data, Gerbang Belum Dipilih!', 'error')
+            } else {
+                $("#waktuImport").val('')
+                $("#file").val('')
+
+                // gerbang
+                $('#gerbangmodalImport').find('option').remove().end()
+                var optionValue = $("#gerbang option:selected").val();
+                var optionText = $("#gerbang option:selected").text();
+                $('#gerbangmodalImport').append(
+                    `<option value="${optionValue}"> ${optionText}</option>`);
+
+
+
+
+                // dasarTarif
+                $('#dasartarifmodalImport').find('option').remove().end();
+                var gerbang = $("#gerbang").val();
+                var optionDasarTarif = '<option value="" Selected > Pilih  Dasar Tarif</option>';
+                $.ajax({
+                    url: '/admin/get-dasar-tarif',
+                    async: false,
+                    method: "POST",
+                    data: {
+                        gerbang: gerbang,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: "JSON",
+                    success: function (response) {
+
+                        $.each(response, function (i, item) {
+
+                            optionDasarTarif += '<option value="' + response[i]
+                                .id_dasar_tarif + '"  >' + response[i]
+                                .dasar_tarif + '</option>'
+                        });
+                    }
+                });
+                $('#dasartarifmodalImport').append(optionDasarTarif);
+
+                $("#modalImportTarifClose").modal('show')
+            }
+
+        })
+
+        $('#btnSimpanImportTarifExit').click(function () {
+            var gerbangmodal = $('#gerbangmodalImport').val()
+            var dasartarifmodal = $('#dasartarifmodalImport').val()
+            var waktu = $('#waktuImport').val()
+            var fileInput = document.getElementById('file')
+            var file = fileInput.files[0];
+
+
+            if (validateField(gerbangmodal, 'Nama Gerbang Harus Di isi') &&
+                validateField(dasartarifmodal, 'Dasar Tarif Harus Di isi') &&
+                validateField(jenis, 'Jenis Harus Di isi') &&
+                validateField(waktu, 'Waktu Berlaku Harus Di isi')
+            ) {
+                if (!file) {
+                    sweetAlert('Gagal!', 'File Harus Diisi', 'error')
+                } else {
+                    var fileName = file.name;
+                    var fileExtension = fileName.split('.').pop().toLowerCase();
+
+                    if (fileExtension == 'xlsx' || fileExtension == 'xls') {
+
+                        var formData = new FormData();
+                        formData.append('gerbangmodal', gerbangmodal);
+                        formData.append('dasartarifmodal', dasartarifmodal);
+                        formData.append('waktu', waktu);
+                        formData.append('file', file);
+                        formData.append('_token', '{{ csrf_token() }}');
+
+                        $.ajax({
+                            type: "POST",
+                            contentType: false,
+                            processData: false,
+                            data: formData,
+                            url: baseUrl + '/import',
+                            async: false,
+                            beforeSend: function () {
+                                // document.getElementById('loading-screen').style.display =
+                                //     'block';
+                            },
+                            success: function (response) {
+                                if (response.code == 200) {
+
+                                    $("#modalImportTarifClose").modal('hide')
+                                    dt_filter.ajax.reload();
+                                    document.getElementById('loading-screen').style
+                                        .display = 'none';
+                                    sweetAlert('Berhasil!',
+                                        response.message, 'success')
+
+                                } else {
+                                    $("#modalImportTarifClose").modal('hide')
+                                    dt_filter.ajax.reload();
+                                    document.getElementById('loading-screen').style
+                                        .display = 'none';
+                                    sweetAlert('Gagal!',
+                                        response.message, 'error')
+                                }
+
+                            }
+                        });
+                    } else {
+                        sweetAlert('Gagal!', 'File Harus Format Excel', 'error')
+
+                    }
+                }
+            }
+        })
 
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\TarifExitImport;
 use App\Models\tbl_dasar_tarif;
 use App\Models\tbl_gerbang;
 use App\Models\tbl_tarif_exit;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Config;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ManajemenTarifCT extends Controller
 {
@@ -348,6 +350,21 @@ class ManajemenTarifCT extends Controller
                 ]
             ]
         );
+    }
+
+
+    public function importclose()
+    {
+        return view(
+            'importclose'
+        );
+    }
+
+    public function importcloseStore(Request $request)
+    {
+        $gerbang = tbl_gerbang::where('gerbang_id', $request->gerbangmodal)->first();
+        Excel::import(new TarifExitImport($gerbang, $request), $request->file('file'));
+        return response()->json(['code' => 200, 'message' => 'Success Import Data']);
     }
 
     public function array_string($array)

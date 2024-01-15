@@ -50,6 +50,10 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
         });
         Route::group(['prefix' => 'close'], function () {
             Route::get('/', [ManajemenTarifCT::class, 'indexclose']);
+
+            Route::get('import', [ManajemenTarifCT::class, 'importclose']);
+            Route::post('import', [ManajemenTarifCT::class, 'importcloseStore']);
+
             Route::post('tambah', [ManajemenTarifCT::class, 'tambahExit']);
             Route::post('update', [ManajemenTarifCT::class, 'updateExit']);
 
