@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\FailedExportClose;
 use App\Imports\TarifExitImport;
 use App\Models\tbl_dasar_tarif;
 use App\Models\tbl_gerbang;
@@ -9,6 +10,7 @@ use App\Models\tbl_tarif_exit;
 use App\Models\tbl_tarif_open;
 use App\Models\View_tarif;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Support\Facades\Config;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
@@ -363,8 +365,27 @@ class ManajemenTarifCT extends Controller
     public function importcloseStore(Request $request)
     {
         $gerbang = tbl_gerbang::where('gerbang_id', $request->gerbangmodal)->first();
-        Excel::import(new TarifExitImport($gerbang, $request), $request->file('file'));
-        return response()->json(['code' => 200, 'message' => 'Success Import Data']);
+
+        try {
+            $import = new TarifExitImport($gerbang, $request);
+            Excel::import($import, $request->file('file'));
+
+            $failed = $import->getFailed();
+            $array = [
+                'gerbang' => $failed
+            ];
+
+            $pdf = Pdf::loadView('admin.pdfFailedClose', $array)->setPaper('a4', 'landscape');
+
+            return response($pdf->output(), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="Table Tarif GT ' . $gerbang->gerbang_nama . '.pdf"');
+
+
+            return response()->json(['code' => 200, 'message' => 'Success Import Data']);
+        } catch (Exception $e) {
+            return response()->json(['code' => 400, 'message' => $e->getMessage()]);
+        }
     }
 
     public function array_string($array)

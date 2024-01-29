@@ -17,6 +17,7 @@ class TarifExitImport implements ToCollection
     {
         $this->gerbang = $gerbang;
         $this->request = $request;
+        $this->failed = [];
     }
 
 
@@ -26,6 +27,7 @@ class TarifExitImport implements ToCollection
         $investors = [];
 
 
+
         for ($i = 0; $i < count($rows); $i++) {
             if ($i == 0) {
                 for ($b = 0; $b < count($rows[$i]); $b++) {
@@ -33,7 +35,6 @@ class TarifExitImport implements ToCollection
                         $investors[] = $rows[$i][$b];
                     }
                 }
-                $investorCount = count($investors);
             }
             if ($i >= 2) {
                 $asal_gerbang = $rows[$i][0];
@@ -94,6 +95,7 @@ class TarifExitImport implements ToCollection
 
                 $modelAsalGerbang = tbl_gerbang::where('gerbang_nama', $asal_gerbang)->first();
 
+
                 if ($modelAsalGerbang) {
                     Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
                     Config::set('database.connections.mysql2.host', $this->gerbang->host);
@@ -123,8 +125,15 @@ class TarifExitImport implements ToCollection
                     $model->aktif = 1;
                     $model->tarif_inv = '[' . implode(',', str_replace('"', '', $investors)) . ']';
                     $model->save();
+                } else {
+                    $this->failed[] = $asal_gerbang;
                 }
             }
         }
+    }
+
+    public function getFailed()
+    {
+        return $this->failed;
     }
 }
