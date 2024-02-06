@@ -299,7 +299,7 @@ class ManajemenTarifCT extends Controller
 
                         'title' => 'Jenis',
                         'data' => 'jenis',
-                        'name' => 'tbl_dasar_tarif.jenis',
+                        'name' => 'tbl_tarif_exit.jenis',
                     ],
                     [
 
