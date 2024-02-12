@@ -1,24 +1,52 @@
-
-<style>
-    p,table{
-        font-size: 10px !important;
-    }
-    table {
-        width: 100%;
-    }
-</style>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarif Gerbang Sistem Tertutup</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+        body {
+            font-size: 5px;
+            margin: 0;
+            padding: 10px;
+        }
+        
+        p, table {
+            font-size: inherit;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td, th {
+            border: 1px solid black;
+            padding: 3px;
+            text-align: center;
+        }
+        @media print {
+            body {
+                font-size: 6px;
+            }
+        }
+        @media print and (max-width: 600px) {
+            body {
+                font-size: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
     <center>
-            <p style="font-weight: bold !important">TARIF GERBANG SISTEM TERTUTUP</p>
+        <p style="font-weight: bold;">TARIF GERBANG SISTEM TERTUTUP</p>
     </center>
-
     <p>
-        Ruas : {{ $gerbang->ruas_nama }}
-        <br>
-        Gerbang : {{ $gerbang->gerbang_nama }}
-        <br>
-        Revisi Tarif :{{ $dasar_tarif->mulai_berlaku}}
-        <br>
+        Ruas : {{ $gerbang->ruas_nama }}<br>
+        Gerbang : {{ $gerbang->gerbang_nama }}<br>
+        Revisi Tarif : {{ $dasar_tarif->mulai_berlaku }}<br>
         Metoda Bayar : Tunai/Umum
     </p>
     <table border="1" style="border-collapse: collapse" >
@@ -29,8 +57,6 @@
             </td>
 
             @php
-
-
             $cleanedString = trim($data[0]->tarif_inv, "[]");
             $arrayValue = explode(',', $cleanedString);
             $arrayValue = array_map('trim', $arrayValue);
@@ -56,18 +82,18 @@
         </tr>
         <tr style="font-weight: bold !important">
             @foreach ($arrayValue as $item)
-            <td style="min-width: 15px "> <center>1</center></td>
-            <td style="min-width: 15px "> <center>2</center></td>
-            <td style="min-width: 15px "> <center>3</center></td>
-            <td style="min-width: 15px "> <center>4</center></td>
-            <td style="min-width: 15px "> <center>5</center></td>
+            <td style="min-width: 5px "> <center>1</center></td>
+            <td style="min-width: 5px "> <center>2</center></td>
+            <td style="min-width: 5px "> <center>3</center></td>
+            <td style="min-width: 5px "> <center>4</center></td>
+            <td style="min-width: 5px "> <center>5</center></td>
             @endforeach
 
-            <td style="min-width: 15px "> <center>1</center></td>
-            <td style="min-width: 15px "> <center>2</center></td>
-            <td style="min-width: 15px "> <center>3</center></td>
-            <td style="min-width: 15px "> <center>4</center></td>
-            <td style="min-width: 15px "> <center>5</center></td>
+            <td style="min-width: 5px "> <center>1</center></td>
+            <td style="min-width: 5px "> <center>2</center></td>
+            <td style="min-width: 5px "> <center>3</center></td>
+            <td style="min-width: 5px "> <center>4</center></td>
+            <td style="min-width: 5px "> <center>5</center></td>
 
         </tr>
         @foreach ($data as $item2)
@@ -104,5 +130,5 @@
 
         
     </table>
-
-
+</body>
+</html>
