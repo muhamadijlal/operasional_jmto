@@ -284,31 +284,26 @@ class ManajemenTarifCT extends Controller
                 'judul' => 'Manajemen Tarif Exit',
                 'Cloums' => [
                     [
-
                         'title' => 'Nama Gerbang',
                         'data' => 'gerbang1',
                         'name' => 'gerbang.gerbang_nama',
                     ],
                     [
-
                         'title' => 'asal Gerbang',
                         'data' => 'asalGerbang',
                         'name' => 'gerbang_asal.gerbang_nama',
                     ],
                     [
-
                         'title' => 'Jenis',
                         'data' => 'jenis',
                         'name' => 'tbl_tarif_exit.jenis',
                     ],
                     [
-
                         'title' => 'Dasar Tarif',
                         'data' => 'dasar_tarif',
                         'name' => 'tbl_dasar_tarif.dasar_tarif',
                     ],
                     [
-
                         'title' => 'Golongan 1',
                         'data' => 'gol1',
                         'name' => 'tbl_tarif_exit.gol1',

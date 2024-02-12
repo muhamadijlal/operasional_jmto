@@ -1,9 +1,11 @@
 
 <style>
     p,table{
-        font-size: 11px !important;
+        font-size: 10px !important;
     }
-    
+    table {
+        width: 100%;
+    }
 </style>
 
     <center>
