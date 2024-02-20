@@ -1,44 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarif Gerbang Sistem Tertutup</title>
     <style>
-        @page {
-            size: A4 landscape;
-            margin: 0;
-        }
-        body {
-            font-size: 5px;
-            margin: 0;
-            padding: 10px;
-        }
-        
-        p, table {
-            font-size: inherit;
-        }
         table {
             width: 100%;
             border-collapse: collapse;
+            font-family:'Open Sans';
+            font-size: 8pt;
+      
         }
-        td, th {
+
+        td,
+        th {
             border: 1px solid black;
             padding: 3px;
             text-align: center;
         }
-        @media print {
-            body {
-                font-size: 6px;
-            }
+
+        .no-page-break {
+            page-break-inside: avoid !important;
         }
-        @media print and (max-width: 600px) {
-            body {
-                font-size: 5px;
-            }
-        }
+
+        .page-break {
+            page-break-before: always;
+        }   
     </style>
 </head>
+
 <body>
     <center>
         <p style="font-weight: bold;">TARIF GERBANG SISTEM TERTUTUP</p>
@@ -49,9 +41,13 @@
         Revisi Tarif : {{ $dasar_tarif->mulai_berlaku }}<br>
         Metoda Bayar : Tunai/Umum
     </p>
-    <table border="1" style="border-collapse: collapse" >
-        <tr style="font-weight: bold !important" >
-            <td rowspan="2" >Asal Gerbang</td>
+    <span id="tableLength"></span>
+    <br>
+    <span id="pageHeight"></span>
+    <br>
+    <table border="1" style="border-collapse: collapse">
+        <tr style="font-weight: bold !important">
+            <td rowspan="2">Asal Gerbang</td>
             <td rowspan="2">
                 Denda
             </td>
@@ -61,7 +57,7 @@
             $arrayValue = explode(',', $cleanedString);
             $arrayValue = array_map('trim', $arrayValue);
             $arrayValue = array_filter($arrayValue, function($value) {
-                return $value !== '00000';
+            return $value !== '00000';
             });
             @endphp
 
@@ -70,65 +66,109 @@
                 <center>
                     {{ $item }}
                 </center>
-            </td>                
+            </td>
             @endforeach
 
-            <td colspan="5">
+            <td colspan="5" class="no-page-break">
                 <center>
                     Total
 
                 </center>
-            </td>          
+            </td>
         </tr>
         <tr style="font-weight: bold !important">
             @foreach ($arrayValue as $item)
-            <td style="min-width: 5px "> <center>1</center></td>
-            <td style="min-width: 5px "> <center>2</center></td>
-            <td style="min-width: 5px "> <center>3</center></td>
-            <td style="min-width: 5px "> <center>4</center></td>
-            <td style="min-width: 5px "> <center>5</center></td>
+            <td >
+                <center>1</center>
+            </td>
+            <td >
+                <center>2</center>
+            </td>
+            <td >
+                <center>3</center>
+            </td>
+            <td >
+                <center>4</center>
+            </td>
+            <td >
+                <center>5</center>
+            </td>
             @endforeach
 
-            <td style="min-width: 5px "> <center>1</center></td>
-            <td style="min-width: 5px "> <center>2</center></td>
-            <td style="min-width: 5px "> <center>3</center></td>
-            <td style="min-width: 5px "> <center>4</center></td>
-            <td style="min-width: 5px "> <center>5</center></td>
+            <td >
+                <center>1</center>
+            </td>
+            <td >
+                <center>2</center>
+            </td>
+            <td >
+                <center>3</center>
+            </td>
+            <td >
+                <center>4</center>
+            </td>
+            <td >
+                <center>5</center>
+            </td>
 
         </tr>
+        @php $counter = 0; @endphp
         @foreach ($data as $item2)
-            <tr>
-                <td>{{ $item2->asalGerbang }}</td>
-                <td>
-                    <center>
-                    @if ($item2->jenis == '2' || $item2->jenis ==  '3')
-                        Ya
+        @if ($counter % 20 == 0 && $counter != 0)
+        <tr class="page-break"></tr>
+        @endif
+        <tr class="no-page-break">
+            <td>{{ $item2->asalGerbang }}</td>
+            <td>
+                <center>
+                    @if ($item2->jenis == '2' || $item2->jenis == '3')
+                    Ya
                     @else
-                        Tidak
+                    Tidak
                     @endif
                 </center>
-                </td>
-                @foreach ($arrayValue as $key => $value)
-                <td>{{ number_format(json_decode($item2->gol1_d)[$key] ?? 0, 0, ',', '.') }}</td>
-                <td>{{ number_format(json_decode($item2->gol2_d)[$key] ?? 0, 0, ',', '.') }}</td>
-                <td>{{ number_format(json_decode($item2->gol3_d)[$key] ?? 0, 0, ',', '.') }}</td>
-                <td>{{ number_format(json_decode($item2->gol4_d)[$key] ?? 0, 0, ',', '.') }}</td>
-                <td>{{ number_format(json_decode($item2->gol5_d)[$key] ?? 0, 0, ',', '.') }}</td>
+            </td>
+            @foreach ($arrayValue as $key => $value)
+            <td>{{ number_format(json_decode($item2->gol1_d)[$key] ?? 0, 0, ',', '.') }}</td>
+            <td>{{ number_format(json_decode($item2->gol2_d)[$key] ?? 0, 0, ',', '.') }}</td>
+            <td>{{ number_format(json_decode($item2->gol3_d)[$key] ?? 0, 0, ',', '.') }}</td>
+            <td>{{ number_format(json_decode($item2->gol4_d)[$key] ?? 0, 0, ',', '.') }}</td>
+            <td>{{ number_format(json_decode($item2->gol5_d)[$key] ?? 0, 0, ',', '.') }}</td>
             @endforeach
 
-                <td>{{ number_format($item2->gol1, 0, ',', '.') }}</td>
-                <td>{{ number_format($item2->gol2, 0, ',', '.') }}</td>
-                <td>{{ number_format($item2->gol3, 0, ',', '.') }}</td>
-                <td>{{ number_format($item2->gol4, 0, ',', '.') }}</td>
-                <td>{{ number_format($item2->gol5, 0, ',', '.') }}</td>
+            <td>{{ number_format($item2->gol1, 0, ',', '.') }}</td>
+            <td>{{ number_format($item2->gol2, 0, ',', '.') }}</td>
+            <td>{{ number_format($item2->gol3, 0, ',', '.') }}</td>
+            <td>{{ number_format($item2->gol4, 0, ',', '.') }}</td>
+            <td>{{ number_format($item2->gol5, 0, ',', '.') }}</td>
 
-            </tr>
-            <tr>
-
-            </tr>
+        </tr>
+        <tr class="no-page-break"></tr>
+        @php $counter++; @endphp
         @endforeach
-
-        
     </table>
 </body>
+<script>
+     window.onload = function() {
+            calculateTableLength();
+            calculatePageHeight();
+
+            window.addEventListener('resize', function() {
+                calculateTableLength();
+                calculatePageHeight();
+            });
+        }
+
+        function calculateTableLength() {
+            var table = document.querySelector('table');
+            var tableLength = table.clientHeight;
+            document.getElementById('tableLength').innerText = "Table Length: " + tableLength + "px";
+        }
+
+        function calculatePageHeight() {
+            var pageHeight = window.innerHeight;
+            document.getElementById('pageHeight').innerText = "Page Height: " + pageHeight + "px";
+        }
+</script>
+
 </html>

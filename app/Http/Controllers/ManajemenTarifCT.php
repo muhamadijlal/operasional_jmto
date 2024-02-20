@@ -723,7 +723,22 @@ class ManajemenTarifCT extends Controller
 
 
 
-        $pdf = Pdf::loadView('admin.pdfClose', $array)->setPaper('a4', 'landscape');
+        $pdf = PDF::loadView('admin.pdfClose', $array)->setPaper('a4', 'landscape');
+
+        // Set options for the PDF
+        $options = [
+            'isPhpEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'dpi' => 150,
+            'fontHeightRatio' => 1.0,
+            'isJavascriptEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'fitToPage' => true, // This option ensures that content fits the page
+        ];
+
+        $pdf->setOptions($options);
 
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
