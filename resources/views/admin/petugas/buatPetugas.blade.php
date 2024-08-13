@@ -218,7 +218,6 @@
                 emptyTable: "Tidak ada data yang tersedia"
                 // Atur pesan lain sesuai kebutuhan Anda
             },
-
             buttons: [{
                 extend: 'collection',
                 className: 'btn btn-label-primary dropdown-toggle mx-3',

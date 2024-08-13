@@ -2,11 +2,102 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\tbl_gerbang;
+use App\Models\tbl_jabatan;
+use App\Models\tbl_log_petugas;
+use App\Models\tbl_pegawai;
+use Yajra\DataTables\Facades\DataTables;
 
 class LogCT extends Controller
 {
     public function getLog(){
-        return 'soon';
+        if (request()->ajax()) {
+            $q = tbl_log_petugas::query();
+
+            return DataTables::of($q)
+            ->addColumn('jabatan', function ($row) {
+                $jabatan_id = $row->id_jabatan;
+
+                $data = tbl_jabatan::where('jabatan_id', $jabatan_id)->first();
+
+                $jabatan = $data->nama_jabatan;
+
+                return $jabatan;
+            })
+            ->addColumn('gerbang', function ($row) {
+                // Split the comma-separated IDs into an array
+                $gerbang_id = $row->gerbang_id;
+
+                // Retrieve related data from Table2Model based on the IDs
+                $data = tbl_gerbang::where('gerbang_id', $gerbang_id)->first();
+
+                // // Create a string to display the related data
+                $gerbang = $data ? $data->gerbang_nama : '';
+
+                return $gerbang;
+            })
+            ->addColumn('nama_petugas', function ($row) {
+                // Split the comma-separated IDs into an array
+                $npp_no = $row->npp_no;
+
+                // Retrieve related data from Table2Model based on the IDs
+                $data = tbl_pegawai::where('npp_no', $npp_no)->first();
+
+                // // Create a string to display the related data
+                $nama_petugas = $data ? $data->nama_pegawai : '';
+
+                return $nama_petugas;
+            })
+            ->make();
+        }
+
+        return view(
+            'admin.logs.Logs',
+            [
+                'judul' => 'Data Petugas',
+                'Columns' => [
+                    [
+                        'title' => 'NPP',
+                        'data' => 'npp_no',
+                        'name' => 'tbl_log_petugas.npp_no',
+                    ],
+                    [
+                        'title' => 'Nama',
+                        'data' => 'nama_petugas',
+                        'name' => 'nama_petugas',
+                    ],
+                    [
+                        'title' => 'Jabatan',
+                        'data' => 'jabatan',
+                        'name' => 'jabatan',
+                    ],
+                    [
+                        'title' => 'Gerbang',
+                        'data' => 'gerbang',
+                        'name' => 'gerbang',
+                    ],
+                    [
+                        'title' => 'Waktu',
+                        'data' => 'waktu_event',
+                        'name' => 'tbl_log_petugas.waktu_event',
+                    ],
+                    // [
+                    //     'title' => 'Kategori',
+                    //     'data' => '-',
+                    //     'name' => '-',
+                    // ],
+                    // [
+                    //     'title' => 'Event',
+                    //     'data' => '-',
+                    //     'name' => '-',
+                    // ],
+                    [
+                        'title' => 'Keterangan',
+                        'data' => 'keterangan',
+                        'name' => 'tbl_log_petugas.keterangan',
+                    ]
+                ]
+            ]
+        );
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BuatPetugasTambahStore;
 use App\Http\Requests\BuatPetugasUpdateStore;
 use App\Models\tbl_gerbang;
+use App\Models\tbl_jabatan;
 use App\Models\tbl_pegawai;
 use App\Models\tbl_pegawai2;
 use Illuminate\Http\Request;
@@ -180,7 +181,41 @@ class PetugasCT extends Controller
         if (request()->ajax()) {
             $q = tbl_pegawai::query()->where('jabatan_id', '!=', 1);
 
-            return DataTables::of($q)->make();
+            return DataTables::of($q)
+                ->addColumn('jabatan', function ($row) {
+                    $jabatan_id = $row->jabatan_id;
+
+                    $data = tbl_jabatan::where('jabatan_id', $jabatan_id)->first();
+
+                    $jabatan = $data->nama_jabatan;
+
+                    return $jabatan;
+                })
+                ->addColumn('penempatan', function ($row) {
+                    // Split the comma-separated IDs into an array
+                    $ids = explode(',', $row->penempatan_gerbang);
+
+                    // Retrieve related data from Table2Model based on the IDs
+                    $relatedData = tbl_gerbang::whereIn('gerbang_id', $ids)->pluck('gerbang_nama')->toArray();
+
+                    // Create a string to display the related data
+                    $penempatan = implode(', ', $relatedData);
+
+                    return $penempatan;
+                })
+                ->addColumn('gerbang', function ($row) {
+                    // Split the comma-separated IDs into an array
+                    $gerbang_id = $row->gerbang_id;
+
+                    // Retrieve related data from Table2Model based on the IDs
+                    $relatedData = tbl_gerbang::where('gerbang_id', $gerbang_id)->first();
+
+                    // // Create a string to display the related data
+                    $gerbang = $relatedData->gerbang_nama;
+
+                    return $gerbang;
+                })
+                ->make();
         }
 
         return view(
@@ -200,13 +235,13 @@ class PetugasCT extends Controller
                     ],
                     [
                         'title' => 'Gerbang',
-                        'data' => 'gerbang_id',
-                        'name' => 'tbl_pegawai.gerbang_id',
+                        'data' => 'gerbang',
+                        'name' => 'gerbang',
                     ],
                     [
                         'title' => 'Jabatan',
-                        'data' => 'jabatan_id',
-                        'name' => 'tbl_pegawai.jabatan_id',
+                        'data' => 'jabatan',
+                        'name' => 'jabatan',
                     ],
                     [
                         'title' => 'Kode Tugas',
@@ -215,8 +250,8 @@ class PetugasCT extends Controller
                     ],
                     [
                         'title' => 'Penempatan',
-                        'data' => 'penempatan_gerbang',
-                        'name' => 'tbl_pegawai.penempatan_gerbang',
+                        'data' => 'penempatan',
+                        'name' => 'penempatan',
                     ]
                 ]
             ]

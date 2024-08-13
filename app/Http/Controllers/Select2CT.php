@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\tbl_dasar_tarif;
 use App\Models\tbl_gerbang;
+use App\Models\tbl_jabatan;
 use App\Models\tbl_pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -73,6 +74,12 @@ class Select2CT extends Controller
     public function getNamaPersonil()
     {
         $data = tbl_pegawai::where('jabatan_id', 2)->where('activated', 1)->get();
+        return response()->json($data);
+    }
+
+    public function getJabatan()
+    {
+        $data = tbl_jabatan::get();
         return response()->json($data);
     }
 }

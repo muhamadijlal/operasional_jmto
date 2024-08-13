@@ -97,6 +97,7 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
     });
 
     Route::get('get-gerbang-data', [Select2CT::class, 'getGerbang']);
+    Route::get('get-jabatan-data', [Select2CT::class, 'getJabatan']);
     Route::get('get-nama-kspt', [Select2CT::class, 'getNamaKspt']);
     Route::get('get-nama-personil', [Select2CT::class, 'getNamaPersonil']);
     Route::get('get-gerbang-data-open', [Select2CT::class, 'getGerbangOpen']);
