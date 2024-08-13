@@ -259,7 +259,6 @@
                                             </li>
                                         </ul>
                                     </li>
-
                                 </ul>
                             </li>
 
@@ -276,10 +275,28 @@
                                           <div>Buat Petugas</div>
                                         </a>
                                     </li>
-
+                                    <li class="menu-item {{ request()->is('admin/petugas/buat-kartu-ops') ? 'active' : '' }}">
+                                        <a href="/admin/petugas/buat-kartu-ops" class="menu-link" >
+                                          <i class="menu-icon tf-icons ti ti-pencil"></i>
+                                          <div>Buat Kartu Ops</div>
+                                        </a>
+                                    </li>
+                                    <li class="menu-item {{ request()->is('admin/petugas/data-petugas') ? 'active' : '' }}">
+                                        <a href="/admin/petugas/data-petugas" class="menu-link" >
+                                          <i class="menu-icon tf-icons ti ti-pencil"></i>
+                                          <div>Data Petugas</div>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
-                            
+                            <li class="menu-item {{ request()->is('admin/log') ? 'active' : '' }}">
+                                {{-- {{ isset($menu->submenu) ? 'menu-link menu-toggle' : 'menu-link' }} --}}
+                                <a href="/admin/logs" class="menu-link" >
+                                    <i class="menu-icon fa-solid fa-clock-rotate-left"></i>
+                                  <div>Logs</div>
+                                </a>
+                            </li>
+
                         </ul>
                     </div>
                   </aside>

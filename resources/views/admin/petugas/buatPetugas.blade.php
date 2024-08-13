@@ -60,8 +60,7 @@
                 </div>
                 <div class="form-group mt-3">
                     <label for="nama_petugas">Nama Petugas (Max 15 Karakter):</label>
-                    <input type="text" maxlength="15" class="form-control " id="nama_petugas"
-                        placeholder="Nama Petugas">
+                    <input type="text" maxlength="15" class="form-control " id="nama_petugas" placeholder="Nama Petugas">
                 </div>
                 <div class="form-group mt-3">
                     <label for="npp">NPP</label>
@@ -194,7 +193,6 @@
                 url: baseUrl, // Ganti dengan URL yang sesuai
                 type: 'GET',
                 error: function (xhr, error, code) {}
-
             },
             columns: dataObject,
             displayLength: 10,

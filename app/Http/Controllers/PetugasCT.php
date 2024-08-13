@@ -14,8 +14,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PetugasCT extends Controller
 {
-    //
-
     public function BuatPetugas(Request $request)
     {
 
@@ -58,6 +56,7 @@ class PetugasCT extends Controller
                 })
                 ->make();
         }
+
         return view(
             'admin.petugas.buatPetugas',
             [
@@ -126,8 +125,6 @@ class PetugasCT extends Controller
         return response()->json(compact('model'));
     }
 
-
-
     public function BuatPetugasUpdate(BuatPetugasUpdateStore $request, $id)
     {
 
@@ -173,5 +170,13 @@ class PetugasCT extends Controller
 
 
         return response()->json(['code' => 200, 'message' => 'Success Syincron Data']);
+    }
+
+    public function BuatKartuOps(){
+        return view("admin.petugas.BuatKartuOps");
+    }
+
+    public function DataPetugas(){
+        return 'soon';
     }
 }

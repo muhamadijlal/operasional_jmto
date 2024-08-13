@@ -4,25 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\tbl_dasar_tarif;
 use App\Models\tbl_gerbang;
+use App\Models\tbl_pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
 class Select2CT extends Controller
 {
-    //
-
     public function getGerbang(Request $request)
     {
-        // if ($request->has('q')) {
-        $cari = $request->q;
         $data = tbl_gerbang::whereRaw("(gerbang_nama LIKE '%" . $request->get('q') . "%')")
+            ->where('status', 1)
             ->orderBy('gerbang_nama', 'asc')
             ->get();
         return response()->json($data);
-
-        // $data = tbl_gerbang::all();
-        // return response()->json($data);
-        // }
     }
 
     public function getGerbangOpen(Request $request)
@@ -67,6 +61,18 @@ class Select2CT extends Controller
     {
 
         $data = tbl_gerbang::where('gerbang_id', '!=', $id)->get();
+        return response()->json($data);
+    }
+
+    public function getNamaKspt()
+    {
+        $data = tbl_pegawai::where('jabatan_id', 2)->where('activated', 1)->get();
+        return response()->json($data);
+    }
+
+    public function getNamaPersonil()
+    {
+        $data = tbl_pegawai::where('jabatan_id', 2)->where('activated', 1)->get();
         return response()->json($data);
     }
 }

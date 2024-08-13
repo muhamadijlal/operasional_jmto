@@ -16,10 +16,8 @@ class AuthCT extends Controller
         return view('auth.login', compact('ruas'));
     }
 
-
     public function loginAction(LoginActionR $request)
     {
-
         if (Auth::attempt(array(
             'npp_no' => $request->npp,
             'password' => $request->password,

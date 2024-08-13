@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminCT;
 use App\Http\Controllers\AuthCT;
 use App\Http\Controllers\DasarTarifCT;
+use App\Http\Controllers\LogCT;
 use App\Http\Controllers\ManajemenTarifCT;
 use App\Http\Controllers\PetugasCT;
 use App\Http\Controllers\Select2CT;
@@ -73,15 +74,31 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
     });
 
     Route::group(['prefix' => 'petugas'], function () {
+        // buat petugas route
         Route::get('buat-petugas', [PetugasCT::class, 'BuatPetugas']);
         Route::post('buat-petugas/tambah', [PetugasCT::class, 'BuatPetugasTambah']);
         Route::get('buat-petugas/delete/{id}', [PetugasCT::class, 'BuatPetugasDelete']);
         Route::get('buat-petugas/edit/{id}', [PetugasCT::class, 'BuatPetugasEdit']);
         Route::post('buat-petugas/update/{id}', [PetugasCT::class, 'BuatPetugasUpdate']);
         Route::get('buat-petugas/sycron', [PetugasCT::class, 'BuatPetugasSycron']);
+
+        // buat kartu ops
+        Route::get("buat-kartu-ops", [PetugasCT::class, 'BuatKartuOps']);
+
+        // data petugas
+        Route::get("data-petugas", [PetugasCT::class, 'DataPetugas']);
+        
+    });
+
+    Route::group(['prefix' => 'logs'], function () {
+        // Logs route
+        Route::get('/', [LogCT::class, 'getLog']);
+        
     });
 
     Route::get('get-gerbang-data', [Select2CT::class, 'getGerbang']);
+    Route::get('get-nama-kspt', [Select2CT::class, 'getNamaKspt']);
+    Route::get('get-nama-personil', [Select2CT::class, 'getNamaPersonil']);
     Route::get('get-gerbang-data-open', [Select2CT::class, 'getGerbangOpen']);
     Route::get('get-gerbang-data-exit', [Select2CT::class, 'getGerbangExit']);
 
