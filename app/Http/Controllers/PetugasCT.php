@@ -14,7 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PetugasCT extends Controller
 {
-    public function BuatPetugas(Request $request)
+    public function BuatPetugas()
     {
 
         if (request()->ajax()) {
@@ -177,6 +177,49 @@ class PetugasCT extends Controller
     }
 
     public function DataPetugas(){
-        return 'soon';
+        if (request()->ajax()) {
+            $q = tbl_pegawai::query()->where('jabatan_id', '!=', 1);
+
+            return DataTables::of($q)->make();
+        }
+
+        return view(
+            'admin.petugas.DataPetugas',
+            [
+                'judul' => 'Data Petugas',
+                'Columns' => [
+                    [
+                        'title' => 'NPP Petugas',
+                        'data' => 'npp_no',
+                        'name' => 'tbl_pegawai.npp_no',
+                    ],
+                    [
+                        'title' => 'Nama Petugas',
+                        'data' => 'nama_pegawai',
+                        'name' => 'tbl_pegawai.nama_pegawai',
+                    ],
+                    [
+                        'title' => 'Gerbang',
+                        'data' => 'gerbang_id',
+                        'name' => 'tbl_pegawai.gerbang_id',
+                    ],
+                    [
+                        'title' => 'Jabatan',
+                        'data' => 'jabatan_id',
+                        'name' => 'tbl_pegawai.jabatan_id',
+                    ],
+                    [
+                        'title' => 'Kode Tugas',
+                        'data' => 'kode_tugas',
+                        'name' => 'tbl_pegawai.kode_tugas',
+                    ],
+                    [
+                        'title' => 'Penempatan',
+                        'data' => 'penempatan_gerbang',
+                        'name' => 'tbl_pegawai.penempatan_gerbang',
+                    ]
+                ]
+            ]
+        );
     }
 }
