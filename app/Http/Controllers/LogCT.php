@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\tbl_gerbang;
 use App\Models\tbl_jabatan;
-use App\Models\tbl_log_petugas;
+use App\Models\tbl_log_operational;
 use App\Models\tbl_pegawai;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -12,7 +12,7 @@ class LogCT extends Controller
 {
     public function getLog(){
         if (request()->ajax()) {
-            $q = tbl_log_petugas::query();
+            $q = tbl_log_operational::query();
 
             return DataTables::of($q)
             ->addColumn('jabatan', function ($row) {
@@ -42,7 +42,6 @@ class LogCT extends Controller
 
                 // Retrieve related data from Table2Model based on the IDs
                 $data = tbl_pegawai::where('npp_no', $npp_no)->first();
-
                 // // Create a string to display the related data
                 $nama_petugas = $data ? $data->nama_pegawai : '';
 
@@ -59,7 +58,7 @@ class LogCT extends Controller
                     [
                         'title' => 'NPP',
                         'data' => 'npp_no',
-                        'name' => 'tbl_log_petugas.npp_no',
+                        'name' => 'tbl_log_operasional.npp_no',
                     ],
                     [
                         'title' => 'Nama',
@@ -78,19 +77,19 @@ class LogCT extends Controller
                     ],
                     [
                         'title' => 'Waktu',
-                        'data' => 'waktu_event',
-                        'name' => 'tbl_log_petugas.waktu_event',
+                        'data' => 'waktu',
+                        'name' => 'tbl_log_operasional.waktu',
                     ],
-                    // [
-                    //     'title' => 'Kategori',
-                    //     'data' => '-',
-                    //     'name' => '-',
-                    // ],
-                    // [
-                    //     'title' => 'Event',
-                    //     'data' => '-',
-                    //     'name' => '-',
-                    // ],
+                    [
+                        'title' => 'Kategori',
+                        'data' => 'kategori',
+                        'name' => 'tbl_log_operasional.kategori',
+                    ],
+                    [
+                        'title' => 'Event',
+                        'data' => 'event',
+                        'name' => 'tbl_log_operasional.event',
+                    ],
                     [
                         'title' => 'Keterangan',
                         'data' => 'keterangan',

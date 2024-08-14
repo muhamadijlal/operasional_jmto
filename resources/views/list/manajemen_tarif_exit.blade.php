@@ -770,27 +770,22 @@
             });
         }
 
-
         $("#waktu").datetimepicker({
             format: 'Y-m-d H:i:s',
             theme: 'white'
         });
+
         $("#waktuImport").datetimepicker({
             format: 'Y-m-d H:i:s',
             theme: 'white'
         });
 
-
-
-
         var dt_filter_table = $('.datatables-basic');
         var dataObject = eval('<?php echo json_encode($Cloums); ?>');
-
 
         $('.datatables-basic-open thead tr').clone(true).appendTo('.datatables-basic-open thead');
 
         $('#gerbang').on('change', function () {
-
 
             if ($.fn.DataTable.isDataTable('#tbl_list')) {
                 $('#tbl_list').DataTable().destroy();
@@ -834,7 +829,6 @@
             });
 
         });
-
 
         $('.datatables-basic').on('click', '.delete', function () {
             var url = '{{ url()->current() }}/delete/' + $(this).data('url') + '/' + $('#gerbang')

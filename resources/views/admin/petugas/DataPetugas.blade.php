@@ -33,13 +33,12 @@
         <select name="gerbang" id="gerbang" style="width: 300px;" class="select2 form-control"></select>
       </div>
       <div class="form-group">
-        <select name="jabatan" id="jabatan" style="width: 300px;" class="select2 form-control">
-          <option value="*">ALL</option>
-        </select>
+        <select name="jabatan" id="jabatan" style="width: 300px;" class="select2 form-control"></select>
       </div>
 
-      <button type="button" class="btn btn-primary">Pilih</button>
+      <button id="submit-btn" type="button" class="btn btn-primary">Pilih</button>
     </div>
+
     <div class="p-3 table-responsive">
         <table id="tbl_list" class="datatables-basic table table-striped table-bordered">
             <thead>
@@ -62,33 +61,45 @@
 <script>
   baseUrl = '{{ url()->current() }}';
   var dataObject = eval('<?php echo json_encode($Columns); ?>')
+  var table = ''
 
   $(document).ready(function () {
-    var dt_filter = $('#tbl_list').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: baseUrl, // Ganti dengan URL yang sesuai
-            type: 'GET',
-            error: function (xhr, error, code) {}
-        },
-        columns: dataObject,
-        displayLength: 10,
-        scrollX: true,
-        scrollCollapse: true,
-        order: [
-            [0, 'asc']
-        ],
-        orderCellsTop: true,
-        lengthMenu: [
-            [10, 25, 50, -1],
-            ['10 rows', '25 rows', '50 rows', 'Show all']
-        ],
-        language: {
-            emptyTable: "Tidak ada data yang tersedia"
-            // Atur pesan lain sesuai kebutuhan Anda
-        }
+    dataTable()
+
+    $('#submit-btn').on('click', function () {
+      table.ajax.reload();
     });
   });
+
+  function dataTable(){
+    table = $('#tbl_list').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: baseUrl,
+        type: 'GET',
+        data: function (d) {
+          // Add additional parameters to the request
+          d.gerbang_id = $('#gerbang').val();
+          d.jabatan_id = $('#jabatan').val();
+        }
+      },
+      columns: dataObject,
+      displayLength: 10,
+      scrollX: true,
+      scrollCollapse: true,
+      order: [
+        [0, 'desc']
+      ],
+      orderCellsTop: true,
+      lengthMenu: [
+        [10, 25, 50, -1],
+        ['10 rows', '25 rows', '50 rows', 'Show all']
+      ],
+      language: {
+        emptyTable: "Tidak ada data yang tersedia"
+      }
+    });
+  }
 </script>
 @endsection

@@ -49,25 +49,25 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: baseUrl, // Ganti dengan URL yang sesuai
-            type: 'GET',
-            error: function (xhr, error, code) {}
+          url: baseUrl, // Ganti dengan URL yang sesuai
+          type: 'GET',
+          error: function (xhr, error, code) {}
         },
         columns: dataObject,
         displayLength: 10,
         scrollX: true,
         scrollCollapse: true,
         order: [
-            [0, 'asc']
+          [4, 'desc']
         ],
         orderCellsTop: true,
         lengthMenu: [
-            [10, 25, 50, -1],
-            ['10 rows', '25 rows', '50 rows', 'Show all']
+          [10, 25, 50, -1],
+          ['10 rows', '25 rows', '50 rows', 'Show all']
         ],
         language: {
-            emptyTable: "Tidak ada data yang tersedia"
-            // Atur pesan lain sesuai kebutuhan Anda
+          emptyTable: "Tidak ada data yang tersedia"
+          // Atur pesan lain sesuai kebutuhan Anda
         }
     });
   });

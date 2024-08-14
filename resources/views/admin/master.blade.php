@@ -263,7 +263,6 @@
                             </li>
 
                             <li class="menu-item {{ request()->is('admin/petugas/*') ? 'active' : '' }}">
-                                {{-- {{ isset($menu->submenu) ? 'menu-link menu-toggle' : 'menu-link' }} --}}
                                 <a href="#" class="menu-link menu-toggle" >
                                   <i class="menu-icon tf-icons ti ti-user"></i>
                                   <div>Petugas</div>
@@ -290,13 +289,11 @@
                                 </ul>
                             </li>
                             <li class="menu-item {{ request()->is('admin/logs') ? 'active' : '' }}">
-                                {{-- {{ isset($menu->submenu) ? 'menu-link menu-toggle' : 'menu-link' }} --}}
                                 <a href="/admin/logs" class="menu-link" >
                                     <i class="menu-icon fa-solid fa-clock-rotate-left"></i>
                                   <div>Logs</div>
                                 </a>
                             </li>
-
                         </ul>
                     </div>
                   </aside>

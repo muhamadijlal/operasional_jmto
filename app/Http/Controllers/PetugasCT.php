@@ -179,7 +179,13 @@ class PetugasCT extends Controller
 
     public function DataPetugas(){
         if (request()->ajax()) {
-            $q = tbl_pegawai::query()->where('jabatan_id', '!=', 1);
+            $q = tbl_pegawai::query();
+
+            if (request()->filled('jabatan_id') && request()->filled('gerbang_id')) {
+                $q->where('gerbang_id', request()->gerbang_id)->where('jabatan_id', request()->jabatan_id);
+            } else {
+                $q->where('jabatan_id', '!=', 1);
+            }
 
             return DataTables::of($q)
                 ->addColumn('jabatan', function ($row) {
