@@ -12,15 +12,15 @@
       <select name="kategori" id="kategori" style="width: 300px;" class="form-control">
         <option value="" disabled selected>-- Pilih Kategori --</option>
         <option value="*">All Kategori</option>
-        <option value="petugas">Petugas</option>
-        <option value="tarif">Tarif</option>
-        <option value="kartu_dinas">kartu Dinas</option>
-        <option value="kartu_passpull">kartu PassPull</option>
-        <option value="blacklist">Blacklist</option>
+        <option value="1">Petugas</option>
+        <option value="2">Tarif</option>
+        <option value="3">kartu Dinas</option>
+        <option value="4">kartu PassPull</option>
+        <option value="5">Blacklist</option>
       </select>
     </div>
 
-    <button type="button" class="btn btn-primary">Pilih</button>
+    <button type="button" id="submit-btn" class="btn btn-primary">Pilih</button>
   </div>
 
   <div class="p-3 table-responsive">
@@ -43,33 +43,44 @@
 <script>
   baseUrl = '{{ url()->current() }}';
   var dataObject = eval('<?php echo json_encode($Columns); ?>')
+  var table = ''
 
   $(document).ready(function () {
-    var dt_filter = $('#tbl_list').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-          url: baseUrl, // Ganti dengan URL yang sesuai
-          type: 'GET',
-          error: function (xhr, error, code) {}
-        },
-        columns: dataObject,
-        displayLength: 10,
-        scrollX: true,
-        scrollCollapse: true,
-        order: [
-          [4, 'desc']
-        ],
-        orderCellsTop: true,
-        lengthMenu: [
-          [10, 25, 50, -1],
-          ['10 rows', '25 rows', '50 rows', 'Show all']
-        ],
-        language: {
-          emptyTable: "Tidak ada data yang tersedia"
-          // Atur pesan lain sesuai kebutuhan Anda
-        }
+    dataTable()
+
+    $('#submit-btn').on('click', function () {
+      table.ajax.reload();
     });
   });
+
+  function dataTable(){
+    table = $('#tbl_list').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: baseUrl, // Ganti dengan URL yang sesuai
+        type: 'GET',
+        data: function(d){
+          d.kategori_id = $("#kategori").val();
+        }
+      },
+      columns: dataObject,
+      displayLength: 10,
+      scrollX: true,
+      scrollCollapse: true,
+      order: [
+        [4, 'desc']
+      ],
+      orderCellsTop: true,
+      lengthMenu: [
+        [10, 25, 50, -1],
+        ['10 rows', '25 rows', '50 rows', 'Show all']
+      ],
+      language: {
+        emptyTable: "Tidak ada data yang tersedia"
+        // Atur pesan lain sesuai kebutuhan Anda
+      }
+    });
+  }
 </script>
 @endsection

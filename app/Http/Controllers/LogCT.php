@@ -11,8 +11,13 @@ use Yajra\DataTables\Facades\DataTables;
 class LogCT extends Controller
 {
     public function getLog(){
+
         if (request()->ajax()) {
             $q = tbl_log_operational::query();
+
+            if(request()->filled('kategori_id') && request()->kategori_id != '*') {
+                $q->where('kategori', request()->kategori_id);
+            }
 
             return DataTables::of($q)
             ->addColumn('jabatan', function ($row) {
@@ -46,6 +51,33 @@ class LogCT extends Controller
                 $nama_petugas = $data ? $data->nama_pegawai : '';
 
                 return $nama_petugas;
+            })
+            ->addColumn('kategori', function ($row) {
+                // Split the comma-separated IDs into an array
+                $kategori_id = $row->kategori;
+
+                switch ($kategori_id) {
+                    case 1:
+                        $kategori = 'Petugas';
+                        break;
+                    case 2:
+                        $kategori = 'Tarif';
+                        break;
+                    case 3:
+                        $kategori = 'Kartu Dinas';
+                        break;
+                    case 4:
+                        $kategori = 'Kartu Pass Pull';
+                        break;
+                    case 5:
+                        $kategori = 'Blacklist';
+                        break;
+                    default:
+                        $kategori = 'UNKNOWNN';
+                        break;
+                }
+
+                return $kategori;
             })
             ->make();
         }
@@ -83,7 +115,7 @@ class LogCT extends Controller
                     [
                         'title' => 'Kategori',
                         'data' => 'kategori',
-                        'name' => 'tbl_log_operasional.kategori',
+                        'name' => 'kategori',
                     ],
                     [
                         'title' => 'Event',
