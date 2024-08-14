@@ -39,7 +39,7 @@ $('#nama_kspt').select2({
     placeholder: '-- Silahkan Pilih Petugas --'
 });
 
-$('#nama_personil').select2({
+$('#nama_plt').select2({
     ajax: {
         url: '/admin/get-nama-personil', 
         dataType: 'json',
@@ -64,7 +64,7 @@ $('#nama_kspt').on('change', function(){
     $('#npp_kspt').val(npp_no)
 });
 
-$('#nama_personil').on('change', function(){
-    var npp_no =  $('#nama_personil').val();
-    $('#npp_personil').val(npp_no)
+$('#nama_plt').on('change', function(){
+    var npp_no =  $('#nama_plt').val();
+    $('#npp_plt').val(npp_no)
 });
