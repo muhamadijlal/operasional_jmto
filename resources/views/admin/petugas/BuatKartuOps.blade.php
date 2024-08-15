@@ -186,146 +186,112 @@
 <script src="{{ asset('assets/js/admin/petugas.js') }}"></script>
 <script src="{{ asset('assets/js/admin/clientapi.js') }}"></script>
 <script>
-var com = '';
-var cst = false;
-var tipe_cst = '';
-var curr_uuid = '';
-var status = false;
-var have_card = false;
-var write_status = false;
-var api = IOTClientService;
-// var kode = $('#kode').val();
+  // Use the IOTClientService API
+  $( document ).ready(function() {
+    var api = IOTClientService;
+    var status = false;
+    var write_status = false;
 
-$("#btnService").on('click', function(){         
-  var fileUrl = "{{ asset('assets/file/ClientService.exe') }}";
-  // Now you can use this URL in JavaScript
-  location.href = fileUrl;
-});
-
-$(document).ready(function() {
-  api.onconnect = function(){
-    status = true;
-  };
-
-  api.ondisconnect = function(){
-    status = false;
-  };
-
-  api.onlog = function(log){
-    if(log == '[*] disconnected')
-    {
-      $("#com i").removeClass("text-success").addClass("text-danger");
-      $("#cst i").removeClass("text-success").addClass("text-danger");
-      $("#cst_type" ).html('');
-      $("#service i").removeClass("text-success").addClass("text-danger");
-      $("#uid").html('?');
-      write_aktif(false);
-      // write_status = false;
+    function write_aktif(s) {
+      $('#btnTulis').prop('disabled', !s);
+      write_status = s;
     }
-    else
-    {
-      $("#service i").removeClass("text-danger").addClass("text-success");
-      // write_aktif(true);           
-      // write_status = true;
-    }
-  };
 
-  api.onmessage = function(msg){
-    if ('active' in msg){
-      if (msg.active != cst){
-        cst = msg.active;
-        if (cst){
-          $("#cst i").removeClass("text-danger").addClass("text-success");
-          $("#cst_type").html(': '+ msg.type);
+    // Set up callbacks
+    api.onconnect = function() {
+      console.log("WebSocket connected");
+      status = true;
+    };
+
+    api.ondisconnect = function() {
+      console.log("WebSocket disconnected");
+      status = false;
+    };
+
+    api.onlog = function(log) {
+      console.log("Log:", log);
+
+      if(log == '[*] disconnected') {
+        $("#com i").removeClass("text-success").addClass("text-danger");
+        $("#cst i").removeClass("text-success").addClass("text-danger");
+        $("#cst_type" ).html('');
+        $("#service i").removeClass("text-success").addClass("text-danger");
+        $("#uid").html('?');
+        write_aktif(false);
+        // write_status = false;
+      } else {
+        $("#service i").removeClass("text-danger").addClass("text-success");
+        // write_aktif(true);           
+        // write_status = true;
+      }
+    };
+
+    var cst = false;
+    var have_card = false;
+    var com = '';
+    var tipe_cst = '';
+    var curr_uuid = '';
+    
+    api.onmessage = function(msg) {
+      console.log("Message received:", msg);
+
+      if ('active' in msg) {
+        if (msg.active != cst) {
+          cst = msg.active;
+          if (cst){
+            $("#cst i").removeClass("text-danger").addClass("text-success");
+            $("#cst_type").html(': '+ msg.type);
+            //write_aktif(true);
+            //write_status=true;
+          } else {
+            $("#cst i").removeClass("text-success").addClass("text-danger");
+            $("#cst_type" ).html('');
+            $("#uid" ).html('?');
+            write_aktif(false);
+            //write_status=false;
+          }
+        }
+        if (!msg.active) {
+          msg.havecard=false;
+        }
+      }
+
+      if ('com' in msg) {
+        if(msg.com != com) {
+          console.log('BuatKartuops:277');
+          
+          $("#com i").removeClass("text-danger").addClass("text-success");
+          $("#com i + span").text(msg.com)
           //write_aktif(true);
           //write_status=true;
-        }
-        else
-        {
-          $("#cst i").removeClass("text-success").addClass("text-danger");
-          $("#cst_type" ).html('');
+        } else {
+          console.log('BuatKartuops:234');
+          $("#com i").removeClass("text-success").addClass("text-danger");
           $("#uid" ).html('?');
           write_aktif(false);
           //write_status=false;
         }
       }
-      if (!msg.active){
-        msg.havecard=false;
-      }
-    }
 
-    if ('com' in msg){
-      if(msg.com != com)
-      {
-        console.log('BuatKartuops:277');
-        
-        $("#com i").removeClass("text-danger").addClass("text-success");
-        $("#com i + span").text(msg.com)
-        //write_aktif(true);
-        //write_status=true;
-      }
-      else
-      {
-        console.log('BuatKartuops:234');
-        $("#com i").removeClass("text-success").addClass("text-danger");
-        $("#uid" ).html('?');
-        write_aktif(false);
-        //write_status=false;
-      }
-    }
-
-    if ('havecard' in msg){
-      if(msg.uid != curr_uuid)
-      {
-        curr_uuid = msg.uid;
-        if(curr_uuid)
-        {
-          $("#uid").html(': ' + curr_uuid);
-          showPaspul();
-          write_aktif(true);
-        }
-        else
-        {
-          write_aktif(false);
-          $("#uid" ).html(' -');
-          $('#btnRead').prop('disabled',true);
+      if ('havecard' in msg) {
+        if(msg.uid != curr_uuid) {
+          curr_uuid = msg.uid;
+          if(curr_uuid) {
+            $("#uid").html(': ' + curr_uuid);
+            showPaspul();
+            write_aktif(true);
+          } else {
+            write_aktif(false);
+            $("#uid").html(' -');
+            $('#btnRead').prop('disabled',true);
+          }
         }
       }
     }
 
     api.open();
 
-    // $("#btnStatus").click(function(){
-    //   $("#petugas-modal-tittle").html('Status Reader'); 
-    //   $.ajax({
-    //       url:"http://localhost:2929/status",
-    //       method:"GET",
-    //       beforeSend: function() { 
-    //           $.Toast.showToast({                       
-    //               "title":"Mohon Tunggu, Proses Sedang Berlangsung",                       
-    //               "icon":"loading",
-    //               "duration": 5000                      
-    //           });
-    //       },
-    //       success:function(response)
-    //       {                    
-    //           $.Toast.hideToast();
-    //           $('#response').attr('rows', 4);
-    //           $("#response").val(JSON.stringify(response.data));  
-    //           $("#kartuOperasionalModal").modal('show');
-    //       },
-    //       error: function (error) {
-    //           $.Toast.hideToast();
-    //           $.Toast.showToast({                       
-    //               "title":"Terdapat Kesalahan, Reader Tidak Terhubung",                       
-    //               "icon":"error",                        
-    //               "duration": 5000                      
-    //           });
-    //       }
-    //   });              
-    
-    
-    $("#btnRead").click(function(){
+    $("#btnRead").click(function() {
       $("#petugas-modal-tittle").html('Info Kartu');   
       var data = document.getElementById('btnRead').datapaspul;
       //console.log(data[0]);
@@ -367,25 +333,23 @@ $(document).ready(function() {
       $("#kartuOperasionalModal").modal('show');
     });
 
-    async function showPaspul()
-    {
+    async function showPaspul() {
       var data= await api.read_sector(1,'A','0A1B2C3D4E5F');
-      if(data){
+      if(data) {
         //console.log(data);
         api.beep();
         api.beep();
         $('#btnRead').prop('disabled',false);
         //window.data_paspul=data;
         document.getElementById('btnRead').datapaspul = data;
-      }else
-      {
+      } else {
         console.log('Bukan Kartu PassPull');
         api.beep();
         $('#btnRead').prop('disabled',true);
       }
     }
 
-    $("#btnTulis").click(function(){
+    $("#btnTulis").click(function() {
       var blok0='';
       var blok1='';
       var blok2='';
@@ -468,19 +432,19 @@ $(document).ready(function() {
       blok2 += dataToHex(npp_plt,6);
       //Nama KSPT
       blok2 += dataToHex(str2hex(nama_plt),26);
+    
 
-      (async function(){
+      (async function() {
         var non_paspul = await api.auth(1,'A','0A1B2C3D4E5F');
-        if (!non_paspul){
+        if (!non_paspul) {
           var kunci2 = await api.auth(1,'A','FFFFFFFFFFFF');
 
-          if(!kunci2){
+          if(!kunci2) {
             kunci2 = await api.auth(1,'A','000000000000');
           }
 
-          if (kunci2){
-            if(!(await api.write(7,'0A1B2C3D4E5F'+'FF078069'+'0A1B2C3D4E5F')))
-            {
+          if (kunci2) {
+            if(!(await api.write(7,'0A1B2C3D4E5F'+'FF078069'+'0A1B2C3D4E5F'))) {
               Swal.fire(
                 'Terdapat Kesalahan!',
                 'Gagal Write Key',
@@ -490,9 +454,7 @@ $(document).ready(function() {
               api.beep();
               return;
             }
-          }
-          else
-          {
+          } else {
             Swal.fire(
               'Terdapat Kesalahan!',
               'Kartu Tidak Dapat Digunakan Lagi',
@@ -504,8 +466,7 @@ $(document).ready(function() {
           }
         }
 
-        if(await api.write_sector(1,'A','0A1B2C3D4E5F',blok0,blok1,blok2))
-        {
+        if(await api.write_sector(1,'A','0A1B2C3D4E5F',blok0,blok1,blok2)) {
           Swal.fire(
             'Berhasil',
             'Kartu Berhasil Ditulis',
@@ -514,9 +475,7 @@ $(document).ready(function() {
 
           api.beep();
           showPaspul();
-        }
-        else
-        {
+        } else {
           Swal.fire(
             'Terdapat Kesalahan!',
             'Kartu Gagal Ditulis',
@@ -527,16 +486,15 @@ $(document).ready(function() {
         }
       })();
     });
-  }
-});
 
-  function write_aktif(s){
-    $('#btnTulis').prop('disabled', !s);
-    write_status = s;
-  }
+    $("#btnService").on('click', function(){         
+      var fileUrl = "{{ asset('assets/file/ClientService.exe') }}";
+      // Now you can use this URL in JavaScript
+      location.href = fileUrl;
+    });
+  });  
 
-  function strReplace(data)
-  {
+  function strReplace(data) {
     l = data.length;
     c = data.indexOf("[");
     s = data.substring(0, c);
@@ -544,21 +502,22 @@ $(document).ready(function() {
     return s;
   }
 
-  function dataToHex(data,panjang)
-  {
+  function dataToHex(data,panjang) {
     var hasil='';
-    if(data.length == panjang){
+
+    if(data.length == panjang) {
       hasil = data;
     } 
-    else if(data.length<panjang){
+
+    else if(data.length<panjang) {
       var snol='';
-      for (var i = 1; i <= panjang - data.length; i++) 
-      {
+
+      for (var i = 1; i <= panjang - data.length; i++) {
         snol += '0';
       }
+
       hasil = snol + data;
-    }else if(data.length>panjang)
-    {
+    }else if(data.length>panjang) {
       hasil=data.substring(0, panjang);
     }
     
@@ -575,81 +534,41 @@ $(document).ready(function() {
     return hex;
   }
 
-  function str2hex(str){
+  function str2hex(str) {
     var out = "";
-    for (var i=0; i<str.length; i++){
-    out += dexhex2(str.charCodeAt(i),2);
+
+    for (var i=0; i<str.length; i++) {
+      out += dexhex2(str.charCodeAt(i),2);
     }
 
     return out;
   }
   
-  function hex2str(hex){
+  function hex2str(hex) {
     var out = "";
-    for (var i=0; i<hex.length; i+=2){
+    for (var i=0; i<hex.length; i+=2) {
       out += String.fromCharCode(parseInt(hex.substring(i,i+2), 16));
     }
 
     return out;
   }
 
-  // function getDataKSPTByChange()
-  // {
-  //   if($('#nama_kspt').val()!=null)
-  //   {
-  //     var res = $('#nama_kspt').val().split('|');
-  //     $('#npp_kspt').val(res);
-  //   }
-  //   else
-  //   {
-  //     $('#nama_kspt').val(0).trigger('change');
-  //     Swal.fire(
-  //     'Terdapat Kesalahan!',
-  //     'Petugas Tidak Terdaftar',
-  //     'error'
-  //     );
-  //   }
-            
-  // }
-
-  // function getDataPLTByChange()
-  // {
-  //   if($('#nama_plt').val()!=null)
-  //   {
-  //     var res=$('#nama_plt').val().split('|');
-  //     npp=res[0];
-      
-  //     $('#npp_plt').val(npp);
-  //   }
-  //   else
-  //   {
-  //     $('#nama_plt').val(0).trigger('change');
-  //     Swal.fire(
-  //       'Terdapat Kesalahan!',
-  //       'Petugas Tidak Terdaftar',
-  //       'error'
-  //     );
-  //   }
-  // }
-
-function jabatanName(id)
-{
-  switch(id)
-  {
-    case 1:
-      return 'KSPT';
-    break;
-    case 2:
-      return 'PLT';
-    break;
-    case 3:
-      return 'TEKNISI';
-    break;
-    default :
-      return 'UNKNOWN';
-    break;
+  function jabatanName(id) {
+    switch(id)
+    {
+      case 1:
+        return 'KSPT';
+      break;
+      case 2:
+        return 'PLT';
+      break;
+      case 3:
+        return 'TEKNISI';
+      break;
+      default :
+        return 'UNKNOWN';
+      break;
+    }
   }
-}
-
 </script>
 @endsection
