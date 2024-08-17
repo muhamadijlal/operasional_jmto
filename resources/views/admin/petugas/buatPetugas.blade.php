@@ -705,11 +705,10 @@ $('#btnSubmitImport').click(function () {
     }
 })
 
-$(".unduh_template").on('click', function(){
-    console.log('oke')
-    // var fileUrl = "{{ asset('assets/file/') }}";
-    // // Now you can use this URL in JavaScript
-    // location.href = fileUrl;
+$("#unduhTemplate").on('click', function(){
+    var fileUrl = "{{ asset('assets/template/template_import_petugas.xlsx') }}";
+    // Now you can use this URL in JavaScript
+    location.href = fileUrl;
 });
 </script>
 @endsection
