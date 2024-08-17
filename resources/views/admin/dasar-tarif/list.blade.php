@@ -72,7 +72,7 @@
     </div>
 </div>
 
-@extends('admin.dasar-tarif.modal')
+@include('admin.dasar-tarif.modal')
 
 
 @endsection

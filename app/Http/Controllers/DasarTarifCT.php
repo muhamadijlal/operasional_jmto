@@ -16,10 +16,7 @@ class DasarTarifCT extends Controller
     {
         $selectedGerbang = $request->input('gerbang');
 
-
-
-        if (request()->ajax()) {
-
+        if($selectedGerbang && request()->ajax()){
             $gerbang = tbl_gerbang::where('gerbang_id', $selectedGerbang)->first();
 
             Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
@@ -40,6 +37,7 @@ class DasarTarifCT extends Controller
                 })
                 ->make();
         }
+
         return view(
             'admin.dasar-tarif.list',
             [
