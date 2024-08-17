@@ -277,7 +277,7 @@
         if(msg.uid != curr_uuid) {
           curr_uuid = msg.uid;
           if(curr_uuid) {
-            $("#uid").html(': ' + curr_uuid);
+            $("#uid").html('UID : ' + curr_uuid);
             showPaspul();
             write_aktif(true);
           } else {

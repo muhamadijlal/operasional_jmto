@@ -12,5 +12,6 @@ class tbl_pegawai extends Model implements Authenticatable
     use AuthenticableTrait;
 
     protected $table = 'tbl_pegawai';
+    protected $guarded = ['id'];
     public $timestamps = false;
 }

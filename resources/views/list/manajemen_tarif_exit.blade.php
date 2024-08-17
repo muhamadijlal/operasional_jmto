@@ -53,6 +53,9 @@
         margin-top: 10px;
     }
 
+    .modal.full-width {
+        width: 100vh !important;
+    }
 </style>
 @endsection
 @section('content')
@@ -655,7 +658,7 @@
     </div>
 </div>
 
-<div class="modal" id="modalViewTarif">
+<div class="modal full-width" id="modalViewTarif">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">

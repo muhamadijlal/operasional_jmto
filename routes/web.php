@@ -81,6 +81,7 @@ Route::group(['middleware' => 'AuthMD', 'prefix' => 'admin'], function () {
         Route::get('buat-petugas/edit/{id}', [PetugasCT::class, 'BuatPetugasEdit']);
         Route::post('buat-petugas/update/{id}', [PetugasCT::class, 'BuatPetugasUpdate']);
         Route::get('buat-petugas/sycron', [PetugasCT::class, 'BuatPetugasSycron']);
+        Route::post('buat-petugas/import', [PetugasCT::class, 'importPetugas']);
 
         // buat kartu ops
         Route::get("buat-kartu-ops", [PetugasCT::class, 'BuatKartuOps']);

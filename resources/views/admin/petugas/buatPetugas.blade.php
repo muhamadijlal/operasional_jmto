@@ -9,8 +9,10 @@
 
 <div class="card">
     <div class="card-body">
-        <button id="addPetugas" class="btn btn-info"> <i class="fa fa-plus"></i> Tambah Petugas</button>
-        <button id="SyncronPetugas" class="btn btn-secondary"> <i class="fa fa-sync"></i> Syncron Data</button>
+        <button id="addPetugas" class="btn btn-label-info"> <i class="fa fa-plus me-2"></i> Tambah Petugas</button>
+        <button id="SyncronPetugas" class="btn btn-label-secondary"> <i class="fa fa-sync me-2"></i> Syncron Data</button>
+        <button id="btnImport" class="btn btn-label-success"> <i class="ti ti-logout me-2" style="transform: rotate(90deg);"></i>Import</button>
+        <button id="unduhTemplate" class="btn btn-label-warning"> <i class="ti ti-file me-2"></i>Unduh Template</button>
     </div>
     <div class="p-3 table-responsive">
         <table id="tbl_list" class="datatables-basic table table-striped table-bordered">
@@ -28,9 +30,6 @@
 
     </div>
 </div>
-
-
-
 
 <div class="modal" id="ModalTambahPetugas">
     <div class="modal-dialog">
@@ -154,6 +153,27 @@
     </div>
 </div>
 
+<div class="modal" id="modalImport">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Import data petugas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mt-3">
+                    <label for="import_file">Import file <span class="text-danger">* (.xlsx, .xls)</span></label>
+                    <input type="file" class="form-control" id="import_file" placeholder="Import data petugas">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="btnSubmitImport" class="btn btn-primary">Import</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @endsection
 
@@ -164,29 +184,19 @@
     baseUrl = '{{ url()->current() }}';
     var dataObject = eval('<?php echo json_encode($Cloums); ?>')
 
-    $(document).ready(function () {
-        function sweetAlert(title, text, icon) {
-            Swal.fire({
-                title: title,
-                text: text,
-                icon: icon,
-                customClass: {
-                    confirmButton: 'btn btn-primary'
-                },
-                buttonsStyling: false
-            });
-        }
+    function sweetAlert(title, text, icon) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            customClass: {
+                confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+        });
+    }
 
-
-        $('#gerbang_penempatan_edit').select2({
-            dropdownParent: $("#ModalEditPetugas")
-        })
-
-        $('#gerbang_penempatan').select2({
-            dropdownParent: $("#ModalTambahPetugas")
-        })
-
-        var dt_filter = $('#tbl_list').DataTable({
+    var dt_filter = $('#tbl_list').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -264,53 +274,37 @@
 
                     }
                 ]
-            }],
-        });
+            }
+        ],
+    });
 
-        $('.datatables-basic').on('click', '.delete', function () {
-            var url = baseUrl + '/delete/' + $(this).data('url');
-
-            Swal.fire({
-                title: 'Peringatan?',
-                text: "Apakah Anda Yakin Menghapus Data Ini??",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Hapus!',
-                cancelButtonText: 'Batal',
-                customClass: {
-                    confirmButton: 'btn btn-primary me-3',
-                    cancelButton: 'btn btn-label-secondary'
-                },
-                buttonsStyling: false
-            }).then(function (result) {
-                $.ajax({
-                    url: url,
-                    method: "get",
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    success: function (response) {
-
-                        document.getElementById('loading-screen').style.display =
-                            'block';
-                        setTimeout(function () {
-                            dt_filter.ajax.reload();
-                            document.getElementById('loading-screen').style
-                                .display = 'none';
-                            sweetAlert('Berhasil!',
-                                'Data Berhasil Dihapus!', 'success')
-                        }, 1000);
-                    }
-
-                });
-
-
-            });
+    $(document).ready(function () {
+        $('#gerbang_penempatan_edit').select2({
+            dropdownParent: $("#ModalEditPetugas")
         })
 
-        $('.datatables-basic').on('click', '.btnEditPetugas', function () {
-            var url = baseUrl + '/edit/' + $(this).data('url');
-            var id = $(this).data('url')
+        $('#gerbang_penempatan').select2({
+            dropdownParent: $("#ModalTambahPetugas")
+        })
+
+        
+
+        $('.datatables-basic').on('click', '.delete', function () {
+        var url = baseUrl + '/delete/' + $(this).data('url');
+
+        Swal.fire({
+            title: 'Peringatan?',
+            text: "Apakah Anda Yakin Menghapus Data Ini??",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Hapus!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                confirmButton: 'btn btn-primary me-3',
+                cancelButton: 'btn btn-label-secondary'
+            },
+            buttonsStyling: false
+        }).then(function (result) {
             $.ajax({
                 url: url,
                 method: "get",
@@ -318,368 +312,404 @@
                 cache: false,
                 processData: false,
                 success: function (response) {
-                    data = response.model
 
-                    $('#id_edit').val(data.id)
-                    $('#nama_petugas_edit').val(data.nama_pegawai)
-                    $('#npp_edit').val(data.npp_no)
-                    $('#inisial_petugas_edit').val(data.kode_tugas)
-
-                    // penempatan gerbang
-                    $('#gerbang_penempatan_edit').find('option').remove().end()
-                    var optionGerbangPenempatan = '';
-
-                    var penempatanArray = data.penempatan_gerbang.split(',');
-
-                    $.ajax({
-                        url: '/admin/get-gerbang-ajax/2',
-                        async: false,
-                        method: "GET",
-                        dataType: "JSON",
-                        success: function (response) {
-                            var optionGerbangPenempatan = '';
-
-                            $.each(response, function (i, item) {
-                                var gerbangId = response[i].gerbang_id;
-                                var gerbangNama = response[i]
-                                    .gerbang_nama;
-
-                                // Check if gerbangId is in the penempatanArray
-                                var isSelected = penempatanArray
-                                    .includes(gerbangId.toString()) ?
-                                    'selected' : '';
-
-                                optionGerbangPenempatan +=
-                                    '<option value="' + gerbangId +
-                                    '" ' + isSelected + '>' +
-                                    gerbangNama + '</option>';
-                            });
-
-                            // Append the generated options to your select element
-                            $('#gerbang_penempatan_edit').html(
-                                optionGerbangPenempatan);
-
-                            // Iterate through each option in the select element
-                            $('#jabatan_edit option').each(function () {
-                                var optionValue = $(this).val();
-
-                                // Check if the optionValue matches the jabatanValues
-                                if (optionValue == data.jabatan_id) {
-                                    console.log('benar')
-                                    $(this).prop('selected', true);
-                                }
-                            });
-
-                            $('#ModalEditPetugas').modal('show')
-                        }
-                    });
-
-
-                    // $('#gerbangmodal').find('option').remove().end();
-                    // $("#form-tambah-edit-DasarTarif").trigger('reset');
-                    // $("#gerbangmodal").val($("#gerbang").val());
-                    // $("#idEdit").val(id);
-                    // $("#versiEdit").val(response.model.versi_tarif);
-                    // $("#skEdit").val(response.model.dasar_tarif);
-                    // $("#waktuEdit").val(response.model.mulai_berlaku);
-                    // var optionValue = $("#gerbang option:selected").val();
-                    // var optionText = $("#gerbang option:selected").text();
-                    // $('#gerbangmodalEdit').append(
-                    //     `<option value="${optionValue}"> ${optionText}</option>`);
-                    // $("#DasarTarifModalEdit").modal('show');
-
-                }
-
-            });
-
-        })
-
-        $('#pilihSemua').on('change', function () {
-            if ($(this).is(':checked')) {
-                // Jika dicentang, pilih semua opsi di select
-                $('#gerbang_penempatan option').prop('selected', true);
-
-                $('#gerbang_penempatan').trigger('change.select2');
-            } else {
-                // Jika tidak dicentang, hilangkan semua pilihan di select
-                $('#gerbang_penempatan option').prop('selected', false);
-
-                $('#gerbang_penempatan').trigger('change.select2');
-            }
-        });
-
-        $('#pilihSemuaEdit').on('change', function () {
-            if ($(this).is(':checked')) {
-                // Jika dicentang, pilih semua opsi di select
-                $('#gerbang_penempatan_edit option').prop('selected', true);
-
-                $('#gerbang_penempatan_edit').trigger('change.select2');
-            } else {
-                // Jika tidak dicentang, hilangkan semua pilihan di select
-                $('#gerbang_penempatan_edit option').prop('selected', false);
-
-                $('#gerbang_penempatan_edit').trigger('change.select2');
-            }
-        });
-
-
-        $('#addPetugas').click(function () {
-
-            $('#nama_petugas').val('')
-            $('#npp').val('')
-            $('#jabatan').val('')
-            $('#inisial_petugas').val('')
-
-            // penempatan gerbang
-            $('#gerbang_penempatan').find('option').remove().end()
-            var optionGerbangPenempatan = '';
-
-            $.ajax({
-                url: '/admin/get-gerbang-ajax/2',
-                async: false,
-                method: "GET",
-
-                dataType: "JSON",
-                success: function (response) {
-
-                    $.each(response, function (i, item) {
-                        optionGerbangPenempatan += '<option value="' + response[i]
-                            .gerbang_id + '"  >' + response[i]
-                            .gerbang_nama + '</option>'
-                    });
-                }
-            });
-            $('#gerbang_penempatan').append(optionGerbangPenempatan);
-
-
-
-            $('#ModalTambahPetugas').modal('show')
-        })
-
-        $('#btnSumbitAddPetugas').click(function () {
-            var gerbang_penempatan = $('#gerbang_penempatan').val()
-            var nama_petugas = $('#nama_petugas').val()
-            var npp = $('#npp').val()
-            var jabatan = $('#jabatan').val()
-            var inisial_petugas = $('#inisial_petugas').val()
-
-            if (gerbang_penempatan.length == 0) {
-                sweetAlert('Gagal!', 'Gerbang Penempatan Harus Diisi', 'error');
-            } else if (
-                validateField(nama_petugas, 'Nama Petugas Wajib Diisi') &&
-                validateField(npp, 'NPP Wajib Diisi') &&
-                validateField(jabatan, 'Jabatan Wajib Diisi') &&
-                validateField(inisial_petugas, 'Inisial Petugas Wajib Diisi')
-            ) {
-                var formData = new FormData();
-                formData.append('gerbang_penempatan', gerbang_penempatan);
-                formData.append('nama_petugas', nama_petugas);
-                formData.append('npp', npp);
-                formData.append('jabatan', jabatan);
-                formData.append('inisial_petugas', inisial_petugas);
-                formData.append('_token', '{{ csrf_token() }}');
-                $.ajax({
-                    type: "POST",
-                    contentType: false,
-                    processData: false,
-                    data: formData,
-                    url: baseUrl + '/tambah',
-                    async: false,
-                    beforeSend: function () {
-                        document.getElementById('loading-screen').style.display =
-                            'block';
-                    },
-                    success: function (response) {
-                        // console.log(response)
-
-                        if (response.code == 200) {
-                            $("#ModalTambahPetugas").modal('hide')
-                            // dt_filter.ajax.reload();
-                            document.getElementById('loading-screen').style
-                                .display = 'none';
-                            sweetAlert('Berhasil!',
-                                response.message, 'success')
-                        } else {
-                            document.getElementById('loading-screen').style
-                                .display = 'none';
-                            displayAlerts(response);
-                            // console.log(response)
-                        }
-
-                        // if (response.code == 200) {
-
-                        //     $("#ModalTambahPetugas").modal('hide')
-                        //     // dt_filter.ajax.reload();
-                        //     document.getElementById('loading-screen').style
-                        //         .display = 'none';
-                        //     sweetAlert('Berhasil!',
-                        //         response.message, 'success')
-
-                        // } else {
-                        //     $("#ModalTambahPetugas").modal('hide')
-                        //     // dt_filter.ajax.reload();
-                        //     document.getElementById('loading-screen').style
-                        //         .display = 'none';
-                        //     sweetAlert('Gagal!',
-                        //         response.message, 'error')
-                        // }
-                    },
-
-                })
-
-            }
-        })
-        $('#btnSumbitEditPetugas').click(function () {
-            var gerbang_penempatan = $('#gerbang_penempatan_edit').val()
-            var nama_petugas = $('#nama_petugas_edit').val()
-            var npp = $('#npp_edit').val()
-            var jabatan = $('#jabatan_edit').val()
-            var inisial_petugas = $('#inisial_petugas_edit').val()
-            var id = $('#id_edit').val()
-
-            if (gerbang_penempatan.length == 0) {
-                sweetAlert('Gagal!', 'Gerbang Penempatan Harus Diisi', 'error');
-            } else if (
-                validateField(nama_petugas, 'Nama Petugas Wajib Diisi') &&
-                validateField(npp, 'NPP Wajib Diisi') &&
-                validateField(jabatan, 'Jabatan Wajib Diisi') &&
-                validateField(inisial_petugas, 'Inisial Petugas Wajib Diisi')
-            ) {
-                var formData = new FormData();
-                formData.append('gerbang_penempatan', gerbang_penempatan);
-                formData.append('nama_petugas', nama_petugas);
-                formData.append('npp', npp);
-                formData.append('jabatan', jabatan);
-                formData.append('inisial_petugas', inisial_petugas);
-                formData.append('_token', '{{ csrf_token() }}');
-                $.ajax({
-                    type: "POST",
-                    contentType: false,
-                    processData: false,
-                    data: formData,
-                    url: baseUrl + '/update/' + id,
-                    async: false,
-                    beforeSend: function () {
-                        document.getElementById('loading-screen').style.display =
-                            'block';
-                    },
-                    success: function (response) {
-                        // console.log(response)
-
-                        if (response.code == 200) {
-                            $("#ModalEditPetugas").modal('hide')
-                            dt_filter.ajax.reload();
-                            document.getElementById('loading-screen').style
-                                .display = 'none';
-                            sweetAlert('Berhasil!',
-                                response.message, 'success')
-                        } else {
-                            document.getElementById('loading-screen').style
-                                .display = 'none';
-                            displayAlerts(response);
-                            // console.log(response)
-                        }
-
-                        // if (response.code == 200) {
-
-                        //     $("#ModalTambahPetugas").modal('hide')
-                        //     // dt_filter.ajax.reload();
-                        //     document.getElementById('loading-screen').style
-                        //         .display = 'none';
-                        //     sweetAlert('Berhasil!',
-                        //         response.message, 'success')
-
-                        // } else {
-                        //     $("#ModalTambahPetugas").modal('hide')
-                        //     // dt_filter.ajax.reload();
-                        //     document.getElementById('loading-screen').style
-                        //         .display = 'none';
-                        //     sweetAlert('Gagal!',
-                        //         response.message, 'error')
-                        // }
-                    },
-
-                })
-
-            }
-        })
-
-        $('#SyncronPetugas').click(function () {
-            Swal.fire({
-                title: 'Peringatan?',
-                text: "Apakah Anda Yakin Sycron Data ??",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya!',
-                cancelButtonText: 'Batal',
-                customClass: {
-                    confirmButton: 'btn btn-primary me-3',
-                    cancelButton: 'btn btn-label-secondary'
-                },
-                buttonsStyling: false
-            }).then(function (result) {
-                $.ajax({
-                    url: baseUrl + '/sycron',
-                    method: "get",
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    beforeSend: function () {
-                        document.getElementById('loading-screen').style.display =
-                            'block';
-                    },
-                    success: function (response) {
-
-                        document.getElementById('loading-screen').style.display =
-                            'none';
+                    document.getElementById('loading-screen').style.display =
+                        'block';
+                    setTimeout(function () {
+                        dt_filter.ajax.reload();
+                        document.getElementById('loading-screen').style
+                            .display = 'none';
                         sweetAlert('Berhasil!',
                             'Data Berhasil Dihapus!', 'success')
-                        // setTimeout(function () {
-                        //     dt_filter.ajax.reload();
-                        //     document.getElementById('loading-screen').style
-                        //         .display = 'none';
-                        //     sweetAlert('Berhasil!',
-                        //         'Data Berhasil Dihapus!', 'success')
-                        // }, 1000);
-                    }
-
-                });
-
+                    }, 1000);
+                }
 
             });
-        })
 
-        function validateField(fieldValue, errorMessage) {
-            if (fieldValue === '') {
-                sweetAlert('Gagal!', errorMessage, 'error');
-                return false;
-            }
-            return true;
-        }
 
-        function displayAlerts(errors) {
+        });
+    })
 
-            // Clear existing alerts
-            $('.alert').remove();
+    $('.datatables-basic').on('click', '.btnEditPetugas', function () {
+        var url = baseUrl + '/edit/' + $(this).data('url');
+        var id = $(this).data('url')
+        $.ajax({
+            url: url,
+            method: "get",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (response) {
+                data = response.model
 
-            // Check if there are any errors
-            if (errors) {
-                // Iterate through the errors and display them as alerts
-                $.each(errors, function (fieldName, messages) {
-                    $.each(messages, function (index, message) {
-                        var alertMessage =
-                            '<div class="alert alert-danger alert-dismissible " role="alert">' +
-                            message +
-                            ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                            '</div>';
+                $('#id_edit').val(data.id)
+                $('#nama_petugas_edit').val(data.nama_pegawai)
+                $('#npp_edit').val(data.npp_no)
+                $('#inisial_petugas_edit').val(data.kode_tugas)
 
-                        // Append the alert to the desired location in your HTML (e.g., a form)
-                        $('#' + fieldName).after(alertMessage);
-                    });
+                // penempatan gerbang
+                $('#gerbang_penempatan_edit').find('option').remove().end()
+                var optionGerbangPenempatan = '';
+
+                var penempatanArray = data.penempatan_gerbang.split(',');
+
+                $.ajax({
+                    url: '/admin/get-gerbang-ajax/2',
+                    async: false,
+                    method: "GET",
+                    dataType: "JSON",
+                    success: function (response) {
+                        var optionGerbangPenempatan = '';
+
+                        $.each(response, function (i, item) {
+                            var gerbangId = response[i].gerbang_id;
+                            var gerbangNama = response[i]
+                                .gerbang_nama;
+
+                            // Check if gerbangId is in the penempatanArray
+                            var isSelected = penempatanArray
+                                .includes(gerbangId.toString()) ?
+                                'selected' : '';
+
+                            optionGerbangPenempatan +=
+                                '<option value="' + gerbangId +
+                                '" ' + isSelected + '>' +
+                                gerbangNama + '</option>';
+                        });
+
+                        // Append the generated options to your select element
+                        $('#gerbang_penempatan_edit').html(
+                            optionGerbangPenempatan);
+
+                        // Iterate through each option in the select element
+                        $('#jabatan_edit option').each(function () {
+                            var optionValue = $(this).val();
+
+                            // Check if the optionValue matches the jabatanValues
+                            if (optionValue == data.jabatan_id) {
+                                console.log('benar')
+                                $(this).prop('selected', true);
+                            }
+                        });
+
+                        $('#ModalEditPetugas').modal('show')
+                    }
                 });
             }
+
+        });
+
+    })
+
+    $('#pilihSemua').on('change', function () {
+        if ($(this).is(':checked')) {
+            // Jika dicentang, pilih semua opsi di select
+            $('#gerbang_penempatan option').prop('selected', true);
+
+            $('#gerbang_penempatan').trigger('change.select2');
+        } else {
+            // Jika tidak dicentang, hilangkan semua pilihan di select
+            $('#gerbang_penempatan option').prop('selected', false);
+
+            $('#gerbang_penempatan').trigger('change.select2');
+        }
+    });
+
+    $('#pilihSemuaEdit').on('change', function () {
+        if ($(this).is(':checked')) {
+            // Jika dicentang, pilih semua opsi di select
+            $('#gerbang_penempatan_edit option').prop('selected', true);
+
+            $('#gerbang_penempatan_edit').trigger('change.select2');
+        } else {
+            // Jika tidak dicentang, hilangkan semua pilihan di select
+            $('#gerbang_penempatan_edit option').prop('selected', false);
+
+            $('#gerbang_penempatan_edit').trigger('change.select2');
+        }
+    });
+
+
+    $('#addPetugas').click(function () {
+
+        $('#nama_petugas').val('')
+        $('#npp').val('')
+        $('#jabatan').val('')
+        $('#inisial_petugas').val('')
+
+        // penempatan gerbang
+        $('#gerbang_penempatan').find('option').remove().end()
+        var optionGerbangPenempatan = '';
+
+        $.ajax({
+            url: '/admin/get-gerbang-ajax/2',
+            async: false,
+            method: "GET",
+
+            dataType: "JSON",
+            success: function (response) {
+
+                $.each(response, function (i, item) {
+                    optionGerbangPenempatan += '<option value="' + response[i]
+                        .gerbang_id + '"  >' + response[i]
+                        .gerbang_nama + '</option>'
+                });
+            }
+        });
+
+        $('#gerbang_penempatan').append(optionGerbangPenempatan);
+
+
+
+        $('#ModalTambahPetugas').modal('show')
+    })
+
+    $('#btnSumbitAddPetugas').click(function () {
+        var gerbang_penempatan = $('#gerbang_penempatan').val()
+        var nama_petugas = $('#nama_petugas').val()
+        var npp = $('#npp').val()
+        var jabatan = $('#jabatan').val()
+        var inisial_petugas = $('#inisial_petugas').val()
+
+        if (gerbang_penempatan.length == 0) {
+            sweetAlert('Gagal!', 'Gerbang Penempatan Harus Diisi', 'error');
+        } else if (
+            validateField(nama_petugas, 'Nama Petugas Wajib Diisi') &&
+            validateField(npp, 'NPP Wajib Diisi') &&
+            validateField(jabatan, 'Jabatan Wajib Diisi') &&
+            validateField(inisial_petugas, 'Inisial Petugas Wajib Diisi')
+        ) {
+            var formData = new FormData();
+            formData.append('gerbang_penempatan', gerbang_penempatan);
+            formData.append('nama_petugas', nama_petugas);
+            formData.append('npp', npp);
+            formData.append('jabatan', jabatan);
+            formData.append('inisial_petugas', inisial_petugas);
+            formData.append('_token', '{{ csrf_token() }}');
+            $.ajax({
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formData,
+                url: baseUrl + '/tambah',
+                async: false,
+                beforeSend: function () {
+                    document.getElementById('loading-screen').style.display =
+                        'block';
+                },
+                success: function (response) {
+                    // console.log(response)
+
+                    if (response.code == 200) {
+                        $("#ModalTambahPetugas").modal('hide')
+                        // dt_filter.ajax.reload();
+                        document.getElementById('loading-screen').style
+                            .display = 'none';
+                        sweetAlert('Berhasil!',
+                            response.message, 'success')
+                    } else {
+                        document.getElementById('loading-screen').style
+                            .display = 'none';
+                        displayAlerts(response);
+                        // console.log(response)
+                    }
+                },
+
+            })
+
         }
     })
 
+    $('#btnSumbitEditPetugas').click(function () {
+        var gerbang_penempatan = $('#gerbang_penempatan_edit').val()
+        var nama_petugas = $('#nama_petugas_edit').val()
+        var npp = $('#npp_edit').val()
+        var jabatan = $('#jabatan_edit').val()
+        var inisial_petugas = $('#inisial_petugas_edit').val()
+        var id = $('#id_edit').val()
+
+        if (gerbang_penempatan.length == 0) {
+            sweetAlert('Gagal!', 'Gerbang Penempatan Harus Diisi', 'error');
+        } else if (
+            validateField(nama_petugas, 'Nama Petugas Wajib Diisi') &&
+            validateField(npp, 'NPP Wajib Diisi') &&
+            validateField(jabatan, 'Jabatan Wajib Diisi') &&
+            validateField(inisial_petugas, 'Inisial Petugas Wajib Diisi')
+        ) {
+            var formData = new FormData();
+            formData.append('gerbang_penempatan', gerbang_penempatan);
+            formData.append('nama_petugas', nama_petugas);
+            formData.append('npp', npp);
+            formData.append('jabatan', jabatan);
+            formData.append('inisial_petugas', inisial_petugas);
+            formData.append('_token', '{{ csrf_token() }}');
+            $.ajax({
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formData,
+                url: baseUrl + '/update/' + id,
+                async: false,
+                beforeSend: function () {
+                    document.getElementById('loading-screen').style.display =
+                        'block';
+                },
+                success: function (response) {
+                    // console.log(response)
+
+                    if (response.code == 200) {
+                        $("#ModalEditPetugas").modal('hide')
+                        dt_filter.ajax.reload();
+                        document.getElementById('loading-screen').style
+                            .display = 'none';
+                        sweetAlert('Berhasil!',
+                            response.message, 'success')
+                    } else {
+                        document.getElementById('loading-screen').style
+                            .display = 'none';
+                        displayAlerts(response);
+                        // console.log(response)
+                    }
+                },
+
+            })
+
+        }
+    })
+
+    $('#SyncronPetugas').click(function () {
+        Swal.fire({
+            title: 'Peringatan?',
+            text: "Apakah Anda Yakin Sycron Data ??",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                confirmButton: 'btn btn-primary me-3',
+                cancelButton: 'btn btn-label-secondary'
+            },
+            buttonsStyling: false
+        }).then(function (result) {
+            $.ajax({
+                url: baseUrl + '/sycron',
+                method: "get",
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function () {
+                    document.getElementById('loading-screen').style.display =
+                        'block';
+                },
+                success: function (response) {
+
+                    document.getElementById('loading-screen').style.display =
+                        'none';
+                    sweetAlert('Berhasil!',
+                        'Data Berhasil Dihapus!', 'success')
+                }
+
+            });
+
+
+        });
+    })
+
+    function validateField(fieldValue, errorMessage) {
+        if (fieldValue === '') {
+            sweetAlert('Gagal!', errorMessage, 'error');
+            return false;
+        }
+        return true;
+    }
+
+    function displayAlerts(errors) {
+
+        // Clear existing alerts
+        $('.alert').remove();
+
+        // Check if there are any errors
+        if (errors) {
+            // Iterate through the errors and display them as alerts
+            $.each(errors, function (fieldName, messages) {
+                $.each(messages, function (index, message) {
+                    var alertMessage =
+                        '<div class="alert alert-danger alert-dismissible " role="alert">' +
+                        message +
+                        ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                        '</div>';
+
+                    // Append the alert to the desired location in your HTML (e.g., a form)
+                    $('#' + fieldName).after(alertMessage);
+                });
+            });
+        }
+    }
+})
+
+$("#btnImport").click(function(){
+    $("#modalImport").modal('show');
+})
+
+$('#btnSubmitImport').click(function () {
+    var fileInput = document.getElementById('import_file')
+    var file = fileInput.files[0];
+
+    if (!file) {
+        sweetAlert('Gagal!', 'File Harus Diisi', 'error')
+    } else {
+        var fileName = file.name;
+        var fileExtension = fileName.split('.').pop().toLowerCase();
+
+        if (fileExtension == 'xlsx' || fileExtension == 'xls') {
+
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('_token', '{{ csrf_token() }}');
+
+            $.ajax({
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formData,
+                url: baseUrl + '/import',
+                async: false,
+                beforeSend: function () {
+                    // document.getElementById('loading-screen').style.display = 'block';
+                },
+                success: function (response) {
+                    if (response.code == 200) {
+
+                        $("#modalImport").modal('hide');
+                        dt_filter.ajax.reload();
+
+                        document.getElementById('loading-screen').style.display = 'none';
+                        sweetAlert('Berhasil!', response.message, 'success')
+
+                    } else {
+                        $("#modalImport").modal('hide');
+                        dt_filter.ajax.reload();
+
+                        document.getElementById('loading-screen').style.display = 'none';
+                        sweetAlert('Gagal!', response.message, 'error')
+                    }
+
+                },
+                finally: function(){
+                    // document.getElementById('loading-screen').style.display = 'none';
+                }
+            });
+        } else {
+            sweetAlert('Gagal!', 'File Harus Format Excel (.xlsx, .xls)', 'error')
+        }
+    }
+})
+
+$(".unduh_template").on('click', function(){
+    console.log('oke')
+    // var fileUrl = "{{ asset('assets/file/') }}";
+    // // Now you can use this URL in JavaScript
+    // location.href = fileUrl;
+});
 </script>
 @endsection

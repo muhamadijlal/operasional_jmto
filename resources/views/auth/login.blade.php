@@ -70,15 +70,6 @@ Login
 
                     <button type="submit" class="btn btn-primary d-grid w-100">Login</button>
                 </form>
-
-                {{-- <p class="text-center">
-                    <span>Belum Punya Akun?</span>
-                    <a href="/register">
-                        <span>Silahkan Register</span>
-                    </a>
-                </p> --}}
-
-
             </div>
         </div>
         <!-- /Register -->

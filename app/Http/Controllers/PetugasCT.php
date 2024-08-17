@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BuatPetugasTambahStore;
 use App\Http\Requests\BuatPetugasUpdateStore;
+use App\Imports\PetugasImport;
 use App\Models\tbl_gerbang;
 use App\Models\tbl_jabatan;
 use App\Models\tbl_pegawai;
 use App\Models\tbl_pegawai2;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Maatwebsite\Excel\Facades\Excel;
 use Svg\Tag\Rect;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -262,5 +265,17 @@ class PetugasCT extends Controller
                 ]
             ]
         );
+    }
+
+    public function importPetugas(Request $request)
+    {
+        try {
+            $import = new PetugasImport($request);
+            Excel::import($import, $request->file('file'));
+
+            return response()->json(['code' => 200, 'message' => 'Success Import Data']);
+        } catch (Exception $e) {
+            return response()->json(['code' => 400, 'message' => $e->getMessage()]);
+        }
     }
 }
