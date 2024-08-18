@@ -273,7 +273,9 @@ class PetugasCT extends Controller
             $import = new PetugasImport($request);
             Excel::import($import, $request->file('file'));
 
-            return response()->json(['code' => 200, 'message' => 'Success Import Data']);
+            $error = count($import->getFailed());
+
+            return response()->json(['code' => 200, 'message' => 'Success Import Data', 'error' => $error]);
         } catch (Exception $e) {
             return response()->json(['code' => 400, 'message' => $e->getMessage()]);
         }

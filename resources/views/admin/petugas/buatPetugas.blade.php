@@ -687,11 +687,13 @@ $('#btnSubmitImport').click(function () {
                         sweetAlert('Berhasil!', response.message, 'success')
 
                     } else {
+                        var errorMessage = getErrMsg(response.message);
+
                         $("#modalImport").modal('hide');
                         dt_filter.ajax.reload();
 
                         document.getElementById('loading-screen').style.display = 'none';
-                        sweetAlert('Gagal!', response.message, 'error')
+                        sweetAlert('Gagal!', errorMessage, 'error')
                     }
 
                 },
@@ -710,5 +712,18 @@ $("#unduhTemplate").on('click', function(){
     // Now you can use this URL in JavaScript
     location.href = fileUrl;
 });
+
+function getErrMsg(errorMessage){
+    var startStr = "Duplicate entry '";
+    var errMsg = ''
+    var startIndex = errorMessage.indexOf(startStr);
+    var endIndex = errorMessage.indexOf("'", startIndex + startStr.length);
+
+    if (startIndex !== -1 && endIndex !== -1) {
+        errMsg = errorMessage.substring(startIndex, endIndex + 1);
+    }
+
+    return errMsg;
+}
 </script>
 @endsection
