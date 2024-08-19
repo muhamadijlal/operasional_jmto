@@ -52,10 +52,6 @@
     #loading-content p {
         margin-top: 10px;
     }
-
-    .modal.full-width {
-        width: 100vh !important;
-    }
 </style>
 @endsection
 @section('content')
@@ -658,8 +654,8 @@
     </div>
 </div>
 
-<div class="modal full-width" id="modalViewTarif">
-    <div class="modal-dialog modal-xl">
+<div class="modal" id="modalViewTarif">
+    <div class="modal-dialog" style="--bs-modal-width: 1300px !important;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">View Tarif</h5>
