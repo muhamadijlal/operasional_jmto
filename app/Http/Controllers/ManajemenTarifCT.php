@@ -218,12 +218,8 @@ class ManajemenTarifCT extends Controller
 
     public function indexclose(Request $request)
     {
-
-
-
         $selectedGerbang = $request->input('gerbang');
         $gerbang = tbl_gerbang::where('gerbang_id', $selectedGerbang)->first();
-
 
         if (request()->ajax()) {
 
@@ -721,9 +717,8 @@ class ManajemenTarifCT extends Controller
             'dasar_tarif' => $dasar_tarif
         ];
 
-
-
-        $pdf = PDF::loadView('admin.pdfClose', $array)->setPaper('a4', 'landscape');
+        // $pdf = PDF::loadView('admin.pdfClose', $array)->setPaper('f4', 'landscape');
+        $pdf = PDF::loadView('admin.pdfClose', $array)->setPaper([0, 0, 600, 1200], 'landscape');
 
         // Set options for the PDF
         $options = [

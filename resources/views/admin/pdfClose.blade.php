@@ -27,8 +27,8 @@
 
         .page-break {
             page-break-before: always;
-        }   
-    </style>
+        }
+    </style>    
 </head>
 
 <body>
@@ -110,41 +110,39 @@
             <td >
                 <center>5</center>
             </td>
-
         </tr>
         @php $counter = 0; @endphp
         @foreach ($data as $item2)
-        @if ($counter % 20 == 0 && $counter != 0)
-        <tr class="page-break"></tr>
-        @endif
-        <tr class="no-page-break">
-            <td>{{ $item2->asalGerbang }}</td>
-            <td>
-                <center>
-                    @if ($item2->jenis == '2' || $item2->jenis == '3')
-                    Ya
-                    @else
-                    Tidak
-                    @endif
-                </center>
-            </td>
-            @foreach ($arrayValue as $key => $value)
-            <td>{{ number_format(json_decode($item2->gol1_d)[$key] ?? 0, 0, ',', '.') }}</td>
-            <td>{{ number_format(json_decode($item2->gol2_d)[$key] ?? 0, 0, ',', '.') }}</td>
-            <td>{{ number_format(json_decode($item2->gol3_d)[$key] ?? 0, 0, ',', '.') }}</td>
-            <td>{{ number_format(json_decode($item2->gol4_d)[$key] ?? 0, 0, ',', '.') }}</td>
-            <td>{{ number_format(json_decode($item2->gol5_d)[$key] ?? 0, 0, ',', '.') }}</td>
-            @endforeach
+            @if ($counter % 25 == 0 && $counter != 0)
+                <tr class="page-break"></tr>
+            @endif
+            <tr class="no-page-break">
+                <td>{{ $item2->asalGerbang }}</td>
+                <td>
+                    <center>
+                        @if ($item2->jenis == '2' || $item2->jenis == '3')
+                        Ya
+                        @else
+                        Tidak
+                        @endif
+                    </center>
+                </td>
+                @foreach ($arrayValue as $key => $value)
+                <td>{{ number_format(json_decode($item2->gol1_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                <td>{{ number_format(json_decode($item2->gol2_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                <td>{{ number_format(json_decode($item2->gol3_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                <td>{{ number_format(json_decode($item2->gol4_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                <td>{{ number_format(json_decode($item2->gol5_d)[$key] ?? 0, 0, ',', '.') }}</td>
+                @endforeach
 
-            <td>{{ number_format($item2->gol1, 0, ',', '.') }}</td>
-            <td>{{ number_format($item2->gol2, 0, ',', '.') }}</td>
-            <td>{{ number_format($item2->gol3, 0, ',', '.') }}</td>
-            <td>{{ number_format($item2->gol4, 0, ',', '.') }}</td>
-            <td>{{ number_format($item2->gol5, 0, ',', '.') }}</td>
-
-        </tr>
-        <tr class="no-page-break"></tr>
-        @php $counter++; @endphp
+                <td>{{ number_format($item2->gol1, 0, ',', '.') }}</td>
+                <td>{{ number_format($item2->gol2, 0, ',', '.') }}</td>
+                <td>{{ number_format($item2->gol3, 0, ',', '.') }}</td>
+                <td>{{ number_format($item2->gol4, 0, ',', '.') }}</td>
+                <td>{{ number_format($item2->gol5, 0, ',', '.') }}</td>
+            </tr>
+            {{-- <tr class="no-page-break"></tr> --}}
+            @php $counter++; @endphp
         @endforeach
     </table>
 </body>
