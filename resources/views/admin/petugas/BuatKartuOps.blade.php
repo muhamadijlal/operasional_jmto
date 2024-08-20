@@ -238,49 +238,6 @@
         });
       }
 
-      function getDataKSPTByChange()
-    {
-        if($('#nama_kspt').val()!=null)
-        {
-            var res=$('#nama_kspt').val().split('|');
-            $('#npp_kspt').val(res);
-        }
-        else
-        {
-            $('#nama_kspt').val(0).trigger('change');
-          
-            //$('#gerbang').val(0).trigger('change');
-            
-            Swal.fire(
-                        'Terdapat Kesalahan!',
-                        'Petugas Tidak Terdaftar',
-                        'error'
-                    );
-            
-        }
-             
-    }
-
-    function getDataPLTByChange()
-    {
-        if($('#nama_plt').val()!=null)
-        {
-            var res=$('#nama_plt').val().split('|');
-            npp=res[0];
-            
-            $('#npp_plt').val(npp);
-        }
-        else
-        {
-            $('#nama_plt').val(0).trigger('change');
-             Swal.fire(
-                         'Terdapat Kesalahan!',
-                         'Petugas Tidak Terdaftar',
-                         'error'
-                     );
-        }
-    }
-
     function write_aktif(s) {
       $('#btnTulis').prop('disabled', !s);
       write_status = s;
