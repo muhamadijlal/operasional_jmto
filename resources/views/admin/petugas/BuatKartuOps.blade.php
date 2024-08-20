@@ -160,7 +160,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <button type="button" class="close" id="btn-close" data-dismiss="modal" aria-hidden="true">&times;</button>
       <h3 id="petugas-modal-tittle" class="modal-title">Tambah jadwal</h3>
     </div>
     <div class="modal-body">
@@ -172,7 +172,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
+      <button type="button" class="btn btn-primary" id="btn-close" data-dismiss="modal">Tutup</button>
     </div>
     </div>
   </div>
@@ -492,7 +492,7 @@
       // Now you can use this URL in JavaScript
       location.href = fileUrl;
     });
-  });  
+  });
 
   function strReplace(data) {
     l = data.length;
@@ -570,5 +570,9 @@
       break;
     }
   }
+
+  $("#btn-close").click(function(){
+    $("#kartuOperasionalModal").modal('close');
+  })
 </script>
 @endsection
