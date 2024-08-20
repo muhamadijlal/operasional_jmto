@@ -160,7 +160,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="close" id="close-modal" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <button type="button" class="close" data-dismiss="modal" id="tombol-x-modal" aria-hidden="true">&times;</button>
       <h3 id="petugas-modal-tittle" class="modal-title">Tambah jadwal</h3>
     </div>
     <div class="modal-body">
@@ -172,7 +172,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" id="close-modal" data-dismiss="modal">Tutup</button>
+      <button type="button" id="tombol-close-modal" class="btn btn-primary" data-dismiss="modal">Tutup</button>
     </div>
     </div>
   </div>
@@ -188,6 +188,7 @@
 <script>
   // Use the IOTClientService API
   $( document ).ready(function() {
+    $("#kartuOperasionalModal").modal('show');
     var api = IOTClientService;
     var status = false;
     var write_status = false;
@@ -258,14 +259,11 @@
 
       if ('com' in msg) {
         if(msg.com != com) {
-          console.log('BuatKartuops:277');
-          
           $("#com i").removeClass("text-danger").addClass("text-success");
           $("#com i + span").text(msg.com)
           //write_aktif(true);
           //write_status=true;
         } else {
-          console.log('BuatKartuops:234');
           $("#com i").removeClass("text-success").addClass("text-danger");
           $("#uid" ).html('?');
           write_aktif(false);
@@ -290,6 +288,36 @@
     }
 
     api.open();
+
+    $("#btnStatus").click(function(){
+      $("#petugas-modal-tittle").html('Status Reader');   
+      $.ajax({
+          url:"http://localhost:2929/status",
+          method:"GET",
+          beforeSend: function() { 
+            $.Toast.showToast({                       
+              "title":"Mohon Tunggu, Proses Sedang Berlangsung",                       
+              "icon":"loading",
+              "duration": 5000                      
+            });
+          },
+          success:function(response)
+          {                    
+            $.Toast.hideToast();
+            $('#response').attr('rows', 4);
+            $("#response").val(JSON.stringify(response.data));  
+            $("#kartuOperasionalModal").modal('show');
+          },
+          error: function (error) {
+            $.Toast.hideToast();
+            $.Toast.showToast({                       
+              "title":"Terdapat Kesalahan, Reader Tidak Terhubung",                       
+              "icon":"error",                        
+              "duration": 5000                      
+            });
+          }
+      });                         
+      });
 
     $("#btnRead").click(function() {
       $("#petugas-modal-tittle").html('Info Kartu');   
@@ -570,8 +598,13 @@
       break;
     }
   }
-$(document).on('click', '#close-modal', function(){
+
+$("#tombol-x-modal").click(function (){
   $("#kartuOperasionalModal").modal('hide');
-});
+})
+
+$("#tombol-close-modal").click(function (){
+  $("#kartuOperasionalModal").modal('hide');
+})
 </script>
 @endsection
