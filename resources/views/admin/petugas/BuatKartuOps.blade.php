@@ -172,7 +172,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" id="btn-close" data-dismiss="modal">Tutup</button>
+      <button type="button" class="btn btn-primary" id="btn-tutup" data-dismiss="modal">Tutup</button>
     </div>
     </div>
   </div>
@@ -572,6 +572,10 @@
   }
 
   $("#btn-close").on('click', function(){
+    $("#kartuOperasionalModal").modal('hide');
+  })
+
+  $("#btn-tutup").on('click', function(){
     $("#kartuOperasionalModal").modal('hide');
   })
 </script>
