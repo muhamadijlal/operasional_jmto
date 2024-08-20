@@ -71,8 +71,8 @@
         <div class="col-lg-4">
           
           <div class="form-group mb-3">
-            <label for="kode">Karu Operasional : </label>
-            <select class="form-control" id="kode" required>
+            <label for="kode">Kartu Operasional : </label>
+            <select class="form-control" id="kode" required onchange="LoadPersonil()">
               <option value="1" selected>KSPT</option>
               <option value="2">PLT</option>
               <option value="3">Teknisi</option>
@@ -188,10 +188,98 @@
 <script>
   // Use the IOTClientService API
   $( document ).ready(function() {
-    $("#kartuOperasionalModal").modal('show');
     var api = IOTClientService;
     var status = false;
     var write_status = false;
+
+    var kode = $('#kode').val();
+    var gerbang_id = $('#gerbang').val();
+    loadPersonil(gerbang_id, kode);
+    
+    $('#kode').on('change', function() {
+      kode = $(this).val();
+      gerbang_id = $('#gerbang').val();
+      loadPersonil(gerbang_id, kode);
+    });
+  
+    $('#gerbang').on('change', function() {
+      gerbang_id = $(this).val();
+      kode = $('#kode').val();
+      loadPersonil(gerbang_id, kode);
+    });
+
+    function loadPersonil(gerbang_id, kode){
+      $('#nama_plt').select2({
+          ajax: {
+            url: '/admin/get-nama-personil',
+            headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            type: "POST",
+            dataType: 'json',
+            data: {
+              gerbang_id,
+              kode
+            },
+            delay: 250,
+            processResults: function (data) {
+                return {
+                    results: $.map(data, function (item) {
+                        return {
+                            text: `${item.nama_pegawai} [${item.npp_no}]`,
+                            id: item.npp_no,
+                        };
+                    }),
+                };
+            },
+            cache: true
+          },
+          placeholder: '-- Silahkan Pilih Petugas --'
+        });
+      }
+
+      function getDataKSPTByChange()
+    {
+        if($('#nama_kspt').val()!=null)
+        {
+            var res=$('#nama_kspt').val().split('|');
+            $('#npp_kspt').val(res);
+        }
+        else
+        {
+            $('#nama_kspt').val(0).trigger('change');
+          
+            //$('#gerbang').val(0).trigger('change');
+            
+            Swal.fire(
+                        'Terdapat Kesalahan!',
+                        'Petugas Tidak Terdaftar',
+                        'error'
+                    );
+            
+        }
+             
+    }
+
+    function getDataPLTByChange()
+    {
+        if($('#nama_plt').val()!=null)
+        {
+            var res=$('#nama_plt').val().split('|');
+            npp=res[0];
+            
+            $('#npp_plt').val(npp);
+        }
+        else
+        {
+            $('#nama_plt').val(0).trigger('change');
+             Swal.fire(
+                         'Terdapat Kesalahan!',
+                         'Petugas Tidak Terdaftar',
+                         'error'
+                     );
+        }
+    }
 
     function write_aktif(s) {
       $('#btnTulis').prop('disabled', !s);

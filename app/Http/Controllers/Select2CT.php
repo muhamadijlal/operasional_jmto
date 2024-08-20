@@ -71,9 +71,30 @@ class Select2CT extends Controller
         return response()->json($data);
     }
 
-    public function getNamaPersonil()
-    {
-        $data = tbl_pegawai::where('jabatan_id', 2)->where('activated', 1)->get();
+    public function getNamaPersonil(Request $request)
+    {   
+        switch($request->kode)
+		{
+			case 1 :
+				$jabatan_id = 2;
+			break;
+			case 2 :
+				$jabatan_id = 3;
+			break;
+			case 3 :
+				$jabatan_id = 4;
+			break;
+		}
+
+        $data = tbl_pegawai::where('activated', 1)->get();
+
+        if ($request->gerbang_id && $jabatan_id){
+            $data = tbl_pegawai::where('activated', 1)
+                                ->where('gerbang_id', $request->gerbang_id)
+                                ->where('jabatan_id', $jabatan_id)
+                                ->get();
+        }
+        
         return response()->json($data);
     }
 
