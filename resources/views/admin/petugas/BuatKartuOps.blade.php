@@ -571,8 +571,8 @@
     }
   }
 
-  $("#btn-close").click(function(){
-    $("#kartuOperasionalModal").modal('close');
+  $("#btn-close").on('click', function(){
+    $("#kartuOperasionalModal").modal('hide');
   })
 </script>
 @endsection
