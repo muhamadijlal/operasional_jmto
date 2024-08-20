@@ -160,7 +160,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="close" id="btn-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <button type="button" class="close" id="close-modal" data-dismiss="modal" aria-hidden="true">&times;</button>
       <h3 id="petugas-modal-tittle" class="modal-title">Tambah jadwal</h3>
     </div>
     <div class="modal-body">
@@ -172,7 +172,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" id="btn-tutup" data-dismiss="modal">Tutup</button>
+      <button type="button" class="btn btn-primary" id="close-modal" data-dismiss="modal">Tutup</button>
     </div>
     </div>
   </div>
@@ -570,13 +570,8 @@
       break;
     }
   }
-
-  $("#btn-close").on('click', function(){
-    $("#kartuOperasionalModal").modal('hide');
-  })
-
-  $("#btn-tutup").on('click', function(){
-    $("#kartuOperasionalModal").modal('hide');
-  })
+$(document).on('click', '#close-modal', function(){
+  $("#kartuOperasionalModal").modal('hide');
+});
 </script>
 @endsection
