@@ -111,12 +111,12 @@
                 <center>5</center>
             </td>
         </tr>
-        @php $counter = 0; @endphp
+        {{-- @php $counter = 0; @endphp --}}
         @foreach ($data as $item2)
-            @if ($counter % 25 == 0 && $counter != 0)
+            {{-- @if ($counter % 50 == 0 && $counter != 0)
                 <tr class="page-break"></tr>
-            @endif
-            <tr class="no-page-break">
+            @endif --}}
+            <tr class="no-page-break" @if ($item2->jenis == '2') style="background-color: #FFECD6;" @endif>
                 <td>{{ $item2->asalGerbang }}</td>
                 <td>
                     <center>
@@ -142,11 +142,11 @@
                 <td>{{ number_format($item2->gol5, 0, ',', '.') }}</td>
             </tr>
             {{-- <tr class="no-page-break"></tr> --}}
-            @php $counter++; @endphp
+            {{-- @php $counter++; @endphp --}}
         @endforeach
     </table>
 </body>
-<script>
+{{-- <script>
      window.onload = function() {
             calculateTableLength();
             calculatePageHeight();
@@ -167,6 +167,6 @@
             var pageHeight = window.innerHeight;
             document.getElementById('pageHeight').innerText = "Page Height: " + pageHeight + "px";
         }
-</script>
+</script> --}}
 
 </html>

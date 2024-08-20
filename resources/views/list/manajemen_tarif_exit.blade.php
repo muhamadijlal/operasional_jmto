@@ -92,11 +92,11 @@
 
 
 
-            <button class="btn btn-info add-new " id="btnAddTarif"> <i class="fa fa-plus"></i> Tambah Tarif</button>
-            <button class="btn btn-secondary  " id="btnRefeshDasarTarif"> <i class="fa fa-refresh"></i> Refresh</button>
-            <button class="btn btn-primary  " id="btnExportTarif"> <i class="fa fa-print"></i> Export</button>
-            <button class="btn btn-link  " id="btnViewTarif"> <i class="fa fa-eye"></i> View Tarif</button>
-            <button id="btnImportTarif" class="btn btn-warning  "> <i class="fa fa-print"></i> Import Tarif</button>
+            <button class="btn btn-info add-new " id="btnAddTarif"> <i class="fa fa-plus me-2"></i> Tambah Tarif</button>
+            <button class="btn btn-secondary  " id="btnRefeshDasarTarif"> <i class="fa fa-refresh me-2"></i> Refresh</button>
+            <button class="btn btn-primary  " id="btnExportTarif"> <i class="fa fa-print me-2"></i> PDF</button>
+            <button class="btn btn-link  " id="btnViewTarif"> <i class="fa fa-eye me-2"></i> View Tarif</button>
+            <button id="btnImportTarif" class="btn btn-warning  "> <i class="fa fa-print me-2"></i> Import Tarif</button>
             <br>
             <br>
 
