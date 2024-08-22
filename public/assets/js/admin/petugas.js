@@ -16,7 +16,6 @@ $('#gerbang').select2({
       cache: true
   },
   placeholder: 'Pilih Gerbang',
-
 });
 
 $('#nama_kspt').select2({

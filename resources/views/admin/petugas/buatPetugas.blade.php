@@ -156,11 +156,12 @@
 <div class="modal" id="modalImport">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Import data petugas</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
             <div class="modal-body">
+                <div class="form-group">
+                    <label for="gerbang">Gerbang : </label>
+                    <select id="gerbang" style="width: 100%" class="form-control select2">
+                    </select>
+                </div>
                 <div class="form-group mt-3">
                     <label for="import_file">Import file <span class="text-danger">* (.xlsx, .xls)</span></label>
                     <input type="file" class="form-control" id="import_file" placeholder="Import data petugas">
@@ -287,7 +288,34 @@
             dropdownParent: $("#ModalTambahPetugas")
         })
 
-        
+        $('#gerbang').select2({
+            dropdownParent: $("#modalImport")
+        })
+
+        var optionGerbangId = '';
+
+        $.ajax({
+            url: '/admin/get-gerbang-data',
+            async: false,
+            method: "GET",
+            dataType: "JSON",
+            success: function (response) {
+                console.log(response.length)
+                var optionGerbangId = '';
+
+                $.each(response, function (i, item) {
+                    var gerbangId = response[i].gerbang_id;
+                    var gerbangNama = response[i].gerbang_nama;
+
+
+                    // optionGerbangId += '<option value="' + gerbangId + '" ' + isSelected + '>' + gerbangNama + '</option>';
+                    optionGerbangId += '<option value="' + gerbangId + '" >' + gerbangNama + '</option>';
+                });
+
+                // Append the generated options to your select element
+                $('#gerbang').html(optionGerbangId);
+            }
+        });
 
         $('.datatables-basic').on('click', '.delete', function () {
         var url = baseUrl + '/delete/' + $(this).data('url');
@@ -653,10 +681,11 @@ $("#btnImport").click(function(){
 
 $('#btnSubmitImport').click(function () {
     var fileInput = document.getElementById('import_file')
+    var gerbangId = $("#gerbang").find(":selected").val()
     var file = fileInput.files[0];
 
-    if (!file) {
-        sweetAlert('Gagal!', 'File Harus Diisi', 'error')
+    if (typeof file == 'undefined' || typeof gerbangId == 'undefined') {
+        sweetAlert('Gagal!', 'File dan Gerbang Harus Diisi', 'error')
     } else {
         var fileName = file.name;
         var fileExtension = fileName.split('.').pop().toLowerCase();
@@ -665,6 +694,7 @@ $('#btnSubmitImport').click(function () {
 
             var formData = new FormData();
             formData.append('file', file);
+            formData.append('gerbang_id', gerbangId);
             formData.append('_token', '{{ csrf_token() }}');
 
             $.ajax({

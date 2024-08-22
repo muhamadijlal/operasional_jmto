@@ -13,7 +13,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Maatwebsite\Excel\Facades\Excel;
-use Svg\Tag\Rect;
 use Yajra\DataTables\Facades\DataTables;
 
 class PetugasCT extends Controller

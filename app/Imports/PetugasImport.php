@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\tbl_pegawai;
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -12,14 +11,16 @@ class PetugasImport implements ToCollection
 {
 
     private $errors;
+    private $gerbang_id;
    
     /**
     * @param Collection $collection
     */
 
-    public function __construct()
+    public function __construct($request)
     {
         $this->errors = array();
+        $this->gerbang_id = $request->gerbang_id;
     }
 
     public function collection(Collection $collection)
@@ -27,16 +28,15 @@ class PetugasImport implements ToCollection
         // START ROW IN INDEX 2
         // START COLUMN ROW IN INDEX 1
         // $collection[2][1]
-        for ($row = 2; $row < count($collection); $row++) {
-
-            $jabatan_id = $this->getJabatanId($collection[$row][3]);
+        for ($row = 2; $row < count($collection) - 1; $row++) {
+            $jabatan_id = $this->getJabatanId($collection[$row][2]);
 
             tbl_pegawai::create([
                 'npp_no' => $collection[$row][1],                   // NPP PETUGAS
-                'email' => $collection[$row][2],                    // EMAIL PETUGAS
                 'jabatan_id' => $jabatan_id,                        // JABATAN PETUGAS
-                'nama_pegawai' => $collection[$row][4],             // NAMA PETUGAS
-                'password' => Hash::make($collection[$row][5]),     // PASSWORD PETUGAS = NPP_NO
+                'nama_pegawai' => $collection[$row][3],             // NAMA PETUGAS
+                'gerbang_id' => $this->gerbang_id,                  // GERBANG ID
+                'password' => Hash::make($collection[$row][1]),     // PASSWORD PETUGAS = NPP_NO
             ]);
         }
     }
