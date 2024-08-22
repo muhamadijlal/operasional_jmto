@@ -30,7 +30,7 @@ class PetugasImport implements ToCollection
                 'jabatan_id' => $jabatan_id,              // JABATAN PETUGAS
                 'nama_pegawai' => $rows[$i][2],           // NAMA PETUGAS
                 'gerbang_id' => $this->gerbang_id,        // GERBANG ID
-                'password' => Hash::make($rows[$i][1]),   // PASSWORD PETUGAS = NPP_NO
+                'password' => $rows[$i][1],               // PASSWORD PETUGAS = NPP_NO
             ]);
         }
     }
@@ -43,17 +43,14 @@ class PetugasImport implements ToCollection
         $jabatan_id = '';
         $jabatan = strtolower($jabatan);
 
-        switch($jabatan) {
-            case 'kbt':
-                $jabatan_id = 1;
-            case 'kspt':
-                $jabatan_id = 2;
-            case 'plt':
-                $jabatan_id = 3;
-            case 'teknisi':
-                $jabatan_id = 4;
-            default:
-                break;
+        if($jabatan == 'kbt'){
+            $jabatan_id = 1;
+        }else if($jabatan == 'kspt'){
+            $jabatan_id = 2;
+        }else if($jabatan == 'plt') {
+            $jabatan_id = 3;
+        }else {
+            $jabatan_id = 4;
         }
 
         return $jabatan_id;
