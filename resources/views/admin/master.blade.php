@@ -279,6 +279,7 @@
                                     </li>
                                 </ul>
                             </li>
+
                             <li class="menu-item {{ request()->is('admin/logs') ? 'active' : '' }}">
                                 <a href="/admin/logs" class="menu-link" >
                                     <i class="menu-icon fa-solid fa-clock-rotate-left"></i>

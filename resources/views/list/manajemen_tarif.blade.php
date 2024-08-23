@@ -888,39 +888,6 @@
 
         })
 
-
-        // $('.datatables-basic').on('click', '.confirm', function () {
-        //     var url = $(this).data('url');
-        //     Swal.fire({
-        //         title: 'Peringatan?',
-        //         text: "Apakah Anda Yakin Mengubah Data Ini??",
-        //         icon: 'warning',
-        //         showCancelButton: true,
-        //         confirmButtonText: 'Ya!',
-        //         cancelButtonText: 'Batal',
-        //         customClass: {
-        //             confirmButton: 'btn btn-primary me-3',
-        //             cancelButton: 'btn btn-label-secondary'
-        //         },
-        //         buttonsStyling: false
-        //     }).then(function (result) {
-        //         if (result.value) {
-        //             Swal.fire({
-        //                 title: 'Berhasil!',
-        //                 text: 'Data Berhasil Diupdate!',
-        //                 icon: 'success',
-        //                 customClass: {
-        //                     confirmButton: 'btn btn-primary'
-        //                 },
-        //                 buttonsStyling: false
-        //             });
-        //             window.location.href = url;
-        //         }
-
-
-        //     });
-        // })
-
         $('#gerbang').select2({
             ajax: {
                 url: '/admin/get-gerbang-data', // Ganti dengan URL yang sesuai untuk mengambil data Gerbang dari server
