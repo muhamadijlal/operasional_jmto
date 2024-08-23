@@ -2,31 +2,7 @@ function cacheInput(e) {
     localStorage.setItem(e.attributes["name"].value, e.value)
 }
 
-
-
 $(document).ready(function () {
-
-    var dt_filter_table = $('.datatables-basic');
-
-    // $('.datatables-basic thead tr').clone(true).appendTo('.datatables-basic thead');
-    // $('.datatables-basic thead tr:eq(1) th').each(function (i) {
-    //     var title = $(this).text();
-
-    //     $(this).html('<input id="Search_' + title + '" name="Search_' + title +
-    //         '" type="text" oninput="cacheInput(this)" class="form-control" placeholder="Search" />'
-    //     );
-    //     $localdata = localStorage.getItem('Search_' + title);
-    //     if ($localdata) {
-    //         document.getElementById('Search_' + title).value = $localdata;
-    //     }
-    //     $('input', this).on('keyup change', function () {
-    //         if (dt_filter.column(i).search() !== this.value) {
-    //             dt_filter.column(i).search(this.value).draw();
-    //         }
-    //     });
-    // });
-
-
     var dt_filter = $('#tbl_list').DataTable({
         processing: true,
         serverSide: true,
@@ -61,7 +37,6 @@ $(document).ready(function () {
             '>',
         language: {
             emptyTable: "Tidak ada data yang tersedia"
-            // Atur pesan lain sesuai kebutuhan Anda
         },
         
         buttons: [{
@@ -125,7 +100,7 @@ $(document).ready(function () {
         var url = UrlCurrent + '/delete/' + $(this).data('url') + '/' + $('#gerbang').val();
 
         Swal.fire({
-            title: 'Peringatan?',
+            title: 'Peringatan sdcsd?',
             text: "Apakah Anda Yakin Menghapus Data Ini??",
             icon: 'warning',
             showCancelButton: true,
@@ -136,29 +111,31 @@ $(document).ready(function () {
                 cancelButton: 'btn btn-label-secondary'
             },
             buttonsStyling: false
-        }).then(function (result) {
-            $.ajax({
-                url: url,
-                method: "get",
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function (response) {
+        }).then(function (response) {
+            if(response.isConfirmed){
+                $.ajax({
+                    url: url,
+                    method: "get",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (response) {
 
-                    document.getElementById('loading-screen').style.display =
-                        'block';
-                    setTimeout(function () {
-                        dt_filter.ajax.reload();
-                        document.getElementById('loading-screen').style
-                            .display = 'none';
-                        sweetAlert('Berhasil!',
-                            'Data Berhasil Dihapus!', 'success')
-                    }, 1000);
-                }
+                        document.getElementById('loading-screen').style.display =
+                            'block';
+                        setTimeout(function () {
+                            dt_filter.ajax.reload();
+                            document.getElementById('loading-screen').style
+                                .display = 'none';
+                            sweetAlert('Berhasil!',
+                                'Data Berhasil Dihapus!', 'success')
+                        }, 1000);
+                    }
 
-            });
-
-
+                });
+            }else{
+                sweetAlert('Dibatalkan', 'Data masih tersimpan!', 'info')
+            }
         });
     })
 
@@ -192,8 +169,6 @@ $(document).ready(function () {
 
     })
 
-
-
     $('#gerbang').select2({
         ajax: {
             url: '/admin/get-gerbang-data', 
@@ -215,24 +190,6 @@ $(document).ready(function () {
 
     });
 
-    // $.ajax({
-    //     type: "GET",
-    //     url: '/admin/get-gerbang-data',
-    //     success: function(response){
-    //         console.log(response)
-    //         $('#gerbang').html('<option value="">Pilih Gerbang</option>');
-    //         var lenData   = response.length;
-    //         var a;
-    //         for(a=0; a<lenData; a++){
-
-    //                 $('#gerbang').append('<option value="'+ response[a].gerbang_id +'">'+ response[a].gerbang_nama +'</option>');
-
-    //         }
-    //     },error: function(textStatus, errorThrown) { 
-           
-    //     }
-    // })
-
     $('#btnAddDasarTarif').click(function () {
 
         if ($('#gerbang').val() == null) {
@@ -249,11 +206,7 @@ $(document).ready(function () {
             $("#DasarTarif-modal-tittle").html('Tambah DasarTarif');
             $("#DasarTarifModal").modal('show');
         }
-
-
-
     });
-
 
     function sweetAlert(title, text, icon) {
         Swal.fire({
@@ -278,8 +231,6 @@ $(document).ready(function () {
             }, 1000);
         }
     });
-
-
 
     $("#form-tambah-edit-DasarTarif").validate()
     $("#form-edit-DasarTarif").validate()
@@ -313,9 +264,7 @@ $(document).ready(function () {
                         'success')
                 }, 1000);
             }
-
         });
-
     });
 
     $("#form-edit-DasarTarif").submit(function (e) {
@@ -345,12 +294,7 @@ $(document).ready(function () {
                         'none';
                     sweetAlert('Berhasil!', 'Data Berhasil Diedit!', 'success')
                 }, 1000);
-
             }
-
         });
-
     });
-
-
 });

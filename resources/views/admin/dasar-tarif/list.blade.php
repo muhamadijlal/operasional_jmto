@@ -1,6 +1,5 @@
 @extends('admin.master')
 
-{{-- judul dari dashboard--}}
 @section('title')
 {{ $judul }}
 @endsection
