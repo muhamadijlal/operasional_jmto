@@ -100,7 +100,7 @@ $(document).ready(function () {
         var url = UrlCurrent + '/delete/' + $(this).data('url') + '/' + $('#gerbang').val();
 
         Swal.fire({
-            title: 'Peringatan sdcsd?',
+            title: 'Peringatan ?',
             text: "Apakah Anda Yakin Menghapus Data Ini??",
             icon: 'warning',
             showCancelButton: true,
