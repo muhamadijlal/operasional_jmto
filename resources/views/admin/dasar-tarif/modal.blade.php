@@ -7,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="form-tambah-edit-DasarTarif" id="form-tambah-edit-DasarTarif">
+                <form id="form-tambah-edit-DasarTarif">
                     @csrf
                     <div class="form-group">
                         <label for="exampleInputEmail1">Gerbang :</label>
