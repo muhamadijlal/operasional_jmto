@@ -1,7 +1,7 @@
 @extends('admin.master')
 
 @section('title')
-
+Buat Kartu Ops
 @endsection
 
 @section('css')
@@ -205,6 +205,7 @@
     $('#gerbang').on('change', function() {
       gerbang_id = $(this).val();
       kode = $('#kode').val();
+
       loadPersonil(gerbang_id, kode);
     });
 

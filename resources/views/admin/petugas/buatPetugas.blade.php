@@ -5,6 +5,26 @@
 Buat Petugas
 @endsection
 
+@section('css')
+<style>
+    .select2-container .select2-selection--single {
+        display: block !important;
+        height: calc(1.5em + 0.75rem + 2px) !important;
+        padding: 0.375rem 0.75rem !important;
+        font-size: 1rem !important;
+        font-weight: 400 !important;
+        line-height: 1.5 !important;
+        color: #495057 !important;
+        background-color: #fff !important;
+        background-clip: padding-box !important;
+        border: 1px solid #ced4da !important;
+        border-radius: 0.25rem !important;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+
+    }
+</style>
+@endsection
+
 @section('content')
 
 <div class="card">
@@ -13,6 +33,11 @@ Buat Petugas
         <button id="SyncronPetugas" class="btn btn-label-secondary"> <i class="fa fa-sync me-2"></i> Syncron Data</button>
         <button id="btnImport" class="btn btn-label-success"> <i class="ti ti-logout me-2" style="transform: rotate(90deg);"></i>Import</button>
         <button id="unduhTemplate" class="btn btn-label-warning"> <i class="ti ti-file me-2"></i>Unduh Template</button>
+
+        <div class="form-group mt-5">
+            <label for="gerbang">Pilih Gerbang : </label>
+            <select name="gerbang" id="gerbang_connection" style="width: 300px;" class="select2 form-control"></select>
+        </div>
     </div>
     <div class="p-3 table-responsive">
         <table id="tbl_list" class="datatables-basic table table-striped table-bordered">
@@ -181,6 +206,7 @@ Buat Petugas
 @section('js')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="{{ asset('assets/js/admin/petugas.js') }}"></script>
 <script>
     baseUrl = '{{ url()->current() }}';
     var dataObject = eval('<?php echo json_encode($Cloums); ?>')
@@ -197,12 +223,20 @@ Buat Petugas
         });
     }
 
+    $("#gerbang_connection").on('change', function(){
+        console.log($("#gerbang_connection").val());
+        dt_filter.draw();
+    })
+
     var dt_filter = $('#tbl_list').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
                 url: baseUrl, // Ganti dengan URL yang sesuai
                 type: 'GET',
+                data: function (d) {
+                    d.gerbang_id = $('#gerbang_connection').val();
+                },
                 error: function (xhr, error, code) {}
             },
             columns: dataObject,
@@ -300,7 +334,6 @@ Buat Petugas
             method: "GET",
             dataType: "JSON",
             success: function (response) {
-                console.log(response.length)
                 var optionGerbangId = '';
 
                 $.each(response, function (i, item) {
