@@ -151,4 +151,10 @@ class Select2CT extends Controller
         
         return $results;
     }
+
+    public function getRuas() {
+        $data = DB::table('tbl_ruas')->get();
+
+        return $data;
+    }
 }

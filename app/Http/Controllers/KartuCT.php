@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\tbl_penerbitan_kartu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -12,11 +11,21 @@ class KartuCT extends Controller
     public function index(){
         if (request()->ajax()) {
             $q = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu');
-            // if(request()->filled('kategori_id') && request()->kategori_id != '*') {
-            //     $q->where('kategori', request()->kategori_id);
-            // }
 
-            return DataTables::of($q)
+            if(request()->filled('ruas') && request()->filled('ktp_jenis_id') && request()->filled('status') && request()->filled('tgl_terbit') && request()->filled('tgl_kadaluarsa')) {
+                $tgl_terbit = date('Y-m-d', strtotime(request()->tgl_terbit));
+                $tgl_kadaluarsa = date('Y-m-d', strtotime(request()->tgl_kadaluarsa));
+
+                $q->where('ruas', strtolower(request()->ruas))
+                    ->where('ktp_jenis_id', request()->ktp_jenis_id)
+                    ->where('status', request()->status)
+                    ->where('tgl_terbit',  $tgl_terbit)
+                    ->where('tgl_kadaluarsa', $tgl_kadaluarsa);
+            }
+
+            $query = $q->get();
+
+            return DataTables::of($query)
             ->addColumn('jenis', function($row){
                 if ($row->ktp_jenis_id == 1) {
                     $jenis = 'Operasional';

@@ -81,4 +81,24 @@ $('#jenis_ktp').select2({
   placeholder: '-- Pilih Jenis KTP --',
   dropdownParent: $("#ModalTambahKartu")
 });
+
+$('#ruas').select2({
+    ajax: {
+        url: '/admin/get-ruas', 
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: item.nama_ruas,
+                        id: item.ruas_id,
+                    };
+                }),
+            };
+        },
+        cache: true
+    },
+    placeholder: '-- Pilih Ruas --'
+  });
   

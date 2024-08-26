@@ -1,6 +1,5 @@
 @extends('admin.master')
 
-{{-- judul dari dashboard--}}
 @section('title')
 {{ $judul }}
 @endsection
@@ -30,21 +29,24 @@
   <div class="card">
     <div class="d-flex p-2 gap-4">
       <div class="form-group" style="width: 15%;">
-        <select name="ruas" id="ruas" class="form-control">
-          <option value="" disabled selected>-- Pilih Ruas --</option>
-          <option value="*">All Ruas</option>
-        </select>
+        <select name="ruas" id="ruas" class="form-control select2"></select>
       </div>
       <div class="form-group" style="width: 15%;">
         <select name="jenis-ktp" id="jenis-ktp" class="form-control">
           <option value="" disabled selected>-- Pilih Jenis KTP --</option>
-          <option value="*">All Jenis KTP</option>
+          <option value="999">ALL</option>                       
+          <option value="1">KTP OPERASIONAL</option>
+          <option value="2">KTP KARYAWAN</option>			
+          <option value="3">KTP MITRA</option>  
         </select>
       </div>
       <div class="form-group" style="width: 15%;">
         <select name="status-ktp" id="status-ktp" class="form-control">
           <option value="" disabled selected>-- Pilih Status KTP --</option>
-          <option value="*">All Kategori</option>
+          <option value="999">ALL</option>                       
+          <option value="1">AKTIF</option>	
+          <option value="2">BLACKLIST</option>
+          <option value="3">DRAFT</option>
         </select>
       </div>
       <div class="form-group" style="width: 20%;">
@@ -173,7 +175,11 @@
       url: baseUrl, // Ganti dengan URL yang sesuai
       type: 'GET',
       data: function(d){
-        d.kategori_id = $("#kategori").val();
+        d.ruas = $("#ruas").val();
+        d.ktp_jenis_id = $("#jenis-ktp").val();
+        d.status = $("#status-ktp").val();
+        d.tgl_terbit = $("#tgl-terbit").val();
+        d.tgl_kadaluarsa = $("#tgl-kadaluarsa").val();
       }
     },
     columns: dataObject,
