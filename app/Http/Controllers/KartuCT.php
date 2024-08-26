@@ -342,8 +342,8 @@ class KartuCT extends Controller
 
     public function getDetailData(Request $request){
         $data =  DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')
-                    ->join('tbl_ruas', 'tbl_ruas.ruas_id', '=', 'tbl_penerbitan_kartu.ruas')
-                    ->select('tbl_penerbitan_kartu.*','tbl_ruas.nama_ruas')
+                    ->join('tbl_ktp_ruas', 'tbl_ktp_ruas.ruas_id', '=', 'tbl_penerbitan_kartu.ruas')
+                    ->select('tbl_penerbitan_kartu.*','tbl_ktp_ruas.nama_ruas')
                     ->where('tbl_penerbitan_kartu.id', $request->id)
                     ->first();
 
