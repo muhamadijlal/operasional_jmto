@@ -8,6 +8,7 @@ use App\Models\tbl_jabatan;
 use App\Models\tbl_pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class Select2CT extends Controller
 {
@@ -102,5 +103,52 @@ class Select2CT extends Controller
     {
         $data = tbl_jabatan::get();
         return response()->json($data);
+    }
+
+    public function getRuasKartu()
+    {
+        $data = DB::table('tbl_ktp_ruas_kartu')->get();
+        
+        return response()->json($data);
+    }
+
+    public function getInstitusi()
+    {
+        $data = DB::table('tbl_ktp_institusi')->get();
+        
+        return response()->json($data);
+    }
+
+    public function getUnit()
+    {
+        $data = DB::table('tbl_ktp_unit')->get();
+        
+        return response()->json($data);
+    }
+
+    public function getKtpOpr()
+    {
+        $data = DB::table('tbl_jenis_ktp')->get();
+        
+        return response()->json($data);
+    }
+
+    public function getOptionNama($tipe = '0')
+    {
+        $data = DB::table('tbl_penerbitan_kartu')->where('isdeleted', 0);
+
+        if ($tipe == '0') {
+			$data->whereIn('ruas', ['a07f', 'a075', 'a077', 'A052', 'A050', 'A04F', 'A04D', 'A047', 'A045', 'A02C', 'A024'])->get();
+		} else if ($tipe == '1') {
+			$data->whereIn('ruas', ['a045', 'a047', 'a04d', 'a04f', '86'])->get();
+		} else if ($tipe == '2') {
+			$data->whereIn('ruas', ['a024', 'a02c'])->get();
+		} else if ($tipe == '3') {
+			$data->whereIn('ruas', ['a050', 'a052'])->get();
+		}
+
+        $results = $data->get();
+        
+        return $results;
     }
 }

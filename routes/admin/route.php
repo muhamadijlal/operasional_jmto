@@ -9,6 +9,7 @@ Route::middleware(['AuthMD'])->group(function () {
     require 'tarif/tarif.php';
     require 'tarif/manajemen-tarif.php';
     require 'petugas/petugas.php';
+    require 'kartu/kartu.php';
     require 'utils/select2.php';
   });
 });

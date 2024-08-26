@@ -5,8 +5,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(Select2CT::class)->group(function () {
   Route::get('get-gerbang-data', 'getGerbang');
+  Route::get('get-ruas-kartu', 'getRuasKartu');
+  Route::get('get-institusi', 'getInstitusi');
+  Route::get('get-unit', 'getUnit');
+  Route::get('get-option-nama', 'getOptionNama');
   Route::get('get-jabatan-data', 'getJabatan');
   Route::get('get-nama-kspt', 'getNamaKspt');
+  Route::get('get-ktp-opr', 'getKtpOpr');
   Route::post('get-nama-personil', 'getNamaPersonil');
   Route::get('get-gerbang-data-open', 'getGerbangOpen');
   Route::get('get-gerbang-data-exit', 'getGerbangExit');

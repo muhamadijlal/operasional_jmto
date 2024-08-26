@@ -2,7 +2,7 @@
 
 {{-- judul dari dashboard--}}
 @section('title')
-{{-- {{ $judul }} --}}
+Buat Petugas
 @endsection
 
 @section('content')
