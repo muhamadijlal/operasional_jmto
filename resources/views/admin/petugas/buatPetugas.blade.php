@@ -232,7 +232,7 @@ Buat Petugas
             processing: true,
             serverSide: true,
             ajax: {
-                url: baseUrl, // Ganti dengan URL yang sesuai
+                url: baseUrl,
                 type: 'GET',
                 data: function (d) {
                     d.gerbang_id = $('#gerbang_connection').val();
@@ -351,7 +351,7 @@ Buat Petugas
         });
 
         $('.datatables-basic').on('click', '.delete', function () {
-        var url = baseUrl + '/delete/' + $(this).data('url');
+        var url = baseUrl + '/delete/' + $(this).data('url') + '/' + $('#gerbang_connection').val();
 
         Swal.fire({
             title: 'Peringatan?',
@@ -373,15 +373,11 @@ Buat Petugas
                 cache: false,
                 processData: false,
                 success: function (response) {
-
-                    document.getElementById('loading-screen').style.display =
-                        'block';
+                    document.getElementById('loading-screen').style.display = 'block';
                     setTimeout(function () {
                         dt_filter.ajax.reload();
-                        document.getElementById('loading-screen').style
-                            .display = 'none';
-                        sweetAlert('Berhasil!',
-                            'Data Berhasil Dihapus!', 'success')
+                        document.getElementById('loading-screen').style.display = 'none';
+                        sweetAlert('Berhasil!', 'Data Berhasil Dihapus!', 'success')
                     }, 1000);
                 }
 
@@ -392,8 +388,9 @@ Buat Petugas
     })
 
     $('.datatables-basic').on('click', '.btnEditPetugas', function () {
-        var url = baseUrl + '/edit/' + $(this).data('url');
+        var url = baseUrl + '/edit/' + $(this).data('url') + '/' + $('#gerbang_connection').val();
         var id = $(this).data('url')
+        var gerbang_conn = $('#gerbang_connection').val()
         $.ajax({
             url: url,
             method: "get",
@@ -403,15 +400,16 @@ Buat Petugas
             success: function (response) {
                 data = response.model
 
-                $('#id_edit').val(data.id)
+                // $('#id_edit').val(data.id)
+                $('#id_edit').val(data.npp_no)
                 $('#nama_petugas_edit').val(data.nama_pegawai)
                 $('#npp_edit').val(data.npp_no)
                 $('#inisial_petugas_edit').val(data.kode_tugas)
 
                 // penempatan gerbang
                 $('#gerbang_penempatan_edit').find('option').remove().end()
-                var optionGerbangPenempatan = '';
 
+                var optionGerbangPenempatan = '';
                 var penempatanArray = data.penempatan_gerbang.split(',');
 
                 $.ajax({
@@ -492,41 +490,41 @@ Buat Petugas
 
 
     $('#addPetugas').click(function () {
+        if($('#gerbang_connection').val() == null || $('#gerbang_connection').val() == '') {
+            sweetAlert('Gagal!', 'Pilih gerbang terlebih dahulu!', 'error');
+        } else {
+            $('#nama_petugas').val('')
+            $('#npp').val('')
+            $('#jabatan').val('')
+            $('#inisial_petugas').val('')
 
-        $('#nama_petugas').val('')
-        $('#npp').val('')
-        $('#jabatan').val('')
-        $('#inisial_petugas').val('')
+            $('#gerbang_penempatan').find('option').remove().end()
+            var optionGerbangPenempatan = '';
 
-        // penempatan gerbang
-        $('#gerbang_penempatan').find('option').remove().end()
-        var optionGerbangPenempatan = '';
+            $.ajax({
+                url: '/admin/get-gerbang-ajax/2',
+                async: false,
+                method: "GET",
 
-        $.ajax({
-            url: '/admin/get-gerbang-ajax/2',
-            async: false,
-            method: "GET",
+                dataType: "JSON",
+                success: function (response) {
 
-            dataType: "JSON",
-            success: function (response) {
+                    $.each(response, function (i, item) {
+                        optionGerbangPenempatan += '<option value="' + response[i]
+                            .gerbang_id + '"  >' + response[i]
+                            .gerbang_nama + '</option>'
+                    });
+                }
+            });
 
-                $.each(response, function (i, item) {
-                    optionGerbangPenempatan += '<option value="' + response[i]
-                        .gerbang_id + '"  >' + response[i]
-                        .gerbang_nama + '</option>'
-                });
-            }
-        });
-
-        $('#gerbang_penempatan').append(optionGerbangPenempatan);
-
-
-
-        $('#ModalTambahPetugas').modal('show')
+            $('#gerbang_penempatan').append(optionGerbangPenempatan);
+            $('#ModalTambahPetugas').modal('show')
+        }
     })
 
     $('#btnSumbitAddPetugas').click(function () {
         var gerbang_penempatan = $('#gerbang_penempatan').val()
+        var gerbang_conn = $('#gerbang_connection').val()
         var nama_petugas = $('#nama_petugas').val()
         var npp = $('#npp').val()
         var jabatan = $('#jabatan').val()
@@ -546,6 +544,7 @@ Buat Petugas
             formData.append('npp', npp);
             formData.append('jabatan', jabatan);
             formData.append('inisial_petugas', inisial_petugas);
+            formData.append('gerbang_conn', gerbang_conn);
             formData.append('_token', '{{ csrf_token() }}');
             $.ajax({
                 type: "POST",
@@ -586,6 +585,7 @@ Buat Petugas
         var nama_petugas = $('#nama_petugas_edit').val()
         var npp = $('#npp_edit').val()
         var jabatan = $('#jabatan_edit').val()
+        var gerbang_conn = $('#gerbang_connection').val()
         var inisial_petugas = $('#inisial_petugas_edit').val()
         var id = $('#id_edit').val()
 
@@ -602,8 +602,10 @@ Buat Petugas
             formData.append('nama_petugas', nama_petugas);
             formData.append('npp', npp);
             formData.append('jabatan', jabatan);
+            formData.append('gerbang_conn', gerbang_conn);
             formData.append('inisial_petugas', inisial_petugas);
             formData.append('_token', '{{ csrf_token() }}');
+
             $.ajax({
                 type: "POST",
                 contentType: false,
@@ -612,68 +614,66 @@ Buat Petugas
                 url: baseUrl + '/update/' + id,
                 async: false,
                 beforeSend: function () {
-                    document.getElementById('loading-screen').style.display =
-                        'block';
+                    document.getElementById('loading-screen').style.display = 'block';
                 },
                 success: function (response) {
-                    // console.log(response)
-
                     if (response.code == 200) {
                         $("#ModalEditPetugas").modal('hide')
                         dt_filter.ajax.reload();
-                        document.getElementById('loading-screen').style
-                            .display = 'none';
-                        sweetAlert('Berhasil!',
-                            response.message, 'success')
+                        document.getElementById('loading-screen').style.display = 'none';
+                        sweetAlert('Berhasil!', response.message, 'success')
                     } else {
-                        document.getElementById('loading-screen').style
-                            .display = 'none';
+                        document.getElementById('loading-screen').style.display = 'none';
                         displayAlerts(response);
-                        // console.log(response)
                     }
                 },
-
+                error: function(response){
+                    document.getElementById('loading-screen').style.display = 'none';
+                    sweetAlert('Gagal!', 'status code : '+ response.status +'. message : ' + response.responseJSON.message, 'error');
+                }
             })
-
         }
     })
 
     $('#SyncronPetugas').click(function () {
-        Swal.fire({
-            title: 'Peringatan?',
-            text: "Apakah Anda Yakin Sycron Data ??",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya!',
-            cancelButtonText: 'Batal',
-            customClass: {
-                confirmButton: 'btn btn-primary me-3',
-                cancelButton: 'btn btn-label-secondary'
-            },
-            buttonsStyling: false
-        }).then(function (result) {
-            $.ajax({
-                url: baseUrl + '/sycron',
-                method: "get",
-                contentType: false,
-                cache: false,
-                processData: false,
-                beforeSend: function () {
-                    document.getElementById('loading-screen').style.display =
-                        'block';
+        if($('#gerbang_connection').val() == null || $('#gerbang_connection').val() == '') {
+            sweetAlert('Gagal!', 'Pilih gerbang terlebih dahulu!', 'error');
+        } else {
+            Swal.fire({
+                title: 'Peringatan?',
+                text: "Apakah Anda Yakin Sycron Data ??",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    confirmButton: 'btn btn-primary me-3',
+                    cancelButton: 'btn btn-label-secondary'
                 },
-                success: function (response) {
+                buttonsStyling: false
+            }).then(function (result) {
+                if(result.isConfirmed){
+                    $.ajax({
+                        url: baseUrl + '/sycron',
+                        method: "get",
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        beforeSend: function () {
+                            document.getElementById('loading-screen').style.display =
+                                'block';
+                        },
+                        success: function (response) {
 
-                    document.getElementById('loading-screen').style.display =
-                        'none';
-                    sweetAlert('Berhasil!',
-                        'Data Berhasil Dihapus!', 'success')
+                            document.getElementById('loading-screen').style.display =
+                                'none';
+                            sweetAlert('Berhasil!',
+                                'Data Berhasil Dihapus!', 'success')
+                        }
+                    });
                 }
-
             });
-
-
-        });
+        }
     })
 
     function validateField(fieldValue, errorMessage) {

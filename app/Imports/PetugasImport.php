@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\tbl_pegawai;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
@@ -25,7 +26,7 @@ class PetugasImport implements ToCollection
         for ($i = 1; $i < count($rows); $i++) {
             $jabatan_id = $this->getJabatanId($rows[$i][1]);
 
-            tbl_pegawai::create([
+            DB::connection('mysql')->table('tbl_pegawai')->insert([
                 'npp_no' => $rows[$i][0],                 // NPP PETUGAS
                 'jabatan_id' => $jabatan_id,              // JABATAN PETUGAS
                 'nama_pegawai' => $rows[$i][2],           // NAMA PETUGAS

@@ -1,6 +1,5 @@
 @extends('admin.master')
 
-{{-- judul dari dashboard--}}
 @section('title')
 {{ $judul }}
 @endsection
@@ -121,47 +120,22 @@
 </div>
 @endsection
 
-@extends('admin.modal.manajemen_tarif')
+@include('admin.modal.manajemen_tarif')
 
 
 @push('scripts')
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-datetime-picker@2.5.11/build/jquery.datetimepicker.full.min.js"
-    integrity="sha256-ptCFteBa9gzHPnbHLsFaC6n2j+u9F60jtR6AwEKEaeM=" crossorigin="anonymous"></script>
-<script src="{{ asset('assets/js') }}/cdn.jsdelivr.net_npm_jquery-validation@1.19.5_dist_jquery.validate.min.js">
-</script>
-<script src="{{ asset('assets/js') }}/cdn.jsdelivr.net_npm_jquery-validation@1.19.5_dist_additional-methods.min.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-datetime-picker@2.5.11/build/jquery.datetimepicker.full.min.js" integrity="sha256-ptCFteBa9gzHPnbHLsFaC6n2j+u9F60jtR6AwEKEaeM=" crossorigin="anonymous"></script>
+<script src="{{ asset('assets/js') }}/cdn.jsdelivr.net_npm_jquery-validation@1.19.5_dist_jquery.validate.min.js"></script>
+<script src="{{ asset('assets/js') }}/cdn.jsdelivr.net_npm_jquery-validation@1.19.5_dist_additional-methods.min.js"></script>
 <script>
     baseUrl = '{{ url()->current() }}';
 </script>
-
 <script src="{{ asset('admin/js/manajemen_tarif.js') }}"></script>
-
-
-
 <script type="text/javascript">
-    // function cacheInput(e) {
-    //     localStorage.setItem(e.attributes["name"].value, e.value)
-    // }
-
     $(document).ready(function () {
-
-        // var dt_filter = null;
-
-        // function sweetAlert(title, text, icon) {
-        //     Swal.fire({
-        //         title: title,
-        //         text: text,
-        //         icon: icon,
-        //         customClass: {
-        //             confirmButton: 'btn btn-primary'
-        //         },
-        //         buttonsStyling: false
-        //     });
-        // }
 
         $("#waktu").datetimepicker({
             format: 'Y-m-d H:i:s',
@@ -836,17 +810,6 @@
                         $('#asal_gerbang_update').val(response.asal_gerbang);
                         $('#asal_gerbang_update').select2().trigger('change');
 
-                        // select2.on('select2:select', function (e) {
-                        //     // Trigger the 'select2:select' event to set the selected value
-                        //     var data = e.params.data;
-                        //     if (data.id === response.model
-                        //     .asal_gerbang) {
-                        //         select2.val(data.id);
-                        //     }
-                        // });
-                        // $("#asal_gerbang_update").show();
-
-
                         inventor = JSON.parse(response.model.tarif_inv)
                         totalInven1 = JSON.parse(response.model.gol1_d)
                         totalInven2 = JSON.parse(response.model.gol2_d)
@@ -883,9 +846,6 @@
                 });
 
             }
-
-
-
         })
 
         $('#gerbang').select2({
@@ -920,9 +880,6 @@
 
                 $(".dataInventor").remove();
 
-
-                // $("#id").val(0);
-
                 var selectedVal = $("#gerbang option:selected").text();
                 selectedVal = selectedVal.split('-').pop().split(')')[0]; // returns 'two'
                 var gerbang = $("#gerbang").val();
@@ -950,8 +907,6 @@
                                 option += '<option value="' + response[i]
                                     .id_dasar_tarif + '"  >' + response[i]
                                     .dasar_tarif + '</option>'
-                                //console.log(option);
-                                //console.log(response[i].dasar_tarif);
                             });
                         }
 
@@ -993,17 +948,14 @@
                                 option += '<option value="' + response[i]
                                     .id_dasar_tarif + '"  >' + response[i]
                                     .dasar_tarif + '</option>'
-                                //console.log(option);
-                                //console.log(response[i].dasar_tarif);
                             });
                         }
-
                     });
 
                     $('#asal_gerbang').select2({
                         dropdownParent: $("#DaftarTarifModal"),
                         ajax: {
-                            url: '/admin/get-gerbang-data', // Ganti dengan URL yang sesuai untuk mengambil data Gerbang dari server
+                            url: '/admin/get-gerbang-data',
                             dataType: 'json',
                             delay: 250,
                             processResults: function (data) {
@@ -1020,7 +972,7 @@
                             cache: true
                         },
                         placeholder: 'Pilih Gerbang',
-                        minimumInputLength: 1 // Jumlah karakter minimum yang harus dimasukkan sebelum AJAX diaktifkan
+                        minimumInputLength: 1
                     });
 
                     $('#jenis').find('option').remove().end();
@@ -1041,11 +993,7 @@
                     $("#asd1").show();
                     $("#asd2").show();
                 }
-
             }
-
-
-
         });
 
 
@@ -1060,111 +1008,30 @@
                 }, 1000);
             }
         });
-
-
-
-
-
-        // $("#form-tambah-edit-DasarTarif").validate()
-        // $("#form-edit-DasarTarif").validate()
-
-        // $("#form-tambah-edit-DasarTarif").submit(function (e) {
-        //     e.preventDefault()
-        //     var url = '{{ url()->current() }}/tambah';
-        //     var formData = new FormData($("#form-tambah-edit-DasarTarif")[0]);
-
-        //     // Tambahkan token CSRF ke dalam formData
-        //     formData.append('_token', '{{ csrf_token() }}');
-
-        //     $.ajax({
-        //         url: url,
-        //         method: "POST",
-        //         data: formData,
-        //         contentType: false,
-        //         cache: false,
-        //         processData: false,
-        //         success: function (response) {
-
-        //             $("#DasarTarifModal").modal('hide');
-        //             $("#form-tambah-edit-DasarTarif").trigger('reset');
-
-        //             document.getElementById('loading-screen').style.display = 'block';
-        //             setTimeout(function () {
-        //                 dt_filter.ajax.reload();
-        //                 document.getElementById('loading-screen').style.display =
-        //                     'none';
-        //                 sweetAlert('Berhasil!', 'Data Berhasil Ditambahkan!',
-        //                     'success')
-        //             }, 1000);
-        //         }
-
-        //     });
-
-        // });
-
-        // $("#form-edit-DasarTarif").submit(function (e) {
-        //     e.preventDefault()
-        //     var url = '{{ url()->current() }}/update';
-        //     var formData = new FormData($("#form-edit-DasarTarif")[0]);
-
-        //     // Tambahkan token CSRF ke dalam formData
-        //     formData.append('_token', '{{ csrf_token() }}');
-
-        //     $.ajax({
-        //         url: url,
-        //         method: "POST",
-        //         data: formData,
-        //         contentType: false,
-        //         cache: false,
-        //         processData: false,
-        //         success: function (response) {
-        //             //console.log(response);
-        //             $("#DasarTarifModalEdit").modal('hide');
-        //             $("#form-edit-DasarTarif").trigger('reset');
-
-        //             document.getElementById('loading-screen').style.display = 'block';
-        //             setTimeout(function () {
-        //                 dt_filter.ajax.reload();
-        //                 document.getElementById('loading-screen').style.display =
-        //                     'none';
-        //                 sweetAlert('Berhasil!', 'Data Berhasil Diedit!', 'success')
-        //             }, 1000);
-
-        //         }
-
-        //     });
-
-        // });
-
-
-
     });
 
     function sum_gol(id) {
         switch (id) {
             case 1:
                 var jgrw = $('#jagorawigol1').val() == '' ? 0 : $('#jagorawigol1').val();
-
-
                 var result = parseFloat(jgrw);
+
                 if (!isNaN(result)) {
                     $('#totalgol1').val(result);
                 }
                 break;
             case 2:
                 var jgrw = $('#jagorawigol2').val() == '' ? 0 : $('#jagorawigol2').val();
-
-
                 var result = parseFloat(jgrw);
+
                 if (!isNaN(result)) {
                     $('#totalgol2').val(result);
                 }
                 break;
             case 3:
                 var jgrw = $('#jagorawigol3').val() == '' ? 0 : $('#jagorawigol3').val();
-
-
                 var result = parseFloat(jgrw);
+
                 if (!isNaN(result)) {
                     $('#totalgol3').val(result);
                 }
@@ -1172,14 +1039,15 @@
             case 4:
                 var jgrw = $('#jagorawigol4').val() == '' ? 0 : $('#jagorawigol4').val();
                 var result = parseFloat(jgrw);
+
                 if (!isNaN(result)) {
                     $('#totalgol4').val(result);
                 }
                 break;
             case 5:
                 var jgrw = $('#jagorawigol5').val() == '' ? 0 : $('#jagorawigol5').val();
-
                 var result = parseFloat(jgrw);
+
                 if (!isNaN(result)) {
                     $('#totalgol5').val(result);
                 }

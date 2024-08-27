@@ -311,7 +311,6 @@ class KartuCT extends Controller
         try{
             DB::beginTransaction();
 
-
             DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->insert([
                 'ktp_id' => '',
                 'no_registrasi' => $request->nomor_kartu,
@@ -393,7 +392,7 @@ class KartuCT extends Controller
             $this->updatedUID($no_registrasi, $uid);
 
             $data = DB::connection('integrasi_bcds')
-                ->table('tbl_log_operasional')->create([
+                ->table('tbl_log_operasional')->insert([
                     // 'npp_no' => auth()->user()->npp_no,
                     // 'id_jabatan' => auth()->user()->jabatan_id,
                     'user_id' => auth()->user()->npp_no,
@@ -437,10 +436,6 @@ class KartuCT extends Controller
         
             return response(['status' => 500, 'message' => 'Gagal!', 'error' => $e->getMessage()]);
         }
-    }
-
-    public function simpan(Request $request){
-        return 'oke';
     }
 
     public function baca(){

@@ -9,8 +9,8 @@ Route::prefix('petugas')->group(function () {
     // buat petugas route
     Route::get('/buat-petugas', 'BuatPetugas');
     Route::post('/buat-petugas/tambah', 'BuatPetugasTambah');
-    Route::get('/buat-petugas/delete/{id}', 'BuatPetugasDelete');
-    Route::get('/buat-petugas/edit/{id}', 'BuatPetugasEdit');
+    Route::get('/buat-petugas/delete/{id}/{gerbang_conn}', 'BuatPetugasDelete');
+    Route::get('/buat-petugas/edit/{id}/{gerbang_conn}', 'BuatPetugasEdit');
     Route::post('/buat-petugas/update/{id}', 'BuatPetugasUpdate');
     Route::get('/buat-petugas/sycron', 'BuatPetugasSycron');
     Route::post('/buat-petugas/import', 'importPetugas');

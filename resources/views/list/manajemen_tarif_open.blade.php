@@ -379,8 +379,7 @@
                         <div class="form-group mb-3">
                             <label for="gerbangEditmodal">Nama Gerbang :</label>
                             <input type="hidden" name="idTarif" id="idTarif">
-                            <select class="form-control" id="gerbangEditmodal" name="gerbangEditmodal"
-                                readonly="readonly" >
+                            <select class="form-control" id="gerbangEditmodal" name="gerbangEditmodal" readonly="readonly" >
                             </select>
                         </div>
                     </div>
@@ -656,48 +655,31 @@
 
 @endsection
 
-{{-- @extends('admin.modal.manajemen_tarif') --}}
-
-
 @push('scripts')
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-datetime-picker@2.5.11/build/jquery.datetimepicker.full.min.js"
-    integrity="sha256-ptCFteBa9gzHPnbHLsFaC6n2j+u9F60jtR6AwEKEaeM=" crossorigin="anonymous"></script>
-<script src="{{ asset('assets/js') }}/cdn.jsdelivr.net_npm_jquery-validation@1.19.5_dist_jquery.validate.min.js">
-</script>
-<script src="{{ asset('assets/js') }}/cdn.jsdelivr.net_npm_jquery-validation@1.19.5_dist_additional-methods.min.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-datetime-picker@2.5.11/build/jquery.datetimepicker.full.min.js" integrity="sha256-ptCFteBa9gzHPnbHLsFaC6n2j+u9F60jtR6AwEKEaeM=" crossorigin="anonymous"></script>
+<script src="{{ asset('assets/js') }}/cdn.jsdelivr.net_npm_jquery-validation@1.19.5_dist_jquery.validate.min.js"></script>
+<script src="{{ asset('assets/js') }}/cdn.jsdelivr.net_npm_jquery-validation@1.19.5_dist_additional-methods.min.js"></script>
 <script>
     baseUrl = '{{ url()->current() }}';
-
 </script>
 
-{{-- <script src="{{ asset('admin/js/manajemen_tarif.js') }}"></script> --}}
-
-
-
 <script type="text/javascript">
-var investorCounts = {};
-var investorCountEdit = {};
+    var investorCounts = {};
+    var investorCountEdit = {};
 
-function formatRibuan(input) {
+    function formatRibuan(input) {
         // Menghapus semua karakter selain digit
         var nilai = input.value.replace(/\D/g, '');
-
         // Menambahkan pemisah ribuan dengan menggunakan locale 'id-ID' (Indonesia)
         var nilaiFormatted = Number(nilai).toLocaleString('id-ID');
-
         // Menetapkan nilai kembali ke input
         input.value = nilaiFormatted;
     }
+
     $(document).ready(function () {
-
-        
-
-        
-
         function sweetAlert(title, text, icon) {
             Swal.fire({
                 title: title,
@@ -710,21 +692,16 @@ function formatRibuan(input) {
             });
         }
 
-
         $("#waktu").datetimepicker({
             format: 'Y-m-d H:i:s',
             theme: 'white'
         });
 
-
         var dt_filter_table = $('.datatables-basic');
         var dataObject = eval('<?php echo json_encode($Cloums); ?>');
 
-
         $('.datatables-basic-open thead tr').clone(true).appendTo('.datatables-basic-open thead');
-
         $('#gerbang').on('change', function () {
-
 
             if ($.fn.DataTable.isDataTable('#tbl_list')) {
                 $('#tbl_list').DataTable().destroy();
@@ -744,7 +721,6 @@ function formatRibuan(input) {
                         d.search = $('input[type="search"]').val()
                     },
                     error: function (xhr, error, code) {}
-
                 },
                 columns: dataObject,
                 displayLength: 10,
@@ -758,17 +734,12 @@ function formatRibuan(input) {
                     [10, 25, 50, -1],
                     ['10 rows', '25 rows', '50 rows', 'Show all']
                 ],
-            
                 language: {
                     emptyTable: "Tidak ada data yang tersedia",
                     processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
                 },
-
-
             });
-
         });
-
 
         $('.datatables-basic').on('click', '.delete', function () {
             var url = '{{ url()->current() }}/delete/' + $(this).data('url') + '/' + $('#gerbang')
@@ -794,31 +765,21 @@ function formatRibuan(input) {
                         cache: false,
                         processData: false,
                         success: function (response) {
-
-                            document.getElementById('loading-screen').style
-                                .display =
-                                'block';
+                            document.getElementById('loading-screen').style.display = 'block';
                             setTimeout(function () {
                                 dt_filter.ajax.reload();
-                                document.getElementById('loading-screen')
-                                    .style
-                                    .display = 'none';
-                                sweetAlert('Berhasil!',
-                                    'Data Berhasil Dihapus!', 'success')
+                                document.getElementById('loading-screen').style.display = 'none';
+                                sweetAlert('Berhasil!', 'Data Berhasil Dihapus!', 'success')
                             }, 1000);
                         }
-
                     });
                 }
-
-
             });
         })
 
         $('.datatables-basic').on('click', '#btnDetailInvestor', function () {
             $("#modalDetailInvestor tbody tr").remove();
             var gerbang = $("#gerbang").val();
-            // console.log($(this).data('url'))
             var id = $(this).data('url')
             $.ajax({
                 url: "{{ url()->current() }}/get-investor-by-id/" + id + '/' + gerbang,
@@ -827,12 +788,10 @@ function formatRibuan(input) {
                 cache: false,
                 processData: false,
                 beforeSend: function () {
-                        document.getElementById('loading-screen').style.display =
-                            'block';
-                    },
+                    document.getElementById('loading-screen').style.display = 'block';
+                },
                 success: function (response) {
-                    document.getElementById('loading-screen').style.display =
-                            'none';
+                    document.getElementById('loading-screen').style.display = 'none';
                     inventor = split_array(response.model.tarif_inv)
                     totalInven1 = JSON.parse(response.model.gol1_d)
                     totalInven2 = JSON.parse(response.model.gol2_d)
@@ -853,29 +812,23 @@ function formatRibuan(input) {
                     })
 
                     $("#modalDetailInvestor").modal('show')
-
                 }
-
             })
-
         })
 
         function split_array(string){
-
             var cleanedString = string.slice(1, -1);
             var arrayValue = cleanedString.split(',');
             return arrayValue
         }
 
         $('.datatables-basic').on('click', '.btnEditTarif', function () {
-
             var url = '{{ url()->current() }}/edit/' + $(this).data('url') + '/' + $('#gerbang').val();
             var id = $(this).data('url')
 
             var selectedVal = $("#gerbang option:selected").text();
             selectedVal = selectedVal.split('-').pop().split(')')[0]; // returns 'two'
             $(".dataInventor").remove();
-
             $.ajax({
                 url: url,
                 method: "get",
@@ -883,11 +836,7 @@ function formatRibuan(input) {
                 cache: false,
                 processData: false,
                 success: function (response) {
-
                     var data = response.model
-
-
-                    // id
 
                     $("#idTarif").val(data.id)
                     // gerbang
@@ -896,7 +845,6 @@ function formatRibuan(input) {
                     var optionText = $("#gerbang option:selected").text();
                     $('#gerbangEditmodal').append(
                         `<option value="${optionValue}"> ${optionText}</option>`);
-
 
                     // asal gerbang
                     $('#asal_edit_gerbang').find('option').remove().end()
@@ -934,7 +882,6 @@ function formatRibuan(input) {
                     });
                     $('#asal_edit_gerbang').append(optionAsalGerbang)
 
-
                     // dasarTarif
                     $('#dasartarifeditmodal').find('option').remove().end();
                     var gerbang = $("#gerbang").val();
@@ -962,9 +909,7 @@ function formatRibuan(input) {
                                         dataDasarTarif[
                                             i]
                                         .dasar_tarif + '</option>'
-
                                 } else {
-
                                     optionDasarTarif +=
                                         '<option value="' +
                                         dataDasarTarif[i]
@@ -972,10 +917,8 @@ function formatRibuan(input) {
                                         dataDasarTarif[
                                             i]
                                         .dasar_tarif + '</option>'
-
                                 }
                             });
-
                         }
                     });
                     $('#dasartarifeditmodal').append(optionDasarTarif);
@@ -1005,8 +948,6 @@ function formatRibuan(input) {
                     $("#totalEditgol4").val(data.gol4)
                     $("#totalEditgol5").val(data.gol5)
 
-                    // investor
-
                     // var fixedJsonString = data.tarif_inv.replace(/'/g, '"');
                     var inventor = split_array(data.tarif_inv);
                     totalInven1 = JSON.parse(data.gol1_d)
@@ -1014,7 +955,6 @@ function formatRibuan(input) {
                     totalInven3 = JSON.parse(data.gol3_d)
                     totalInven4 = JSON.parse(data.gol4_d)
                     totalInven5 = JSON.parse(data.gol5_d)
-
 
                     $("#investor_edit1").val(inventor[0]);
                     $("#investor_edit2").val(inventor[0]);
@@ -1027,10 +967,8 @@ function formatRibuan(input) {
                     $("#total_investor_edit4").val(totalInven4[0]);
                     $("#total_investor_edit5").val(totalInven5[0]);
 
-
                     investorCountEdit = {}
                     $.each(inventor, function (i, item) {
-
                         if (i > 0) {
                             tambahInvestorEdit(1, inventor[i], totalInven1[i])
                             tambahInvestorEdit(2, inventor[i], totalInven2[i])
@@ -1038,23 +976,12 @@ function formatRibuan(input) {
                             tambahInvestorEdit(4, inventor[i], totalInven4[i])
                             tambahInvestorEdit(5, inventor[i], totalInven5[i])
                         }
-
                     })
 
                     $("#modalEditTarifClose").modal('show')
-
-
                 }
-
             });
-
-
-
-
-
-
         })
-
 
         $('#gerbang').select2({
             ajax: {
@@ -1073,7 +1000,7 @@ function formatRibuan(input) {
                 },
                 cache: true
             },
-            placeholder: 'Pilih Gerbang',
+            placeholder: 'Pilih Gerbang'
         });
 
 
@@ -1091,26 +1018,6 @@ function formatRibuan(input) {
                 var optionValue = $("#gerbang option:selected").val();
                 var optionText = $("#gerbang option:selected").text();
                 $('#gerbangmodal').append(`<option value="${optionValue}"> ${optionText}</option>`);
-
-
-                // asal gerbang
-                // $('#asal_gerbang').find('option').remove().end()
-                // var optionAsalGerbang = '<option value="" Selected > Pilih Gerbang Asal</option>';
-                // $.ajax({
-                //     url: '/admin/get-gerbang-ajax/' + optionValue,
-                //     async: false,
-                //     method: "GET",
-                //     dataType: "JSON",
-                //     success: function (response) {
-
-                //         $.each(response, function (i, item) {
-                //             optionAsalGerbang += '<option value="' + response[i]
-                //                 .gerbang_id + '"  >' + response[i]
-                //                 .gerbang_nama + '</option>'
-                //         });
-                //     }
-                // });
-                // $('#asal_gerbang').append(optionAsalGerbang);
 
                 // dasarTarif
                 $('#dasartarifmodal').find('option').remove().end();
@@ -1137,15 +1044,6 @@ function formatRibuan(input) {
                 });
                 $('#dasartarifmodal').append(optionDasarTarif);
 
-                // jenis
-                // $('#jenis').find('option').remove().end();
-                // var optionJenis = '<option value="" Selected > Pilih  Jenis</option>'
-                // optionJenis += "<option value='khl' >khl</option>"
-                // optionJenis += "<option value='ags' >ags</option>"
-                // optionJenis += "<option value='normal' >normal</option>"
-                // $('#jenis').append(optionJenis)
-
-
                 // waktu
                 $("#waktu").val('')
 
@@ -1162,8 +1060,6 @@ function formatRibuan(input) {
                 $('#investor5').val('')
                 $('#total_investor5').val('')
 
-
-
                 // harga
                 $('#totalgol1').val('')
                 $('#totalgol2').val('')
@@ -1173,11 +1069,7 @@ function formatRibuan(input) {
 
                 $("#modalTambahTarifClose").modal('show')
             }
-
-
-
         });
-
 
         $('#btnSimpanTarifExit').click(function () {
 
@@ -1206,8 +1098,6 @@ function formatRibuan(input) {
             var investor3 = getString('input[name="investor3[]"]')
             var investor4 = getString('input[name="investor4[]"]')
             var investor5 = getString('input[name="investor5[]"]')
-
-
 
             if (
                 validateField(gerbangmodal, 'Nama Gerbang Harus Di isi') &&
@@ -1287,12 +1177,10 @@ function formatRibuan(input) {
                     }
                 });
             }
-
         })
 
 
         $('#btnEditTarifExit').click(function () {
-
             var id = $('#idTarif').val()
             var gerbangmodal = $('#gerbangEditmodal').val()
             var dasartarifmodal = $('#dasartarifeditmodal').val()
@@ -1317,8 +1205,6 @@ function formatRibuan(input) {
             var investor3 = getString('input[name="investor_edit3[]"]')
             var investor4 = getString('input[name="investor_edit4[]"]')
             var investor5 = getString('input[name="investor_edit5[]"]')
-
-
 
             if (
                 validateField(gerbangmodal, 'Nama Gerbang Harus Di isi') &&
@@ -1464,8 +1350,6 @@ function formatRibuan(input) {
             }
         })
 
-
-
         function validateField(fieldValue, errorMessage) {
             if (fieldValue === '') {
                 sweetAlert('Gagal!', errorMessage, 'error');
@@ -1499,101 +1383,91 @@ function formatRibuan(input) {
                 return accumulator + currentValue;
             }, 0);
         }
-
-
-
-
     });
 
+    // Objek untuk menyimpan investorCount untuk setiap tabIndex
+    function tambahInvestor(tabIndex, value = null, totalinven = null) {
+        // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
+        if (!investorCounts.hasOwnProperty(tabIndex)) {
+            investorCounts[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
+        }
 
-// Objek untuk menyimpan investorCount untuk setiap tabIndex
+        // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
+        var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
 
+        // Buat elemen form group untuk input investor
+        var formGroup = document.createElement('div');
+        formGroup.className = 'form-group dataInventor';
 
-function tambahInvestor(tabIndex, value = null, totalinven = null) {
-    // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
-    if (!investorCounts.hasOwnProperty(tabIndex)) {
-        investorCounts[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
-    }
-
-    // Temukan elemen tab-pane yang sesuai berdasarkan tabIndex
-    var tabPane = document.getElementById('gol' + tabIndex + '-tab-pane');
-
-    // Buat elemen form group untuk input investor
-    var formGroup = document.createElement('div');
-    formGroup.className = 'form-group dataInventor';
-
-    // Label untuk input investor
-    var label = document.createElement('label');
-    label.textContent = 'Investor ' + investorCounts[tabIndex];
-    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
-
-    // Input untuk investor
-    var input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'form-control';
-    input.name = 'investor' + tabIndex + '[]';
-    input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
-    if (value != null) {
-        input.value = value;
-    }
-
-    // Tombol "Delete" untuk menghapus investor
-    var deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
-    deleteButton.type = 'button';
-
-    var hr = document.createElement('hr');
-
-    // Tambahkan event listener untuk tombol "Delete"
-    deleteButton.addEventListener('click', function () {
-        // Hapus elemen form group saat tombol "Delete" diklik
-        formGroup.remove();
-
-        // Kurangi nilai investorCount
-        investorCounts[tabIndex]--;
-        // Pastikan nilai investorCount tidak kurang dari 2
-        investorCounts[tabIndex] = Math.max(investorCounts[tabIndex], 2);
-
-        // Update label investor sesuai dengan nilai terbaru
+        // Label untuk input investor
+        var label = document.createElement('label');
         label.textContent = 'Investor ' + investorCounts[tabIndex];
         label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
+
+        // Input untuk investor
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control';
+        input.name = 'investor' + tabIndex + '[]';
         input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
+        if (value != null) {
+            input.value = value;
+        }
+
+        // Tombol "Delete" untuk menghapus investor
+        var deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'btn btn-danger btn-sm mt-2 mb-2';
+        deleteButton.type = 'button';
+
+        var hr = document.createElement('hr');
+
+        // Tambahkan event listener untuk tombol "Delete"
+        deleteButton.addEventListener('click', function () {
+            // Hapus elemen form group saat tombol "Delete" diklik
+            formGroup.remove();
+
+            // Kurangi nilai investorCount
+            investorCounts[tabIndex]--;
+            // Pastikan nilai investorCount tidak kurang dari 2
+            investorCounts[tabIndex] = Math.max(investorCounts[tabIndex], 2);
+
+            // Update label investor sesuai dengan nilai terbaru
+            label.textContent = 'Investor ' + investorCounts[tabIndex];
+            label.setAttribute('for', 'investor' + tabIndex + '_' + investorCounts[tabIndex]);
+            input.id = 'investor' + tabIndex + '_' + investorCounts[tabIndex];
+            totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+            totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
+        });
+
+        // Total Investor
+        var totalLabel = document.createElement('label');
+        totalLabel.textContent = 'Tarif Investor';
         totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+
+        var totalInput = document.createElement('input');
+        totalInput.type = 'number';
+        totalInput.className = 'form-control';
+        totalInput.name = 'totalinvestor' + tabIndex + '[]';
         totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
-    });
+        totalInput.value = totalinven;
 
-    // Total Investor
-    var totalLabel = document.createElement('label');
-    totalLabel.textContent = 'Tarif Investor';
-    totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCounts[tabIndex]);
+        // Tambahkan elemen-elemen ini ke dalam tab-pane
+        formGroup.appendChild(hr);
+        formGroup.appendChild(label);
+        formGroup.appendChild(input);
+        formGroup.appendChild(totalLabel);
+        formGroup.appendChild(totalInput);
+        tabPane.appendChild(formGroup);
+        formGroup.appendChild(deleteButton);
 
-    var totalInput = document.createElement('input');
-    totalInput.type = 'number';
-    totalInput.className = 'form-control';
-    totalInput.name = 'totalinvestor' + tabIndex + '[]';
-    totalInput.id = 'total_investor' + tabIndex + '_' + investorCounts[tabIndex];
-    totalInput.value = totalinven;
+        formGroup.appendChild(hr); // Tambahkan tombol "Delete"
 
-    // Tambahkan elemen-elemen ini ke dalam tab-pane
-    formGroup.appendChild(hr);
-    formGroup.appendChild(label);
-    formGroup.appendChild(input);
-    formGroup.appendChild(totalLabel);
-    formGroup.appendChild(totalInput);
-    tabPane.appendChild(formGroup);
-    formGroup.appendChild(deleteButton);
-
-    formGroup.appendChild(hr); // Tambahkan tombol "Delete"
-
-    investorCounts[tabIndex]++; // Inkrementasi hitungan investor untuk tabIndex tertentu
-}
-
-
+        investorCounts[tabIndex]++; // Inkrementasi hitungan investor untuk tabIndex tertentu
+    }
 
     function tambahInvestorEdit(tabIndex, value = null, totalinven = null) {
-       
-           // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
+        // Inisialisasi investorCount jika belum ada untuk tabIndex tertentu
         if (!investorCountEdit.hasOwnProperty(tabIndex)) {
             investorCountEdit[tabIndex] = 2; // Mulai dari 2 atau nilai yang sesuai
         }
@@ -1604,20 +1478,20 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
         var formGroup = document.createElement('div');
         formGroup.className = 'form-group dataInventor';
 
-    // Label untuk input investor
-    var label = document.createElement('label');
-    label.textContent = 'Investor ' + investorCountEdit[tabIndex];
-    label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+        // Label untuk input investor
+        var label = document.createElement('label');
+        label.textContent = 'Investor ' + investorCountEdit[tabIndex];
+        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
 
- // Input untuk investor
- var input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'form-control';
-    input.name = 'investor_edit' + tabIndex + '[]';
-    input.id = 'investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
-    if (value != null) {
-        input.value = value;
-    }
+        // Input untuk investor
+        var input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control';
+        input.name = 'investor_edit' + tabIndex + '[]';
+        input.id = 'investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
+        if (value != null) {
+            input.value = value;
+        }
 
         // Tombol "Delete" untuk menghapus investor
         var deleteButton = document.createElement('button');
@@ -1627,23 +1501,23 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
 
         var hr = document.createElement('hr');
 
- // Tambahkan event listener untuk tombol "Delete"
- deleteButton.addEventListener('click', function () {
-        // Hapus elemen form group saat tombol "Delete" diklik
-        formGroup.remove();
+        // Tambahkan event listener untuk tombol "Delete"
+        deleteButton.addEventListener('click', function () {
+            // Hapus elemen form group saat tombol "Delete" diklik
+            formGroup.remove();
 
-        // Kurangi nilai investorCount
-        investorCountEdit[tabIndex]--;
-        // Pastikan nilai investorCount tidak kurang dari 2
-        investorCountEdit[tabIndex] = Math.max(investorCountEdit[tabIndex], 2);
+            // Kurangi nilai investorCount
+            investorCountEdit[tabIndex]--;
+            // Pastikan nilai investorCount tidak kurang dari 2
+            investorCountEdit[tabIndex] = Math.max(investorCountEdit[tabIndex], 2);
 
-        // Update label investor sesuai dengan nilai terbaru
-        label.textContent = 'Investor ' + investorCountEdit[tabIndex];
-        label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
-        input.id = 'investor' + tabIndex + '_' + investorCountEdit[tabIndex];
-        totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
-        totalInput.id = 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex];
-    });
+            // Update label investor sesuai dengan nilai terbaru
+            label.textContent = 'Investor ' + investorCountEdit[tabIndex];
+            label.setAttribute('for', 'investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+            input.id = 'investor' + tabIndex + '_' + investorCountEdit[tabIndex];
+            totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
+            totalInput.id = 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex];
+        });
 
         // Total Investor
         var totalLabel = document.createElement('label');
@@ -1651,11 +1525,11 @@ function tambahInvestor(tabIndex, value = null, totalinven = null) {
         totalLabel.setAttribute('for', 'total_investor' + tabIndex + '_' + investorCountEdit[tabIndex]);
 
         var totalInput = document.createElement('input');
-    totalInput.type = 'number';
-    totalInput.className = 'form-control';
-    totalInput.name = 'totalinvestor_edit' + tabIndex + '[]';
-    totalInput.id = 'total_investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
-    totalInput.value = totalinven;
+        totalInput.type = 'number';
+        totalInput.className = 'form-control';
+        totalInput.name = 'totalinvestor_edit' + tabIndex + '[]';
+        totalInput.id = 'total_investor_edit' + tabIndex + '_' + investorCountEdit[tabIndex];
+        totalInput.value = totalinven;
         // Tambahkan elemen-elemen ini ke dalam tab-pane
 
         formGroup.appendChild(hr);

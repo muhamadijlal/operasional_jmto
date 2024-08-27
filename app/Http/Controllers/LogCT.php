@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\tbl_gerbang;
-use App\Models\tbl_jabatan;
-use App\Models\tbl_log_operational;
-use App\Models\tbl_pegawai;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class LogCT extends Controller
@@ -13,7 +10,7 @@ class LogCT extends Controller
     public function getLog(){
 
         if (request()->ajax()) {
-            $q = tbl_log_operational::query();
+            $q = DB::connection('mysql')->table('tbl_log_operational')->query();
 
             if(request()->filled('kategori_id') && request()->kategori_id != '*') {
                 $q->where('kategori', request()->kategori_id);
@@ -23,7 +20,7 @@ class LogCT extends Controller
             ->addColumn('jabatan', function ($row) {
                 $jabatan_id = $row->id_jabatan;
 
-                $data = tbl_jabatan::where('jabatan_id', $jabatan_id)->first();
+                $data = DB::connection('mysql')->table('tbl_jabatan')->where('jabatan_id', $jabatan_id)->first();
 
                 $jabatan = $data->nama_jabatan;
 
@@ -34,7 +31,7 @@ class LogCT extends Controller
                 $gerbang_id = $row->gerbang_id;
 
                 // Retrieve related data from Table2Model based on the IDs
-                $data = tbl_gerbang::where('gerbang_id', $gerbang_id)->first();
+                $data = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_id', $gerbang_id)->first();
 
                 // // Create a string to display the related data
                 $gerbang = $data ? $data->gerbang_nama : '';
@@ -46,8 +43,8 @@ class LogCT extends Controller
                 $npp_no = $row->npp_no;
 
                 // Retrieve related data from Table2Model based on the IDs
-                $data = tbl_pegawai::where('npp_no', $npp_no)->first();
-                // // Create a string to display the related data
+                $data = DB::connection('mysql')->table('tbl_pegawai')->where('npp_no', $npp_no)->first();
+                // Create a string to display the related data
                 $nama_petugas = $data ? $data->nama_pegawai : '';
 
                 return $nama_petugas;

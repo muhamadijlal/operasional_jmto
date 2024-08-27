@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginActionR;
-use App\Models\tbl_ruas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AuthCT extends Controller
 {
     public function login()
     {
-        $ruas = tbl_ruas::first();
+        $ruas = DB::connection('mysql')->table('tbl_ruas')->first();
 
         return view('auth.login', compact('ruas'));
     }
 
-    public function loginAction(LoginActionR $request)
+    public function loginAction(Request $request)
     {
+        $request->validate([
+            'npp'     => 'required',
+            'password'  => 'required',
+        ]);
+
         if (Auth::attempt(array(
             'npp_no' => $request->npp,
             'password' => $request->password,

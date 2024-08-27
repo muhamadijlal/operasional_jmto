@@ -91,7 +91,7 @@ $('#ruas').select2({
             return {
                 results: $.map(data, function (item) {
                     return {
-                        text: item.nama_ruas,
+                        text: item.ruas_nama,
                         id: item.ruas_id,
                     };
                 }),
