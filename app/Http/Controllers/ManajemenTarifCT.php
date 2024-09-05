@@ -346,15 +346,16 @@ class ManajemenTarifCT extends Controller
             Excel::import($import, $request->file('file'));
 
             $failed = $import->getFailed();
+
             $array = [
                 'gerbang' => $failed
             ];
 
-            $pdf = Pdf::loadView('admin.pdfFailedClose', $array)->setPaper('a4', 'landscape');
+            // $pdf = Pdf::loadView('admin.pdfFailedClose', $array)->setPaper('a4', 'landscape');
 
-            return response($pdf->output(), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="Table Tarif GT ' . $gerbang->gerbang_nama . '.pdf"');
+            // return response($pdf->output(), 200)
+            //     ->header('Content-Type', 'application/pdf')
+            //     ->header('Content-Disposition', 'attachment; filename="Table Tarif GT ' . $gerbang->gerbang_nama . '.pdf"');
 
 
             return response()->json(['code' => 200, 'message' => 'Success Import Data']);

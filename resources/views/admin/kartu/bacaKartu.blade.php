@@ -108,7 +108,7 @@ $(document).ready(function() {
   };
 
   api.onlog = function(log) {
-    console.log("Log:", log);
+    // console.log("Log:", log);
 
     if(log == '[*] disconnected') {
       $("#com i").removeClass("text-success").addClass("text-danger");
@@ -166,9 +166,9 @@ $(document).ready(function() {
           // document.getElementById('btnTulis').uid = curr_uuid;
           // $('#btnRead').prop('disabled', false);
           showKartuDinas();
-          // write_aktif(true);
+          write_aktif(true);
         } else {
-          // write_aktif(false);
+          write_aktif(false);
           $("#uid").html(' -');
           $('#btnRead').prop('disabled',true);
         }
@@ -188,9 +188,12 @@ $(document).ready(function() {
     var blok2 = data[2];
 
     $.ajax({
-      url: base_url + '/getDetailKTP',
+      url: baseUrl + '/getDetailKTP',
       method: "POST",
       dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
       data: {
         blok0: blok0,
         blok1: blok1,
@@ -200,7 +203,7 @@ $(document).ready(function() {
         document.getElementById('loading-screen').style.display = 'block';
       },
       success: function(response) {
-        console.log(response);
+
         var ruas = (response.data.ruas).toUpperCase();
         var expired = (response.data.expire).substring(0, 4) + '-' + (response.data.expire).substring(4, 6) + '-' + (response.data.expire).substring(6, 8);
         var tipe = response.data.tipe;
@@ -209,7 +212,7 @@ $(document).ready(function() {
         var namaa = (response.ktpNama[0].nama).toUpperCase();
         var nama;       
 
-        swal.fire({
+        Swal.fire({
           title: 'Data Kartu Tol Perusahaan',
           customClass: {
             popup: 'swal-wide',
@@ -223,6 +226,9 @@ $(document).ready(function() {
             <style>
             .uid_img{
               width: 250px;
+            }
+            .swal2-popup {
+              width: 26% !important;
             }
             .odd{
               background-color:#7bb3c1;
@@ -240,7 +246,7 @@ $(document).ready(function() {
             </style>
             <thead>
             <tr style="padding:10px;">
-              <td width="25%" rowspan="6"><img class="uid_img" src="` + base_url + `assets/file/logo/card.png"></img></td>
+              <td width="25%" rowspan="6"><img class="uid_img" src="http://operasional_jmto.co/assets/img/card.png"></img></td>
               <td class="" width="20%" style="text-align:left;">UID</td>
               <td width="2%" style="text-align:left;">:</td>
               <td width="" style="text-align:left;">` + uid + `</td>

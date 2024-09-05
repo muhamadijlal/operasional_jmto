@@ -41,6 +41,7 @@
 		}
 	}
 	async function send_command(c,force){
+		// console.log("send_command : "+force, cs_status)
 		if (force||('active' in cs_status)) {
 			if (force||(cs_status.active)){
 				let retval = new Promise((ret) => {
@@ -55,7 +56,9 @@
 						}
 					]);
 				});
+				console.log("retval :"+ JSON.stringify(retval))
 				_log("  >> "+c);
+				console.log("ini c: "+c)
 				ws.send(c);
 				return await retval;
 			}
@@ -124,6 +127,7 @@
 	};
 	api.auth=(async function(sector, keytype, key){
 		var res = await send_command("auth "+sector+" "+keytype+" "+key);
+		console.log("api auth res: "+JSON.stringify(res))
 		if ((res)&&(res.code==0))
 			return true;
 		return false;
@@ -142,6 +146,7 @@
 	});
 	api.read_sector=(async function(sector, keytype, key){
 		var data=[];
+
 		if (await api.auth(sector,keytype,key)){
 			for (var i=0;i<3;i++){
 				var res = await api.read(sector*4+i);
@@ -154,6 +159,7 @@
 				}
 			}
 			api.finish();
+			console.log("data nya : "+data)
 			return data;
 		}
 		return false;

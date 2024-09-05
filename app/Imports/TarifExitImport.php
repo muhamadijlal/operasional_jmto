@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
+use function PHPUnit\Framework\throwException;
+
 class TarifExitImport implements ToCollection
 {
     private $gerbang;
@@ -36,7 +38,7 @@ class TarifExitImport implements ToCollection
                 }
             }
             if ($i >= 2) {
-                $asal_gerbang = $rows[$i][0];
+                $asal_gerbang = strtolower($rows[$i][0]);
                 $jenis = $rows[$i][1];
 
                 $kelipatanGetGol = 1;
@@ -89,16 +91,16 @@ class TarifExitImport implements ToCollection
                     }
                 }
 
-                $modelAsalGerbang = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_nama', $asal_gerbang)->first();
+                $modelAsalGerbang = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_nama', $asal_gerbang)->firstOrFail();
 
                 if ($modelAsalGerbang) {
-                    Config::set('database.connections.mysql2.host', $this->gerbang->host);
+                    // Config::set('database.connections.mysql2.host', $this->gerbang->host);
                     Config::set('database.connections.mysql2.port', $this->gerbang->port);
                     Config::set('database.connections.mysql2.database', $this->gerbang->database);
                     Config::set('database.connections.mysql2.username', $this->gerbang->user);
                     Config::set('database.connections.mysql2.password', $this->gerbang->pass);
 
-                    DB::connection('mysql2')->table('tbl_tarif_exit')->insert([
+                    $dataDB = DB::connection('mysql2')->table('tbl_tarif_exit')->insert([
                         'ruas_id' => $this->gerbang->ruas_id,
                         'gerbang_id' => $this->gerbang->gerbang_id,
                         'asal_gerbang' => $modelAsalGerbang->gerbang_id,

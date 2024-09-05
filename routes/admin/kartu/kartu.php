@@ -16,7 +16,7 @@ Route::prefix('kartu')->group(function () {
     Route::post('/buat/getDetailData', 'getDetailData');
     Route::post('/buat/generateDataKartu', 'generateDataKartu');
     Route::post('/buat/updateUID', 'updateUID');
-    Route::post('/buat/getDetailKTP', 'getDetailKTP');
+    Route::post('/baca/getDetailKTP', 'getDetailKTP');
     
     // Route::post('/simpan', 'simpan');
 
