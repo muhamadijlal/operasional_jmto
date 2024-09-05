@@ -203,9 +203,16 @@ $(document).ready(function() {
         document.getElementById('loading-screen').style.display = 'block';
       },
       success: function(response) {
-
+        // console.log('haidar 123 : '+response.data.tipe)
         var ruas = (response.data.ruas).toUpperCase();
-        var expired = (response.data.expire).substring(0, 4) + '-' + (response.data.expire).substring(4, 6) + '-' + (response.data.expire).substring(6, 8);
+
+        var year = response.data.expire.substring(0, 4);
+        var month = response.data.expire.substring(4, 6);
+        var day = response.data.expire.substring(6, 8);
+
+        var expired = year + '-' + month + '-' + day;
+
+        console.log("iben ganteng: "+response.data.expire)
         var tipe = response.data.tipe;
         var nokartu = response.data.nokartu;
         var uid = (response.data.uid).toUpperCase();
@@ -346,22 +353,21 @@ $(document).ready(function() {
   });
 
   function tipeKartu(id) {
-    var kartu = '';
 
-    // switch (id) {
-    //   case '1':
-    //     kartu = 'Operasional';
-    //     break;
-    //   case '2':
-    //     kartu = 'Karyawan';
-    //     break;
-    //   case '3':
-    //     kartu = 'Mitra';
-    //     break;
-    //   default:
-    //     kartu = 'UNKNOWN';
-    //     break;
-    // }
+    switch (id) {
+      case '01':
+        kartu = 'Operasional';
+        break;
+      case '02':
+        kartu = 'Karyawan';
+        break;
+      case '03':
+        kartu = 'Mitra';
+        break;
+      default:
+        kartu = 'UNKNOWN';
+        break;
+    }
 
     return kartu;
   }

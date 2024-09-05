@@ -359,6 +359,7 @@ class KartuCT extends Controller
     }
 
     public function generateDataKartu(Request $request){
+
         $nomor = $request->no_ktp;
         $ruas = $request->kode_ruas;
         $expire = $request->masa_berlaku;
@@ -582,11 +583,13 @@ class KartuCT extends Controller
     }
 
     private function ktp_write($nomor, $ruas, $expire, $tipe, $uid){
+
+        $expiredDate = str_replace('-', '', $expire);
         $pbk        = env("PUBLIC_KEY");
         $pvk        = env("PRIVATE_KEY");
         $nomor      = $this->ktp_datalen($nomor,16);
         $ruas       = $this->ktp_datalen($ruas,4);
-        $expire     = $this->ktp_datalen($expire,8);
+        $expire     = $this->ktp_datalen($expiredDate,8);
         $tipe       = $this->ktp_datalen($tipe,2);
         $uid        = $this->ktp_datalen($uid,8);
         $data       = "fe{$ruas}{$expire}{$tipe}{$nomor}{$uid}";

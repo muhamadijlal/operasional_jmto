@@ -91,7 +91,7 @@ Buat Kartu
           </div>
 
           <div class="form-group mb-3">
-            <label for="tipe_ktp">Tipe KPT :</label>
+            <label for="tipe_ktp">Tipe KTP :</label>
             <input type="text" class="form-control" id="tipe_ktp" placeholder="Tipe KTP" disabled>
           </div>
 
@@ -294,12 +294,18 @@ $(document).ready(function() {
           return false;
         } else {
           var formData = new FormData();
+          console.log('tipe ktp :'+$('#tipe_ktp').val())
 
           formData.append('uid_ktp', $('#uid_ktp').val());
           formData.append('no_ktp',  $('#no_ktp').val());
           formData.append('kode_ruas', $('#kode_ruas').val());
-          formData.append('tipe_ktp', $('#tipe_ktp').val());
+          formData.append('tipe_ktp', generateTipeKTP($('#tipe_ktp').val()));
           formData.append('masa_berlaku', $('#masa_berlaku').val());
+
+          // Display the key/value pairs
+          for (var pair of formData.entries()) {
+            console.log('datanya : '+pair[0]+ ', ' + pair[1]); 
+          }
 
           $.ajax({
             url: baseUrl + '/generateDataKartu',
@@ -374,6 +380,7 @@ $(document).ready(function() {
         }
       }
     } else {
+      console.log("ini uid else cond : "+uid)
       Swal.fire({
         title: 'UID Kartu Belum Terdata',
         customClass: {
@@ -436,6 +443,22 @@ $(document).ready(function() {
     location.href = fileUrl;
   });
 });
+
+function generateTipeKTP(tipe) {
+  const tipeKTP = tipe.toLowerCase();
+  console.log("TIPE KTPNYA :" + tipeKTP);
+  
+  switch (tipeKTP) {
+    case 'operasional':
+      return 1;
+    case 'karyawan':
+      return 2;
+    case 'mitra':
+      return 3;
+    default:
+      return 0;
+  }
+}
 
 function tipeKartu(id) {
   var kartu = '';
