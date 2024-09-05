@@ -246,7 +246,7 @@ $(document).ready(function() {
             </style>
             <thead>
             <tr style="padding:10px;">
-              <td width="25%" rowspan="6"><img class="uid_img" src="http://operasional_jmto.co/assets/img/card.png"></img></td>
+              <td width="25%" rowspan="6"><img class="uid_img" src="/assets/img/card.png"></img></td>
               <td class="" width="20%" style="text-align:left;">UID</td>
               <td width="2%" style="text-align:left;">:</td>
               <td width="" style="text-align:left;">` + uid + `</td>
@@ -349,13 +349,13 @@ $(document).ready(function() {
     var kartu = '';
 
     switch (id) {
-      case '01':
+      case '1':
         kartu = 'Operasional';
         break;
-      case '02':
+      case '2':
         kartu = 'Karyawan';
         break;
-      case '03':
+      case '3':
         kartu = 'Mitra';
         break;
       default:
