@@ -348,20 +348,20 @@ $(document).ready(function() {
   function tipeKartu(id) {
     var kartu = '';
 
-    switch (id) {
-      case '1':
-        kartu = 'Operasional';
-        break;
-      case '2':
-        kartu = 'Karyawan';
-        break;
-      case '3':
-        kartu = 'Mitra';
-        break;
-      default:
-        kartu = 'UNKNOWN';
-        break;
-    }
+    // switch (id) {
+    //   case '1':
+    //     kartu = 'Operasional';
+    //     break;
+    //   case '2':
+    //     kartu = 'Karyawan';
+    //     break;
+    //   case '3':
+    //     kartu = 'Mitra';
+    //     break;
+    //   default:
+    //     kartu = 'UNKNOWN';
+    //     break;
+    // }
 
     return kartu;
   }
