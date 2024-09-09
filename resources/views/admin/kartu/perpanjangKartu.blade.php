@@ -410,41 +410,44 @@ $(document).ready(function() {
   function tipeRuas(id) {
     var kartu = '';
     switch (id.toUpperCase()) {
-      case 'A045':
-        kartu = 'MTN';
-        break;
-      case 'A047':
-        kartu = 'MTN + JANGER';
-        break;
-      case 'A04D':
-        kartu = 'MTN + BSD';
-        break;
-      case 'A04F':
-        kartu = 'MTN + JANGER + BSD';
-        break;
-      case 'A050':
-        kartu = 'JKC';
-        break;
-      case 'A052':
-        kartu = 'JKC + JANGER';
-        break;
-      case 'A024':
-        kartu = 'CSJ';
-        break;
-      case 'A02C':
-        kartu = 'CSJ+BSD';
-        break;
-      case 'A07F':
-        kartu = 'JORR 2 + BSD + JANGER';
-        break;
-      case 'A075':
-        kartu = 'MTN + CSJ + JKC';
-        break;
-      case 'A047':
-        kartu = 'MTN + JANGER';
-        break;
-      case 'A077':
-        kartu = 'JORR 2 + JANGER';
+      // case 'A045':
+      //   kartu = 'MTN';
+      //   break;
+      // case 'A047':
+      //   kartu = 'MTN + JANGER';
+      //   break;
+      // case 'A04D':
+      //   kartu = 'MTN + BSD';
+      //   break;
+      // case 'A04F':
+      //   kartu = 'MTN + JANGER + BSD';
+      //   break;
+      // case 'A050':
+      //   kartu = 'JKC';
+      //   break;
+      // case 'A052':
+      //   kartu = 'JKC + JANGER';
+      //   break;
+      // case 'A024':
+      //   kartu = 'CSJ';
+      //   break;
+      // case 'A02C':
+      //   kartu = 'CSJ+BSD';
+      //   break;
+      // case 'A07F':
+      //   kartu = 'JORR 2 + BSD + JANGER';
+      //   break;
+      // case 'A075':
+      //   kartu = 'MTN + CSJ + JKC';
+      //   break;
+      // case 'A047':
+      //   kartu = 'MTN + JANGER';
+      //   break;
+      // case 'A077':
+      //   kartu = 'JORR 2 + JANGER';
+      //   break;
+      case 'B001':
+        kartu = 'JMJ';
         break;
       default:
         kartu = 'Unknown1';

@@ -42,62 +42,67 @@ class KartuCT extends Controller
             ->addColumn('ruas', function($row) {
 
                 switch ($row->ruas) {
-                    case 'a045':
-                        $ruas = '<span style="background-color:blue;" class="badge rounded-pill">MTN</span>';
-                        break;
-                    case 'a047':
-                        $ruas = '<div class="d-flex gap-1">
-                                    <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                                    <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                                </div>';
-                        break;
-                    case 'a04d':
-                        $ruas = '<div class="d-flex gap-1">
-                                    <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                                    <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                                </div>';
-                        break;
-                    case 'a04f':
-                        $ruas = '<div class="d-flex gap-1">
-                                    <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                                    <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                                    <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                                </div>';
-                        break;
-                    case 'a050':
-                        $ruas = '<span style="background-color:blue;" class="badge rounded-pill">JKC</span>';
-                        break;
-                    case 'a052':
-                        $ruas = '<div class="d-flex gap-1">
-                                    <span style="background-color:blue;" class="badge rounded-pill">JKC</span>
-                                    <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                                </div>';
-                        break;
-                    case 'a024':
-                        $ruas = '<span style="background-color:blue;" class="badge rounded-pill">CSJ</span>';
-                        break;
-                    case 'a02c':
-                        $ruas = '<div class="d-flex gap-1">
-                                    <span style="background-color:blue;" class="badge rounded-pill">CSJ</span>
-                                    <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                                </div>';
-                        break;
-                    case 'a075':
-                        $ruas = '<span style="background-color:blue;" class="badge rounded-pill">JORR</span>';
-                        break;
-                    case 'a07f':
-                        $ruas = '<div class="d-flex gap-1">
-                                    <span style="background-color:blue;" class="badge rounded-pill">JORR2</span>
-                                    <span style="background-color:blue;" class="badge rounded-pill">JANGER</span>
-                                    <span style="background-color:blue;" class="badge rounded-pill">BSD</span>
-                                </div>';
-                        break;
-                    case 'a077':
-                        $ruas = '<div class="d-flex gap-1">
-                                    <span style="background-color:blue;" class="badge rounded-pill">JORR2</span>
-                                    <span style="background-color:blue;" class="badge rounded-pill">JANGER</span>
-                                </div>';
-                        break;
+                    // case 'a045':
+                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">MTN</span>';
+                    //     break;
+                    // case 'a047':
+                    //     $ruas = '<div class="d-flex gap-1">
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
+                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
+                    //             </div>';
+                    //     break;
+                    // case 'a04d':
+                    //     $ruas = '<div class="d-flex gap-1">
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
+                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
+                    //             </div>';
+                    //     break;
+                    // case 'a04f':
+                    //     $ruas = '<div class="d-flex gap-1">
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
+                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
+                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
+                    //             </div>';
+                    //     break;
+                    // case 'a050':
+                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">JKC</span>';
+                    //     break;
+                    // case 'a052':
+                    //     $ruas = '<div class="d-flex gap-1">
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">JKC</span>
+                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
+                    //             </div>';
+                    //     break;
+                    // case 'a024':
+                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">CSJ</span>';
+                    //     break;
+                    // case 'a02c':
+                    //     $ruas = '<div class="d-flex gap-1">
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">CSJ</span>
+                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
+                    //             </div>';
+                    //     break;
+                    // case 'a075':
+                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">JORR</span>';
+                    //     break;
+                    // case 'a07f':
+                    //     $ruas = '<div class="d-flex gap-1">
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">JORR2</span>
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">JANGER</span>
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">BSD</span>
+                    //             </div>';
+                    //     break;
+                    // case 'a077':
+                    //     $ruas = '<div class="d-flex gap-1">
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">JORR2</span>
+                    //                 <span style="background-color:blue;" class="badge rounded-pill">JANGER</span>
+                    //             </div>';
+                    //     break;
+                      case 'b001':
+                            $ruas = '<div class="d-flex gap-1">
+                                        <span style="background-color:blue;" class="badge rounded-pill">JMJ</span>
+                                    </div>';
+                      break;
                     default:
                         $ruas = '<span style="background-color:blue;" class="badge rounded-pill">Unknown</span>';
                         break;
