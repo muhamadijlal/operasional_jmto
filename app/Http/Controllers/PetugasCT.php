@@ -234,25 +234,6 @@ class PetugasCT extends Controller
         return response()->json(['code' => 200, 'message' => 'Success Delete Data']);
     }
 
-    public function BuatPetugasSycron()
-    {
-
-        $modal = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_id', '02')->get();
-        $pegawai = DB::connection('mysql')->table('tbl_pegawai')->get();
-
-        foreach ($modal as $_ => $gerbang) {
-            Config::set('database.connections.mysql2.host', $gerbang->host);
-            Config::set('database.connections.mysql2.port', $gerbang->port);
-            Config::set('database.connections.mysql2.database', $gerbang->database);
-            Config::set('database.connections.mysql2.username', $gerbang->user);
-            Config::set('database.connections.mysql2.password', $gerbang->pass);
-
-            DB::connection('mysql2')->table('tbl_pegawai')->truncate();
-        }
-
-        return response()->json(['code' => 200, 'message' => 'Success Syincron Data']);
-    }
-
     public function BuatKartuOps(){
         return view("admin.petugas.BuatKartuOps");
     }

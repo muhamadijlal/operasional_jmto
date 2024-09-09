@@ -30,7 +30,6 @@ Buat Petugas
 <div class="card">
     <div class="card-body">
         <button id="addPetugas" class="btn btn-label-info"> <i class="fa fa-plus me-2"></i> Tambah Petugas</button>
-        <button id="SyncronPetugas" class="btn btn-label-secondary"> <i class="fa fa-sync me-2"></i> Syncron Data</button>
         <button id="btnImport" class="btn btn-label-success"> <i class="ti ti-logout me-2" style="transform: rotate(90deg);"></i>Import</button>
         <button id="unduhTemplate" class="btn btn-label-warning"> <i class="ti ti-file me-2"></i>Unduh Template</button>
 
@@ -632,47 +631,6 @@ Buat Petugas
                     sweetAlert('Gagal!', 'status code : '+ response.status +'. message : ' + response.responseJSON.message, 'error');
                 }
             })
-        }
-    })
-
-    $('#SyncronPetugas').click(function () {
-        if($('#gerbang_connection').val() == null || $('#gerbang_connection').val() == '') {
-            sweetAlert('Gagal!', 'Pilih gerbang terlebih dahulu!', 'error');
-        } else {
-            Swal.fire({
-                title: 'Peringatan?',
-                text: "Apakah Anda Yakin Sycron Data ??",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ya!',
-                cancelButtonText: 'Batal',
-                customClass: {
-                    confirmButton: 'btn btn-primary me-3',
-                    cancelButton: 'btn btn-label-secondary'
-                },
-                buttonsStyling: false
-            }).then(function (result) {
-                if(result.isConfirmed){
-                    $.ajax({
-                        url: baseUrl + '/sycron',
-                        method: "get",
-                        contentType: false,
-                        cache: false,
-                        processData: false,
-                        beforeSend: function () {
-                            document.getElementById('loading-screen').style.display =
-                                'block';
-                        },
-                        success: function (response) {
-
-                            document.getElementById('loading-screen').style.display =
-                                'none';
-                            sweetAlert('Berhasil!',
-                                'Data Berhasil Dihapus!', 'success')
-                        }
-                    });
-                }
-            });
         }
     })
 

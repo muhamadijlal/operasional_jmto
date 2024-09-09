@@ -68,11 +68,11 @@ Perpanjang Kartu
 
     <hr class="my-4">
 
-    <form>
+    <form id="form-tulis-kartu">
       <div class="row col-12">
           <div class="form-group mb-3">
-            <label for="uid">UID Kartu :</label>
-            <input type="text" class="form-control" id="uid" disabled placeholder="UID Kartu">
+            <label for="uid_ktp">UID Kartu :</label>
+            <input type="text" class="form-control" id="uid_ktp" disabled placeholder="UID Kartu">
           </div>
 
           <div class="form-group mb-3">
@@ -87,8 +87,11 @@ Perpanjang Kartu
 
           <div class="form-group mb-3">
             <label for="tipe_ktp">Tipe KPT :</label>
-            <select class="form-control" id="tipe_ktp" disabled>
-              <option value="" disabled selected>Pilih Jenis KTP</option>
+            <select class="form-control" id="tipe_ktp" readonly disabled>
+              <option selected value="0">Pilih Jenis KTP</option>
+              <option value="Operasional">KTP OPERASIONAL</option>
+              <option value="Karyawan">KTP KARYAWAN</option>
+              <option value="Mitra">KTP MITRA</option>
             </select>
           </div>
 
@@ -145,6 +148,11 @@ $(document).ready(function() {
   var api = IOTClientService;
   var status = false;
   var write_status = false;
+
+  function write_aktif(s) {
+    // $('#updateKartu').prop('disabled', !s);
+    write_status = s;
+  }
 
   // Set up callbacks
   api.onconnect = function() {
@@ -213,17 +221,20 @@ $(document).ready(function() {
         curr_uuid = msg.uid;
         if(curr_uuid) {
           $("#uid").html('UID : ' + curr_uuid);
-          document.getElementById('btnTulis').uid = curr_uuid;
-          $('#btnTulis').prop('disabled', false);
+          document.getElementById('updateKartu').uid = curr_uuid;
+
+          $('#updateKartu').prop('disabled', false);
 
           showKartuDinas();
           write_aktif(true);
         } else {
           write_aktif(false);
           $("#uid").html(' -');
-          document.getElementById('btnTulis').uid = '';
-          $('#btnRead').prop('disabled',true);
-          $('#btnTulis').prop('disabled', true);
+          document.getElementById('updateKartu').uid = '';
+          $('#bacaKartu').prop('disabled',true);
+          $("#masa_berlaku").prop('disabled', true);
+          $("#form-tulis-kartu")[0].reset();
+          $('#updateKartu').prop('disabled', true);
         }
       }
     }
@@ -231,18 +242,21 @@ $(document).ready(function() {
 
   api.open();
 
-  $("#btnRead").click(function() {
+  $("#bacaKartu").click(function() {
     window.history.forward(1);
 
-    var data = document.getElementById('btnRead').dataktp;
+    var data = document.getElementById('bacaKartu').dataktp;
 
     var blok0 = data[0];
     var blok1 = data[1];
     var blok2 = data[2];
 
     $.ajax({
-      url: base_url + '/getDetailKTP',
+      url: baseUrl + '/getDetailKTP',
       method: "POST",
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
       dataType: 'json',
       data: {
         blok0: blok0,
@@ -253,7 +267,6 @@ $(document).ready(function() {
         document.getElementById('loading-screen').style.display = 'block';
       },
       success: function(response) {
-        console.log(response);
         var ruas = (response.data.ruas).toUpperCase();
         var expired = (response.data.expire).substring(0, 4) + '-' + (response.data.expire).substring(4, 6) + '-' + (response.data.expire).substring(6, 8);
         var tipe = response.data.tipe;
@@ -262,7 +275,7 @@ $(document).ready(function() {
         var namaa = (response.ktpNama[0].nama).toUpperCase();
         var nama;       
 
-        swal.fire({
+        Swal.fire({
           title: 'Data Kartu Tol Perusahaan',
           customClass: {
             popup: 'swal-wide',
@@ -280,6 +293,9 @@ $(document).ready(function() {
             .odd{
               background-color:#7bb3c1;
             }
+            .swal2-popup {
+              width: 35% !important;
+            }
             .clse{
               color:black;
             }
@@ -293,7 +309,7 @@ $(document).ready(function() {
             </style>
             <thead>
             <tr style="padding:10px;">
-              <td width="25%" rowspan="6"><img class="uid_img" src="` + base_url + `assets/file/logo/card.png"></img></td>
+              <td width="25%" rowspan="6"><img class="uid_img" src="/assets/img/card.png"></img></td>
               <td class="" width="20%" style="text-align:left;">UID</td>
               <td width="2%" style="text-align:left;">:</td>
               <td width="" style="text-align:left;">` + uid + `</td>
@@ -328,6 +344,18 @@ $(document).ready(function() {
             </thead>
           </table>`
         });
+
+          $('#uid_ktp').val(uid);
+          // $('#nama').val(nama);
+          $('#kode_ruas').val(ruas);
+          $('#no_ktp').val(nokartu);
+          // $('#tipe_ktp').val(tipe);
+          $('#tipe_ktp').val(tipeKartu(tipe));
+          // console.log($('#tipe_ktp_show').val(parseInt(tipe)));
+          // $('#tipe_ktp').prop('disabled', true);
+          // $('#nama_ruas_show').val(tipeRuas(ruas));
+          $('#masa_berlaku').prop('disabled', false);
+          $('#masa_berlaku').val(expired);
 
           document.getElementById('loading-screen').style.display = 'none';
       },
@@ -380,15 +408,141 @@ $(document).ready(function() {
     });
   })
 
+  $("#updateKartu").click(function(e) {
+  e.preventDefault();
+
+  var uid = $('#uid_ktp').val();
+  var no = $('#no_ktp').val();
+
+  var curr_uid = document.getElementById('updateKartu').uid;
+  
+  if (uid) {
+    if (document.getElementById('updateKartu').uid != '') {
+          // if (uid != curr_uid) {
+          //   Swal.fire('Terdapat Kesalahan !', 'Kartu tidak sesuai', 'error');
+
+          //   return false;
+          // } else {
+            var formData = new FormData();
+
+            formData.append('uid_ktp', $('#uid_ktp').val());
+            formData.append('no_ktp',  $('#no_ktp').val());
+            formData.append('kode_ruas', $('#kode_ruas').val());
+            formData.append('tipe_ktp', generateTipeKTP($('#tipe_ktp').val()));
+            formData.append('masa_berlaku', $('#masa_berlaku').val());
+
+            // Display the key/value pairs
+            for (var pair of formData.entries()) {
+              console.log('datanya : '+pair[0]+ ', ' + pair[1]); 
+            }
+            
+            $.ajax({
+              url: baseUrl + '/generateDataKartu',
+              method: "POST",
+              data: formData,
+              headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+              },
+              contentType: false,
+              cache: false,
+              processData: false,
+              beforeSend: function() {
+                document.getElementById('loading-screen').style.display = 'block';
+
+              },
+              success: function(response) {
+                data = response.data
+                document.getElementById('loading-screen').style.display = 'none';
+                var blok0 = data[0];
+                var blok1 = data[1];
+                var blok2 = data[2];
+
+                (async function() {
+                  //init sector 5
+                  var init_sector5 = await api.auth(5, 'B', 'ffffffffffff');
+                  if (init_sector5) {
+                    if (await api.write(23, 'FFFFFFFFFFFF08778fffFFFFFFFFFFFF')) {
+                      api.beep();
+                    } else {
+                    }
+                  } else {
+                    Swal.fire('Kartu tidak dapat dipakai lagi', 'ERROR CODE (5)', 'info')
+                    return false;
+                  }
+
+                  //init sector 7
+                  var init_sector7 = await api.auth(7, 'B', 'ffffffffffff');
+                  if (init_sector7) {
+                    if (await api.write(31, '2177A6F5342108778fffFFFFFFFFFFFF')) {
+                      api.beep();
+                    } else {
+                    }
+                  } else {
+                    Swal.fire('Kartu tidak dapat dipakai lagi', 'ERROR CODE (7)', 'info')
+                    return false;
+                  }
+
+
+                  var tulis_ktp = await api.write_sector(7, 'B', 'ffffffffffff', blok0, blok1, blok2);
+                  if (tulis_ktp) {
+                    Swal.fire(
+                        'Berhasil',
+                        'Kartu Berhasil Diupdate',
+                        'success'
+                    );
+
+                    api.beep();
+
+                    $("#form-tulis-kartu")[0].reset();
+                    $("#tgl").prop('disabled', true);
+                    //edit status draft to aktif
+
+                    //showPaspul();
+                  } else {
+                    Swal.fire(
+                      'Error',
+                      'Kartu Gagal Diupdate',
+                      'error'
+                    );
+                  }
+                })();
+              }
+            });
+          // }
+      }
+  } else {
+      Swal.fire(
+          'Mohon Maaf',
+          'Mohon Baca Kartu Terlebih Dahulu',
+          'warning'
+      );
+  }
+
+});
+
   $("#btnService").on('click', function(){         
     var fileUrl = "{{ asset('assets/file/ClientService.exe') }}";
     // Now you can use this URL in JavaScript
     location.href = fileUrl;
   });
 
-  function tipeKartu(id) {
-    var kartu = '';
+  function generateTipeKTP(tipe) {
+    const tipeKTP = tipe.toLowerCase();
+    console.log("TIPE KTPNYA :" + tipeKTP);
+    
+    switch (tipeKTP) {
+      case 'operasional':
+        return 1;
+      case 'karyawan':
+        return 2;
+      case 'mitra':
+        return 3;
+      default:
+        return 0;
+    }
+  }
 
+  function tipeKartu(id) {
     switch (id) {
       case '01':
         kartu = 'Operasional';
@@ -463,14 +617,14 @@ $(document).ready(function() {
       //console.log(data);
       api.beep();
       api.beep();
-      $('#btnRead').prop('disabled', false);
+      $('#bacaKartu').prop('disabled', false);
       //window.data_paspul=data;
-      document.getElementById('btnRead').dataktp = data;
+      document.getElementById('bacaKartu').dataktp = data;
 
     } else {
       //console.log('Bukan Kartu Dinas');
       api.beep();
-      $('#btnRead').prop('disabled', true);
+      $('#bacaKartu').prop('disabled', true);
     }
   }
 })

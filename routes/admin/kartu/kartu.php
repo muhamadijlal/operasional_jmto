@@ -25,6 +25,8 @@ Route::prefix('kartu')->group(function () {
 
     // perpanjang kartu routes
     Route::get('/perpanjang', 'perpanjang');
+    Route::post('/perpanjang/getDetailKTP ', 'getDetailKTP');
+    Route::post('/perpanjang/generateDataKartu', 'generateDataKartu');
 
     // blacklist kartu routes
     Route::get('/blacklist', 'blacklist');

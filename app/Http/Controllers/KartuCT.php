@@ -364,7 +364,6 @@ class KartuCT extends Controller
     }
 
     public function generateDataKartu(Request $request){
-
         $nomor = $request->no_ktp;
         $ruas = $request->kode_ruas;
         $expire = $request->masa_berlaku;

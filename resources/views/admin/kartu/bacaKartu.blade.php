@@ -373,6 +373,7 @@ $(document).ready(function() {
   }
 
   function tipeRuas(id) {
+    console.log("TIPE RUAS : "+ id)
     var kartu = '';
     switch (id.toUpperCase()) {
       // case 'A045':

@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\tbl_pegawai;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -23,10 +24,21 @@ class PetugasImport implements ToCollection
 
     public function collection(Collection $rows)
     {
+        $gerbang = DB::connection('mysql')
+                        ->table('tbl_gerbang')
+                        ->where('gerbang_id', $this->gerbang_id)
+                        ->first();
+
+        Config::set('database.connections.mysql2.host', $gerbang->host);
+        Config::set('database.connections.mysql2.port', $gerbang->port);
+        Config::set('database.connections.mysql2.database', $gerbang->database);
+        Config::set('database.connections.mysql2.username', $gerbang->user);
+        Config::set('database.connections.mysql2.password', $gerbang->pass);
+
         for ($i = 1; $i < count($rows); $i++) {
             $jabatan_id = $this->getJabatanId($rows[$i][1]);
 
-            DB::connection('mysql')->table('tbl_pegawai')->insert([
+            DB::connection('mysql2')->table('tbl_pegawai')->insert([
                 'npp_no' => $rows[$i][0],                 // NPP PETUGAS
                 'jabatan_id' => $jabatan_id,              // JABATAN PETUGAS
                 'nama_pegawai' => $rows[$i][2],           // NAMA PETUGAS
