@@ -448,7 +448,7 @@ class KartuCT extends Controller
     }
 
     public function perpanjang(){
-        return view('admin.kartu.perpanjangkartu');
+        return view('admin.kartu.perpanjangKartu');
     }
 
     public function blacklist(){
