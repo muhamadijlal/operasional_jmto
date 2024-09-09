@@ -1,6 +1,6 @@
 $('#ruas-ktp').select2({
   ajax: {
-      url: '/admin/get-ruas-kartu', 
+      url: '/admin/kartu/get-ruas-kartu', 
       dataType: 'json',
       delay: 250,
       processResults: function (data) {
@@ -21,7 +21,7 @@ $('#ruas-ktp').select2({
 
 $('#institusi').select2({
   ajax: {
-      url: '/admin/get-institusi', 
+      url: '/admin/kartu/get-institusi', 
       dataType: 'json',
       delay: 250,
       processResults: function (data) {
@@ -42,7 +42,7 @@ $('#institusi').select2({
 
 $('#unit').select2({
   ajax: {
-      url: '/admin/get-unit', 
+      url: '/admin/kartu/get-unit', 
       dataType: 'json',
       delay: 250,
       processResults: function (data) {
@@ -63,7 +63,7 @@ $('#unit').select2({
 
 $('#jenis_ktp').select2({
   ajax: {
-      url: '/admin/get-ktp-opr', 
+      url: '/admin/kartu/get-ktp-opr', 
       dataType: 'json',
       delay: 250,
       processResults: function (data) {
@@ -84,14 +84,14 @@ $('#jenis_ktp').select2({
 
 $('#ruas').select2({
     ajax: {
-        url: '/admin/get-ruas', 
+        url: '/admin/kartu/get-ruas', 
         dataType: 'json',
         delay: 250,
         processResults: function (data) {
             return {
                 results: $.map(data, function (item) {
                     return {
-                        text: item.ruas_nama,
+                        text: item.nama_ruas,
                         id: item.ruas_id,
                     };
                 }),

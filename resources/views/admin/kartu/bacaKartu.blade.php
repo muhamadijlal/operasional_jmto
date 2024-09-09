@@ -414,9 +414,6 @@ $(document).ready(function() {
       case 'B001':
         kartu = 'JMJ';
         break;
-      case 'B001':
-        kartu = 'JMJ';
-        break;
       default:
         kartu = 'Unknown1';
         break;

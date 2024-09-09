@@ -608,4 +608,39 @@ class KartuCT extends Controller
             substr($cipher, 64, 32)
         );
     }
+
+    public function getUnit()
+    {
+        $data = DB::connection('integrasi_bcds')->table('tbl_ktp_unit')->get();
+        
+        return response()->json($data);
+    }
+
+    public function getRuas()
+    {
+        $data = DB::connection('integrasi_bcds')->table('tbl_ruas')->get();
+        
+        return response()->json($data);
+    }
+
+    public function getKtpOpr()
+    {
+        $data = DB::connection('integrasi_bcds')->table('tbl_jenis_ktp')->get();
+        
+        return response()->json($data);
+    }
+
+    public function getInstitusi()
+    {
+        $data = DB::connection('integrasi_bcds')->table('tbl_ktp_institusi')->get();
+        
+        return response()->json($data);
+    }
+
+    public function getRuasKartu()
+    {
+        $data = DB::connection('mysql')->table('tbl_ktp_ruas_kartu')->get();
+        
+        return response()->json($data);
+    }
 }

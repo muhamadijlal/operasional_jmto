@@ -28,6 +28,13 @@ Route::prefix('kartu')->group(function () {
 
     // blacklist kartu routes
     Route::get('/blacklist', 'blacklist');
+
+    // select 2
+    Route::get('/get-unit', 'getUnit');
+    Route::get('/get-ruas', 'getRuas');
+    Route::get('/get-ruas-kartu', 'getRuasKartu');
+    Route::get('/get-ktp-opr', 'getKtpOpr');
+    Route::get('/get-institusi', 'getInstitusi');
   });
 });
 

@@ -7,6 +7,8 @@ Route::controller(Select2CT::class)->group(function () {
   Route::get('get-gerbang-data', 'getGerbang');
   Route::get('get-ruas-kartu', 'getRuasKartu');
   Route::get('get-ruas', 'getRuas');
+  Route::get('get-ruas-ktp-nama', 'getRuasKTPNama');
+  Route::get('get-ruas-ktp', 'getRuasKTP');
   Route::get('get-institusi', 'getInstitusi');
   Route::get('get-unit', 'getUnit');
   Route::get('get-option-nama', 'getOptionNama');

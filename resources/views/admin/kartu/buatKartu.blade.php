@@ -396,7 +396,7 @@ $(document).ready(function() {
       }).then((result) => {
         if (result.value) {
           $.ajax({
-            url: base_url + '/updateUID',
+            url: baseUrl + '/updateUID',
             method: "POST",
             dataType: 'JSON',
             headers: {
