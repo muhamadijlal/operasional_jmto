@@ -350,7 +350,7 @@ class KartuCT extends Controller
     }
 
     public function buat(){
-        return view('admin.kartu.buatkartu');
+        return view('admin.kartu.buatKartu');
     }
 
     public function getDetailData(Request $request){
@@ -444,7 +444,7 @@ class KartuCT extends Controller
     }
 
     public function baca(){
-        return view('admin.kartu.bacakartu');
+        return view('admin.kartu.bacaKartu');
     }
 
     public function perpanjang(){
