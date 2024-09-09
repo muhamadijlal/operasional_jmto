@@ -235,7 +235,7 @@ $(document).ready(function() {
               width: 250px;
             }
             .swal2-popup {
-              width: 26% !important;
+              width: 35% !important;
             }
             .odd{
               background-color:#7bb3c1;
