@@ -49,16 +49,20 @@
         <tr style="font-weight: bold !important">
             <td rowspan="2">Asal Gerbang</td>
             <td rowspan="2">
-                Denda
+                Tarif
             </td>
-
+            <td colspan="5" class="no-page-break">
+                <center>
+                    Total
+                </center>
+            </td>
             @php
-            $cleanedString = trim($data[0]->tarif_inv, "[]");
-            $arrayValue = explode(',', $cleanedString);
-            $arrayValue = array_map('trim', $arrayValue);
-            $arrayValue = array_filter($arrayValue, function($value) {
-            return $value !== '00000';
-            });
+                $cleanedString = trim($data[0]->tarif_inv, "[]");
+                $arrayValue = explode(',', $cleanedString);
+                $arrayValue = array_map('trim', $arrayValue);
+                $arrayValue = array_filter($arrayValue, function($value) {
+                    return $value !== '00000';
+                });
             @endphp
 
             @foreach ($arrayValue as $item)
@@ -68,13 +72,6 @@
                 </center>
             </td>
             @endforeach
-
-            <td colspan="5" class="no-page-break">
-                <center>
-                    Total
-
-                </center>
-            </td>
         </tr>
         <tr style="font-weight: bold !important">
             @foreach ($arrayValue as $item)
@@ -121,12 +118,21 @@
                 <td>
                     <center>
                         @if ($item2->jenis == '2' || $item2->jenis == '3')
-                        Ya
+                            Ags
                         @else
-                        Tidak
+                            Normal
                         @endif
                     </center>
                 </td>
+
+                {{-- total --}}
+                <td>{{ number_format($item2->gol1, 0, ',', '.') }}</td>
+                <td>{{ number_format($item2->gol2, 0, ',', '.') }}</td>
+                <td>{{ number_format($item2->gol3, 0, ',', '.') }}</td>
+                <td>{{ number_format($item2->gol4, 0, ',', '.') }}</td>
+                <td>{{ number_format($item2->gol5, 0, ',', '.') }}</td>
+                {{-- total --}}
+
                 @foreach ($arrayValue as $key => $value)
                 <td>{{ number_format(json_decode($item2->gol1_d)[$key] ?? 0, 0, ',', '.') }}</td>
                 <td>{{ number_format(json_decode($item2->gol2_d)[$key] ?? 0, 0, ',', '.') }}</td>
@@ -134,12 +140,6 @@
                 <td>{{ number_format(json_decode($item2->gol4_d)[$key] ?? 0, 0, ',', '.') }}</td>
                 <td>{{ number_format(json_decode($item2->gol5_d)[$key] ?? 0, 0, ',', '.') }}</td>
                 @endforeach
-
-                <td>{{ number_format($item2->gol1, 0, ',', '.') }}</td>
-                <td>{{ number_format($item2->gol2, 0, ',', '.') }}</td>
-                <td>{{ number_format($item2->gol3, 0, ',', '.') }}</td>
-                <td>{{ number_format($item2->gol4, 0, ',', '.') }}</td>
-                <td>{{ number_format($item2->gol5, 0, ',', '.') }}</td>
             </tr>
             {{-- <tr class="no-page-break"></tr> --}}
             {{-- @php $counter++; @endphp --}}

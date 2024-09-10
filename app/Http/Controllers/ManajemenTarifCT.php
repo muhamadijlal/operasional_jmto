@@ -676,6 +676,7 @@ class ManajemenTarifCT extends Controller
                     'view_tarif.tarif_inv',
                     'view_tarif.tgl_berlaku',
                 ])
+                ->orderBy('gerbang_asal.gerbang_nama', 'ASC')
                 ->get();
 
         $array = [
