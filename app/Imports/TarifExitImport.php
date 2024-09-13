@@ -129,7 +129,6 @@ class TarifExitImport implements ToCollection
                         'id_dasar_tarif' => $this->request->dasartarifmodal,
                         'aktif' => 1,
                         'tarif_inv' => '[' . implode(',', str_replace('"', '', $investors)) . ']',
-                        save();
                     ]);
 
                 } else {
