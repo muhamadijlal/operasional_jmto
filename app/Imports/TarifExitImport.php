@@ -114,7 +114,7 @@ class TarifExitImport implements ToCollection
                         'ruas_id' => $this->gerbang->ruas_id,
                         'gerbang_id' => $this->gerbang->gerbang_id,
                         'asal_gerbang' => $modelAsalGerbang->gerbang_id,
-                        'jenis' => $jenis->jenis_gerbang,
+                        'jenis' => $jenis,
                         'gol1' => $gol1,
                         'gol1_d' => '[' . implode(',', $gol1_d) . ']',
                         'gol2' => $gol2,
