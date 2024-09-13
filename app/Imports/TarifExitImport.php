@@ -36,8 +36,8 @@ class TarifExitImport implements ToCollection
                 }
             }
             if ($i >= 2) {
-                $asal_gerbang = strtolower($rows[$i][0]);
-                $jenis = $rows[$i][1];
+                $asal_gerbang = $rows[$i][0];
+                $jenis = strtolower($rows[$i][1]);
 
                 $kelipatanGetGol = 1;
                 $kelipatanInv = 0;
@@ -92,16 +92,16 @@ class TarifExitImport implements ToCollection
                 try {
                     $modelAsalGerbang = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_nama', $asal_gerbang)->first();
 
-                    if (!$modelAsalGerbang) {
-                        throw new ModelNotFoundException("Data dengan nama gerbang '{$asal_gerbang}' tidak ditemukan.");
-                    }
-                } catch (ModelNotFoundException $e) {
-                    // Tangani pengecualian sesuai kebutuhan, misalnya:
-                    return response()->json(['error' => $e->getMessage()], 404);
-                } catch (QueryException $e) {
-                    // Tangani pengecualian query lainnya jika diperlukan
-                    return response()->json(['error' => 'Terjadi kesalahan pada query.'], 500);
-                }   
+                    // if (!$modelAsalGerbang) {
+                    //     throw new ModelNotFoundException("Data dengan nama gerbang '{$asal_gerbang}' tidak ditemukan.");
+                    // }
+                // } catch (ModelNotFoundException $e) {
+                //     // Tangani pengecualian sesuai kebutuhan, misalnya:
+                //     return response()->json(['error' => $e->getMessage()], 404);
+                // } catch (QueryException $e) {
+                //     // Tangani pengecualian query lainnya jika diperlukan
+                //     return response()->json(['error' => 'Terjadi kesalahan pada query.'], 500);
+                // }   
 
                 if ($modelAsalGerbang) {
                     // Config::set('database.connections.mysql2.host', $this->gerbang->host);
@@ -114,7 +114,7 @@ class TarifExitImport implements ToCollection
                         'ruas_id' => $this->gerbang->ruas_id,
                         'gerbang_id' => $this->gerbang->gerbang_id,
                         'asal_gerbang' => $modelAsalGerbang->gerbang_id,
-                        'jenis' => $modelAsalGerbang->jenis_gerbang,
+                        'jenis' => $modelAsalGerbang->jenis,
                         'gol1' => $gol1,
                         'gol1_d' => '[' . implode(',', $gol1_d) . ']',
                         'gol2' => $gol2,
