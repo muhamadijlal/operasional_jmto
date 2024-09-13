@@ -2,14 +2,12 @@
 
 namespace App\Imports;
 
-use App\Models\tbl_gerbang;
-use App\Models\tbl_tarif_exit;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-
-use function PHPUnit\Framework\throwException;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TarifExitImport implements ToCollection
 {
@@ -91,7 +89,19 @@ class TarifExitImport implements ToCollection
                     }
                 }
 
-                $modelAsalGerbang = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_nama', $asal_gerbang)->firstOrFail();
+                try {
+                    $modelAsalGerbang = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_nama', $asal_gerbang)->first();
+
+                    if (!$modelAsalGerbang) {
+                        throw new ModelNotFoundException("Data dengan nama gerbang '{$asal_gerbang}' tidak ditemukan.");
+                    }
+                } catch (ModelNotFoundException $e) {
+                    // Tangani pengecualian sesuai kebutuhan, misalnya:
+                    return response()->json(['error' => $e->getMessage()], 404);
+                } catch (QueryException $e) {
+                    // Tangani pengecualian query lainnya jika diperlukan
+                    return response()->json(['error' => 'Terjadi kesalahan pada query.'], 500);
+                }   
 
                 if ($modelAsalGerbang) {
                     // Config::set('database.connections.mysql2.host', $this->gerbang->host);
@@ -99,12 +109,12 @@ class TarifExitImport implements ToCollection
                     Config::set('database.connections.mysql2.database', $this->gerbang->database);
                     Config::set('database.connections.mysql2.username', $this->gerbang->user);
                     Config::set('database.connections.mysql2.password', $this->gerbang->pass);
-
+                    
                     $dataDB = DB::connection('mysql2')->table('tbl_tarif_exit')->insert([
                         'ruas_id' => $this->gerbang->ruas_id,
                         'gerbang_id' => $this->gerbang->gerbang_id,
                         'asal_gerbang' => $modelAsalGerbang->gerbang_id,
-                        'jenis' => $modelAsalGerbang->jenis,
+                        'jenis' => $modelAsalGerbang->jenis_gerbang,
                         'gol1' => $gol1,
                         'gol1_d' => '[' . implode(',', $gol1_d) . ']',
                         'gol2' => $gol2,
