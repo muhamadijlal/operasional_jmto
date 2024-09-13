@@ -36,7 +36,7 @@ class TarifExitImport implements ToCollection
                 }
             }
             if ($i >= 2) {
-                $asal_gerbang = strtolower($rows[$i][0]);
+                $asal_gerbang = $rows[$i][0];
                 $jenis = $rows[$i][1];
 
                 $kelipatanGetGol = 1;
@@ -89,37 +89,50 @@ class TarifExitImport implements ToCollection
                     }
                 }
 
-                $modelAsalGerbang = tbl_gerbang::where('gerbang_nama', $asal_gerbang)->first();
+                try {
+                    $modelAsalGerbang = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_nama')->first();
+
+                    if (!$modelAsalGerbang) {
+                        throw new ModelNotFoundException("Data dengan nama gerbang '{$asal_gerbang}' tidak ditemukan.");
+                    }
+                } catch (ModelNotFoundException $e) {
+                    // Tangani pengecualian sesuai kebutuhan, misalnya:
+                    return response()->json(['error' => $e->getMessage()], 404);
+                } catch (QueryException $e) {
+                    // Tangani pengecualian query lainnya jika diperlukan
+                    return response()->json(['error' => 'Terjadi kesalahan pada query.'], 500);
+                }   
 
                 if ($modelAsalGerbang) {
-                    Config::set('database.default', 'mysql2'); // Ganti 'mysql2' dengan nama koneksi yang sesuai
-                    Config::set('database.connections.mysql2.host', $this->gerbang->host);
+                    // Config::set('database.connections.mysql2.host', $this->gerbang->host);
                     Config::set('database.connections.mysql2.port', $this->gerbang->port);
                     Config::set('database.connections.mysql2.database', $this->gerbang->database);
                     Config::set('database.connections.mysql2.username', $this->gerbang->user);
                     Config::set('database.connections.mysql2.password', $this->gerbang->pass);
+                    
+                    $dataDB = DB::connection('mysql2')->table('tbl_tarif_exit')->insert([
+                        'ruas_id' => $this->gerbang->ruas_id,
+                        'gerbang_id' => $this->gerbang->gerbang_id,
+                        'asal_gerbang' => $modelAsalGerbang->gerbang_id,
+                        'jenis' => $jenis,
+                        'gol1' => $gol1,
+                        'gol1_d' => '[' . implode(',', $gol1_d) . ']',
+                        'gol2' => $gol2,
+                        'gol2_d' => '[' . implode(',', $gol2_d) . ']',
+                        'gol3' => $gol3,
+                        'gol3_d' => '[' . implode(',', $gol3_d) . ']',
+                        'gol4' => $gol4,
+                        'gol4_d' => '[' . implode(',', $gol4_d) . ']',
+                        'gol5' => $gol5,
+                        'gol5_d' => '[' . implode(',', $gol5_d) . ']',
+                        'tgl_berlaku' =>  $this->request->waktu,
+                        'id_dasar_tarif' => $this->request->dasartarifmodal,
+                        'aktif' => 1,
+                        'tarif_inv' => '[' . implode(',', str_replace('"', '', $investors)) . ']',
+                    ]);
 
-                    $model = new tbl_tarif_exit();
-                    $model->ruas_id = $this->gerbang->ruas_id;
-                    $model->gerbang_id = $this->gerbang->gerbang_id;
-                    $model->asal_gerbang =  $modelAsalGerbang->gerbang_id;
-                    $model->jenis = $jenis;
-                    $model->gol1 = $gol1;
-                    $model->gol1_d =  '[' . implode(',', $gol1_d) . ']';
-                    $model->gol2 = $gol2;
-                    $model->gol2_d =  '[' . implode(',', $gol2_d) . ']';
-                    $model->gol3 = $gol3;
-                    $model->gol3_d =  '[' . implode(',', $gol3_d) . ']';
-                    $model->gol4 = $gol4;
-                    $model->gol4_d =  '[' . implode(',', $gol4_d) . ']';
-                    $model->gol5 = $gol5;
-                    $model->gol5_d =  '[' . implode(',', $gol5_d) . ']';
-
-                    $model->tgl_berlaku = $this->request->waktu;
-                    $model->id_dasar_tarif = $this->request->dasartarifmodal;
-                    $model->aktif = 1;
-                    $model->tarif_inv = '[' . implode(',', str_replace('"', '', $investors)) . ']';
-                    $model->save();
+                } else {
+                    $this->failed[] = $asal_gerbang;
                 }
             }
         }
