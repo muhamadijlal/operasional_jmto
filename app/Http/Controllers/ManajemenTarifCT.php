@@ -685,8 +685,18 @@ class ManajemenTarifCT extends Controller
             'dasar_tarif' => $dasar_tarif
         ];
 
+        $cleanedString = trim($data[0]->tarif_inv, "[]");
+        $amountColumn = explode(',', $cleanedString);
+        $amountColumn = array_map('trim', $amountColumn);
+        $amountColumn = array_filter($amountColumn, function($value) {
+            return $value !== '00000';
+        });
+
+        $widthColumn = 170;
+        $dynamicWidth = count($amountColumn) * $widthColumn;
+
         // $pdf = PDF::loadView('admin.pdfClose', $array)->setPaper('f4', 'landscape');
-        $pdf = PDF::loadView('admin.pdfClose', $array)->setPaper([0, 0, 600, 1200], 'landscape');
+        $pdf = PDF::loadView('admin.pdfClose', $array)->setPaper([0, 0, 600, $dynamicWidth], 'landscape');
 
         // Set options for the PDF
         $options = [

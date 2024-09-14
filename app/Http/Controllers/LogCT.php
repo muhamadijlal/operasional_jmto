@@ -10,13 +10,15 @@ class LogCT extends Controller
     public function getLog(){
 
         if (request()->ajax()) {
-            $q = DB::connection('mysql')->table('tbl_log_operational')->query();
+            $q = DB::connection('mysql')->table('tbl_log_operasional');
 
             if(request()->filled('kategori_id') && request()->kategori_id != '*') {
                 $q->where('kategori', request()->kategori_id);
             }
-
-            return DataTables::of($q)
+            
+            $result = $q->get();
+            
+            return DataTables::of($result)
             ->addColumn('jabatan', function ($row) {
                 $jabatan_id = $row->id_jabatan;
 

@@ -239,12 +239,13 @@ class PetugasCT extends Controller
     }
 
     public function DataPetugas(){
+        // dd(request()->gerbang_id, request()->jabatan_id);
         if (request()->ajax()) {
-            $q = DB::connection('mysql')->table('tbl_pegawai')->get();
+            $q = DB::connection('mysql')->table('tbl_pegawai');
             if (request()->filled('jabatan_id') && request()->filled('gerbang_id')) {
-                $q->where('gerbang_id', request()->gerbang_id)->where('jabatan_id', request()->jabatan_id);
+                $q->where('gerbang_id', request()->gerbang_id)->where('jabatan_id', request()->jabatan_id)->get();
             } else {
-                $q->where('jabatan_id', '!=', 1);
+                $q->where('jabatan_id', '!=', 1)->get();
             }
 
             return DataTables::of($q)
