@@ -240,8 +240,7 @@ class PetugasCT extends Controller
 
     public function DataPetugas(){
         if (request()->ajax()) {
-            $q = DB::connection('mysql')->table('tbl_pegawai')->query();
-
+            $q = DB::connection('mysql')->table('tbl_pegawai')->get();
             if (request()->filled('jabatan_id') && request()->filled('gerbang_id')) {
                 $q->where('gerbang_id', request()->gerbang_id)->where('jabatan_id', request()->jabatan_id);
             } else {
@@ -263,11 +262,15 @@ class PetugasCT extends Controller
                     $ids = explode(',', $row->penempatan_gerbang);
 
                     // Retrieve related data from Table2Model based on the IDs
-                    $relatedData = DB::connection('mysql')->table('tbl_gerbang')->whereIn('gerbang_id', $ids)->pluck('gerbang_nama')->toArray();
+                    $query = DB::connection('mysql')->table('tbl_gerbang')->whereIn('gerbang_id', $ids)->first();
+                    if($query == null){
+                        $penempatan = '-';
+                    }else{
+                        $relatedData = DB::connection('mysql')->table('tbl_gerbang')->whereIn('gerbang_id', $ids)->pluck('gerbang_nama')->toArray();
+                        $penempatan = implode(', ', $relatedData);
+                    }
 
                     // Create a string to display the related data
-                    $penempatan = implode(', ', $relatedData);
-
                     return $penempatan;
                 })
                 ->addColumn('gerbang', function ($row) {
@@ -277,8 +280,7 @@ class PetugasCT extends Controller
                     // Retrieve related data from Table2Model based on the IDs
                     $relatedData = DB::connection('mysql')->table('tbl_gerbang')->where('gerbang_id', $gerbang_id)->first();
 
-                    // // Create a string to display the related data
-                    $gerbang = $relatedData->gerbang_nama;
+                    $gerbang = $relatedData ? $relatedData->gerbang_nama : '-';
 
                     return $gerbang;
                 })

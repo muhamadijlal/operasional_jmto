@@ -86,8 +86,8 @@ Buat Petugas
                     <input type="text" maxlength="15" class="form-control " id="nama_petugas" placeholder="Nama Petugas">
                 </div>
                 <div class="form-group mt-3">
-                    <label for="npp">NPP</label>
-                    <input type="text" class="form-control " id="npp" placeholder="NPP">
+                    <label for="npp">NPP 23</label>
+                    <input type="text" maxlength="7" class="form-control " id="npp" placeholder="NPP">
                 </div>
                 <div class="form-group mt-3">
                     <label for="jabatan">Jabatan</label>
@@ -365,24 +365,26 @@ Buat Petugas
             },
             buttonsStyling: false
         }).then(function (result) {
-            $.ajax({
-                url: url,
-                method: "get",
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function (response) {
-                    document.getElementById('loading-screen').style.display = 'block';
-                    setTimeout(function () {
-                        dt_filter.ajax.reload();
-                        document.getElementById('loading-screen').style.display = 'none';
-                        sweetAlert('Berhasil!', 'Data Berhasil Dihapus!', 'success')
-                    }, 1000);
-                }
-
-            });
-
-
+            if(result.isDismissed || result.isDenied){
+                sweetAlert('Info', 'Data tidak jadi dihapus!', 'info')
+            }else if(result.isConfirmed){
+                $.ajax({
+                    url: url,
+                    method: "get",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (response) {
+                        document.getElementById('loading-screen').style.display = 'block';
+                        setTimeout(function () {
+                            dt_filter.ajax.reload();
+                            document.getElementById('loading-screen').style.display = 'none';
+                            sweetAlert('Berhasil!', 'Data Berhasil Dihapus!', 'success')
+                        }, 1000);
+                    }
+    
+                });
+            }
         });
     })
 
@@ -409,7 +411,9 @@ Buat Petugas
                 $('#gerbang_penempatan_edit').find('option').remove().end()
 
                 var optionGerbangPenempatan = '';
-                var penempatanArray = data.penempatan_gerbang.split(',');
+                var penempatanArray = data.penempatan_gerbang ? data.penempatan_gerbang.split(',') : [];
+
+                // 
 
                 $.ajax({
                     url: '/admin/get-gerbang-ajax/2',
