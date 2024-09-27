@@ -144,21 +144,9 @@ class KartuCT extends Controller
                 return $status;
             })
             ->addColumn('action', function ($row) {
-                if($row->status == 2){
-                    $btn = '
-                        <div class="d-flex">
-                            <a href="#" class="btn m-1 btn-success btn-sm" id="whitelist" data-id="' . $row->id . '"><i class="fa-solid fa-check"></i></a>
-                        </div>
-                    ';
-                }else{
-                    $btn = '
-                        <div class="d-flex">
-                            <a href="#" class="btn m-1 btn-danger btn-sm" id="blacklist" data-id="' . $row->id . '"><i class="fa-solid fa-ban"></i></a>
-                        </div>
-                    ';
-                }
-
-                return $btn;
+                return '<div class="d-flex">
+                            <a href="#" class="btn m-1 btn-warning btn-sm" onclick="handleEdit('.$row->id.')"><i class="fa-solid fa-pencil"></i></a>
+                        </div>';
             })
             ->rawColumns(['ruas', 'status', 'action'])
             ->make();
@@ -641,5 +629,41 @@ class KartuCT extends Controller
         $data = DB::connection('mysql')->table('tbl_ktp_ruas_kartu')->get();
         
         return response()->json($data);
+    }
+
+    public function edit_kartu(Request $request) {
+
+        $request->validate([
+            'pemilik_kartu' => 'required',
+            'jenis_ktp' => 'required',
+        ]);
+
+        try{
+            DB::beginTransaction();
+
+            DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('id', $request->id)->update([
+                'ktp_jenis_id' => $request->jenis_ktp,
+                'nama' => $request->pemilik_kartu,
+                'status' => 1,
+            ]);
+
+            DB::connection('integrasi_bcds')->table('tbl_log_operasional')->insert([
+                'npp_no' => auth()->user()->npp_no,
+                'id_jabatan' => auth()->user()->jabatan_id,
+                'waktu' => date('Y-m-d H:i:s'),
+                'kategori' => 2,
+                'event' => 'update',
+                'keterangan' => json_encode($request->all()),
+            ]);
+
+             // Commit transaction
+            DB::commit();
+
+            return response(['status' => 200, 'message' => "Data berhasil diupdate"]);
+        }catch (\Exception $e) {
+            DB::rollBack();
+        
+            return response(['status' => 500, 'message' => 'Gagal update data', 'error' => $e->getMessage()]);
+        }
     }
 }

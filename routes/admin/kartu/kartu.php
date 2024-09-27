@@ -8,6 +8,7 @@ Route::prefix('kartu')->group(function () {
     // penerbitan routes
     Route::get('/penerbitan', 'index');
     Route::post('/penerbitan/tambah', 'tambah_kartu');
+    Route::post('/penerbitan/edit', 'edit_kartu');
     Route::post('/penerbitan/blacklist/{id}', 'blacklist_ktp');
     Route::post('/penerbitan/whitelist/{id}', 'whitelist_ktp');
 

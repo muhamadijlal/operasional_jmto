@@ -82,6 +82,27 @@ $('#jenis_ktp').select2({
   dropdownParent: $("#ModalTambahKartu")
 });
 
+$('#jenis_ktp_edit').select2({
+    ajax: {
+        url: '/admin/kartu/get-ktp-opr', 
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: `KTP ${item.keterangan}`,
+                        id: item.jenis_ktp_id,
+                    };
+                }),
+            };
+        },
+        cache: true
+    },
+    placeholder: '-- Pilih Jenis KTP --',
+    dropdownParent: $("#ModalEditKartu")
+  });
+
 $('#ruas').select2({
     ajax: {
         url: '/admin/kartu/get-ruas', 

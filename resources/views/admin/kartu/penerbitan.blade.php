@@ -136,6 +136,31 @@
       </div>
   </div>
 </div>
+
+<div class="modal" id="ModalEditKartu">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Update Kartu</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="form-group mt-3">
+                  <label for="pemilik_kartu_edit">Nama Pemegang Kartu <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control " id="pemilik_kartu_edit" placeholder="Nama Pemegang Kartu">
+              </div>
+              <div class="form-group mt-3">
+                <label for="jenis_ktp_edit">Jenis KTP <span class="text-danger">*</span></label>
+                <select class="form-control select2" style="width: 100%" id="jenis_ktp_edit"></select>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" id="btnSumbitEditPetugas" class="btn btn-primary">Simpan</button>
+          </div>
+      </div>
+  </div>
+</div>
 @endsection
 
 @section('js')
@@ -145,10 +170,10 @@
 <script>
   baseUrl = '{{ url()->current() }}'
 
-
   var dataObject = eval('<?php echo json_encode($Columns); ?>')
   var table = ''
   var ModalTambahKartu = $("#ModalTambahKartu");
+  var ModalEditKartu = $("#ModalEditKartu");
 
   function sweetAlert(title, text, icon) {
     Swal.fire({
@@ -256,9 +281,9 @@
   $("#btnSumbitTambahPetugas").on('click', function(){
     var nomor_kartu = $("#nomor_kartu").val()
     var no_ref = $("#no_ref").val()
-    var pemilik_kartu = $("#pemilik_kartu").val()
     var ruas = $("#ruas-ktp").val()
     var jenis_ktp = $("#jenis_ktp").val()
+    var pemilik_kartu = $("#pemilik_kartu").val()
     var institusi = $("#institusi").val()
     var unit = $("#unit").val()
     var tgl_kadaluarsa = $("#tgl_kadaluarsa").val()
@@ -376,5 +401,44 @@
       }
     });
   })
+
+  function handleEdit(id) {
+    ModalEditKartu.modal("show");
+
+    $("#btnSumbitEditPetugas").on('click', function(){
+      var jenis_ktp = $("#jenis_ktp_edit").val()
+      var pemilik_kartu = $("#pemilik_kartu_edit").val()
+
+      var formData = new FormData();
+
+      formData.append('id', id);
+      formData.append('jenis_ktp', jenis_ktp);
+      formData.append('pemilik_kartu', pemilik_kartu);
+      formData.append('_token', '{{ csrf_token() }}');
+
+      $.ajax({
+        type: "POST",
+        contentType: false,
+        processData: false,
+        data: formData,
+        url: baseUrl + '/edit',
+        async: false,
+        beforeSend: function () {
+          document.getElementById('loading-screen').style.display = 'block';
+        },
+        success: function (response) {
+          if (response.status == 200) {
+            ModalEditKartu.modal('hide')
+            table.draw();
+            document.getElementById('loading-screen').style.display = 'none';
+            sweetAlert('Berhasil!', response.message, 'success')
+          } else {
+            document.getElementById('loading-screen').style.display = 'none';
+            sweetAlert('Gagal!', response.message + " error : " + response.error, 'error')
+          }
+        },
+      })
+    })
+  }
 </script>
 @endsection
