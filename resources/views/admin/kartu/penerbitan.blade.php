@@ -109,7 +109,7 @@
                   <input type="text" class="form-control " id="pemilik_kartu" placeholder="Nama Pemegang Kartu">
               </div>
               <div class="form-group mt-3">
-                <label for="ruas-ktp">Ruas <span class="text-danger">*</span></label>
+                <label for="ruas-ktp">Ruas<span class="text-danger">*</span></label>
                 <select class="form-control select2" style="width: 100%" id="ruas-ktp"></select>
               </div>
               <div class="form-group mt-3">
@@ -131,7 +131,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="button" id="btnSumbitTambahPetugas" class="btn btn-primary">Edit</button>
+            <button type="button" id="btnSumbitTambahPetugas" class="btn btn-primary">Simpan</button>
           </div>
       </div>
   </div>
