@@ -8,7 +8,7 @@ $('#ruas-ktp').select2({
               results: $.map(data, function (item) {
                   return {
                       text: item.ruas,
-                      id: item.id,
+                      id: item.fisik_kartu,
                   };
               }),
           };

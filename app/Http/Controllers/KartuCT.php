@@ -144,9 +144,25 @@ class KartuCT extends Controller
                 return $status;
             })
             ->addColumn('action', function ($row) {
-                return '<div class="d-flex">
+                if($row->status == 2){
+                    $btn = '
+                        <div class="d-flex">
+                            <div class="d-flex">
+                                <a href="#" class="btn m-1 btn-success btn-sm" id="whitelist" data-id="' . $row->id . '"><i class="fa-solid fa-check"></i></a>
+                                <a href="#" class="btn m-1 btn-warning btn-sm" onclick="handleEdit('.$row->id.')"><i class="fa-solid fa-pencil"></i></a>
+                            </div>
+                        </div>
+                    ';
+                }else{
+                    $btn = '
+                        <div class="d-flex">
+                            <a href="#" class="btn m-1 btn-danger btn-sm" id="blacklist" data-id="' . $row->id . '"><i class="fa-solid fa-ban"></i></a>
                             <a href="#" class="btn m-1 btn-warning btn-sm" onclick="handleEdit('.$row->id.')"><i class="fa-solid fa-pencil"></i></a>
-                        </div>';
+                        </div>
+                    ';
+                }
+
+                return $btn;
             })
             ->rawColumns(['ruas', 'status', 'action'])
             ->make();
@@ -294,6 +310,7 @@ class KartuCT extends Controller
         $request->validate([
             'nomor_kartu' => 'required',
             'pemilik_kartu' => 'required',
+            'no_ref' => 'required',
             'ruas' => 'required',
             'jenis_ktp' => 'required',
             'institusi' => 'required',
@@ -306,6 +323,8 @@ class KartuCT extends Controller
 
             DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->insert([
                 'ktp_id' => '',
+                'no_referensi' => $request->no_ref,
+                'ruas' => $request->ruas,
                 'no_registrasi' => $request->nomor_kartu,
                 'ktp_jenis_id' => $request->jenis_ktp,
                 'model_operasi' => 0,
@@ -632,7 +651,6 @@ class KartuCT extends Controller
     }
 
     public function edit_kartu(Request $request) {
-
         $request->validate([
             'pemilik_kartu' => 'required',
             'jenis_ktp' => 'required',
