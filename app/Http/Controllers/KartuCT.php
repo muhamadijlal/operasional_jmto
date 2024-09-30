@@ -307,10 +307,11 @@ class KartuCT extends Controller
     }
 
     public function tambah_kartu(Request $request) {
+        $ruas = DB::connection('integrasi_bcds')->table('tbl_ktp_ruas_kartu')->where("id", $request->ruas)->first();
+
         $request->validate([
             'nomor_kartu' => 'required',
             'pemilik_kartu' => 'required',
-            'no_ref' => 'required',
             'ruas' => 'required',
             'jenis_ktp' => 'required',
             'institusi' => 'required',
@@ -324,7 +325,7 @@ class KartuCT extends Controller
             DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->insert([
                 'ktp_id' => '',
                 'no_referensi' => $request->no_ref,
-                'ruas' => $request->ruas,
+                'ruas' =>  $ruas->fisik_kartu,
                 'no_registrasi' => $request->nomor_kartu,
                 'ktp_jenis_id' => $request->jenis_ktp,
                 'model_operasi' => 0,
