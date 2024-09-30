@@ -377,21 +377,48 @@ class KartuCT extends Controller
         $expire = $request->masa_berlaku;
         $tipe = $request->tipe_ktp;
         $uid = $request->uid_ktp;
+        $id = $request->id_ktp;
 
         $data = $this->ktp_write($nomor, $ruas, $expire, $tipe, $uid);
 
-        DB::connection('integrasi_bcds')->table('tbl_log_operasional')->insert([
-            // 'npp_no' => auth()->user()->npp_no,
-            // 'id_jabatan' => auth()->user()->jabatan_id,
-            'user_id' => auth()->user()->npp_no,
-            'user_tipe' => '99',
-            'waktu' => date('Y-m-d H:i:s'),
-            'kategori' => 3,
-            'event' => 'encode kartu',
-            'keterangan' => json_encode($nomor),
-        ]);
-
-        return response(['status' => 200, 'message' => "Data kartu berhasil generate", 'data' => $data]);
+        try {
+            DB::beginTransaction();
+        
+            // Update data penerbitan kartu
+            DB::connection("integrasi_bcds")->table("tbl_penerbitan_kartu")->where("id", $id)->update([
+                'ktp_id' => $uid,
+            ]);
+        
+            // Menyimpan log operasional
+            DB::connection('integrasi_bcds')->table('tbl_log_operasional')->insert([
+                // Uncomment and use if needed
+                // 'npp_no' => auth()->user()->npp_no,
+                // 'id_jabatan' => auth()->user()->jabatan_id,
+                'user_id' => auth()->user()->npp_no,
+                'user_tipe' => '99',
+                'waktu' => now(), // Gunakan helper now() untuk mendapatkan timestamp
+                'kategori' => 3,
+                'event' => 'encode kartu',
+                'keterangan' => json_encode($nomor), // Pastikan $nomor adalah variabel yang valid
+            ]);
+        
+            DB::commit();
+        
+            return response()->json([
+                'status' => 200,
+                'message' => "Data kartu berhasil di-generate",
+                'data' => $data // Pastikan $data adalah variabel yang valid
+            ]);
+        
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return response()->json([
+                'status' => 500,
+                'message' => 'Gagal menyimpan data',
+                'error' => $e->getMessage()
+            ]);
+        }        
     }
 
     public function updateUID(Request $request) {

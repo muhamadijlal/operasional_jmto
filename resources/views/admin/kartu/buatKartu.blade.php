@@ -64,7 +64,6 @@ Buat Kartu
         </button>
       </div>
     </div>
-    
 
     <hr class="my-4">
 
@@ -145,6 +144,7 @@ $(document).ready(function() {
   var api = IOTClientService;
   var status = false;
   var write_status = false;
+  var penerbitanKartuId;
 
   function write_aktif(s) {
     // $('#btnTulis').prop('disabled', !s);
@@ -218,6 +218,9 @@ $(document).ready(function() {
         curr_uuid = msg.uid;
         if(curr_uuid) {
           $("#uid").html('UID : ' + curr_uuid);
+
+          $("#uid_ktp").val(curr_uuid);
+          
           document.getElementById('btnTulis').uid = curr_uuid;
           $('#btnTulis').prop('disabled', false);
           showKartuDinas();
@@ -236,7 +239,7 @@ $(document).ready(function() {
   api.open();
 
   $("#optionNama").change(function() {
-    var penerbitanKartuId = $('#optionNama').val();
+    penerbitanKartuId = $('#optionNama').val();
 
     if (penerbitanKartuId == '') {
       $('#form-tulis-kartu').trigger("reset");
@@ -301,6 +304,7 @@ $(document).ready(function() {
           formData.append('kode_ruas', $('#kode_ruas').val());
           formData.append('tipe_ktp', generateTipeKTP($('#tipe_ktp').val()));
           formData.append('masa_berlaku', $('#masa_berlaku').val());
+          formData.append('id_ktp', penerbitanKartuId);
 
           // Display the key/value pairs
           for (var pair of formData.entries()) {
