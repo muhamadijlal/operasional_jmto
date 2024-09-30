@@ -38,6 +38,8 @@ Route::prefix('kartu')->group(function () {
     Route::get('/get-ruas-kartu', 'getRuasKartu');
     Route::get('/get-ktp-opr', 'getKtpOpr');
     Route::get('/get-institusi', 'getInstitusi');
+
+    Route::get('/get-option-nama', 'getOptionNama');
   });
 });
 

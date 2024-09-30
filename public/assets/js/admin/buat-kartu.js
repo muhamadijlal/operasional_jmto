@@ -1,6 +1,6 @@
 $('#optionNama').select2({
   ajax: {
-      url: '/admin/get-option-nama', 
+      url: '/admin/kartu/get-option-nama', 
       dataType: 'json',
       delay: 250,
       processResults: function (data) {

@@ -645,7 +645,7 @@ class KartuCT extends Controller
 
     public function getRuasKartu()
     {
-        $data = DB::connection('mysql')->table('tbl_ktp_ruas_kartu')->get();
+        $data = DB::connection('integrasi_bcds')->table('tbl_ktp_ruas_kartu')->get();
         
         return response()->json($data);
     }
@@ -683,5 +683,28 @@ class KartuCT extends Controller
         
             return response(['status' => 500, 'message' => 'Gagal update data', 'error' => $e->getMessage()]);
         }
+    }
+
+    public function getOptionNama($tipe = '0')
+    {
+        $data = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('isdeleted', 0);
+
+        if ($tipe == '0') {
+			//$data->whereIn('ruas', ['a07f', 'a075', 'a077', 'A052', 'A050', 'A04F', 'A04D', 'A047', 'A045', 'A02C', 'A024'])->get();
+            $data->whereIn('ruas', ['b001'])->get();
+		} else if ($tipe == '1') {
+			//$data->whereIn('ruas', ['a045', 'a047', 'a04d', 'a04f', '86'])->get();
+            $data->whereIn('ruas', ['b001'])->get();
+		} else if ($tipe == '2') {
+			//$data->whereIn('ruas', ['a024', 'a02c'])->get();
+            $data->whereIn('ruas', ['b001'])->get();
+		} else if ($tipe == '3') {
+			//$data->whereIn('ruas', ['a050', 'a052'])->get();
+            $data->whereIn('ruas', ['b001'])->get();
+		}
+
+        $results = $data->get();
+        
+        return $results;
     }
 }
