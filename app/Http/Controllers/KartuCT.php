@@ -713,9 +713,13 @@ class KartuCT extends Controller
         }
     }
 
-    public function getOptionNama($tipe = '0')
+    public function getOptionNama(Request $request, $tipe = '0')
     {
-        $data = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('isdeleted', 0);
+        $data = DB::connection('integrasi_bcds')
+                ->table('tbl_penerbitan_kartu')
+                ->select(['nama','id'])
+                ->where('isdeleted', 0)
+                ->where('nama', 'LIKE', '%' . $request->get('q') . '%');
 
         if ($tipe == '0') {
 			//$data->whereIn('ruas', ['a07f', 'a075', 'a077', 'A052', 'A050', 'A04F', 'A04D', 'A047', 'A045', 'A02C', 'A024'])->get();
@@ -732,7 +736,7 @@ class KartuCT extends Controller
 		}
 
         $results = $data->get();
-        
-        return $results;
+
+        return response()->json($results);
     }
 }
