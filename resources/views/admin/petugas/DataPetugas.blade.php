@@ -88,6 +88,7 @@
       displayLength: 10,
       scrollX: true,
       scrollCollapse: true,
+      searching: false,
       order: [
         [0, 'desc']
       ],

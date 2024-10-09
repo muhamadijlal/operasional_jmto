@@ -65,14 +65,21 @@
   </div>
 
   <div class="card">
-    <div class="d-flex flex-row-reverse m-2 gap-2">
-      <button type="button" id="btnRefresh" class="btn btn-outline-info btn-sm" data-toggle="tooltip" title="Refresh tabel">
-        <i class="menu-icon tf-icons ti ti-refresh"></i>
-      </button>
-      <button type="button" id="btnTambahKartu" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" title="Add Kartu">
-        <i class="menu-icon tf-icons ti ti-plus"></i>
-      </button>
+    <div class="d-flex justify-content-between align-items-center m-2">
+      <div class="form-group flex-grow-1">
+        <input type="text" class="form-control" id="search" style="width: 35%;" placeholder="Search nama kartu">
+      </div>
+  
+      <div class="d-flex flex-row gap-2">
+          <button type="button" id="btnRefresh" class="btn btn-outline-info btn-sm" data-toggle="tooltip" title="Refresh tabel">
+              <i class="menu-icon tf-icons ti ti-refresh"></i>
+          </button>
+          <button type="button" id="btnTambahKartu" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" title="Add Kartu">
+              <i class="menu-icon tf-icons ti ti-plus"></i>
+          </button>
+      </div>
     </div>
+  
 
     <div class="p-3 table-responsive">
       <table id="tbl_list" class="datatables-basic table table-striped table-bordered">
@@ -146,8 +153,8 @@
           </div>
           <div class="modal-body">
               <div class="form-group mt-3">
-                  <label for="pemilik_kartu_edit">Nama Pemegang Kartu <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control " id="pemilik_kartu_edit" placeholder="Nama Pemegang Kartu">
+                <label for="pemilik_kartu_edit">Nama Pemegang Kartu <span class="text-danger">*</span></label>
+                <input type="text" class="form-control " id="pemilik_kartu_edit" placeholder="Nama Pemegang Kartu">
               </div>
               <div class="form-group mt-3">
                 <label for="jenis_ktp_edit">Jenis KTP <span class="text-danger">*</span></label>
@@ -172,6 +179,7 @@
 
   var dataObject = eval('<?php echo json_encode($Columns); ?>')
   var table = ''
+  let search = ''
   var ModalTambahKartu = $("#ModalTambahKartu");
   var ModalEditKartu = $("#ModalEditKartu");
 
@@ -200,14 +208,17 @@
       url: baseUrl, // Ganti dengan URL yang sesuai
       type: 'GET',
       data: function(d){
+        d.search = $('#search').val();
         d.ruas = $("#ruas").val();
         d.ktp_jenis_id = $("#jenis-ktp").val();
         d.status = $("#status-ktp").val();
         d.tgl_terbit = $("#tgl-terbit").val();
         d.tgl_kadaluarsa = $("#tgl-kadaluarsa").val();
-      }
+      },
+      error: function (xhr, error, code) {}
     },
     columns: dataObject,
+    searching: false,
     displayLength: 10,
     scrollX: true,
     scrollCollapse: true,
@@ -223,6 +234,11 @@
       emptyTable: "Tidak ada data yang tersedia"
       // Atur pesan lain sesuai kebutuhan Anda
     }
+  });
+
+  $('#search').on('change', function(){
+    console.log("searching..")
+    table.draw()
   });
 
   $("#ruas-ktp").change(function(){

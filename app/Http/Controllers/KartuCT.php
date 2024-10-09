@@ -23,8 +23,17 @@ class KartuCT extends Controller
                     ->where('tgl_kadaluarsa', $tgl_kadaluarsa);
             }
 
-            $query = $q->get();
+            if (request()->filled('search')) {
+                $searchValue = request()->search;
+                $q->where(function($query) use ($searchValue) {
+                    $query->where('nama', 'like', "%{$searchValue}%")
+                          ->orWhere('no_registrasi', 'like', "%{$searchValue}%")
+                          ->orWhere('no_referensi', 'like', "%{$searchValue}%");
+                });
+            }
 
+            $query = $q->get();
+            
             return DataTables::of($query)
             ->addColumn('jenis', function($row){
                 if ($row->ktp_jenis_id == 1) {
