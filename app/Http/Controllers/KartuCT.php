@@ -717,7 +717,7 @@ class KartuCT extends Controller
     {
         $data = DB::connection('integrasi_bcds')
                 ->table('tbl_penerbitan_kartu')
-                ->select(['nama','id'])
+                ->select(['nama','id','no_registrasi'])
                 ->where('isdeleted', 0)
                 ->where('nama', 'LIKE', '%' . $request->get('q') . '%');
 

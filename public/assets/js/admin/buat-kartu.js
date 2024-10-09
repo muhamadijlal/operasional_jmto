@@ -12,8 +12,8 @@ $('#optionNama').select2({
             return {
                 results: $.map(data, function (item) {
                     return {
-                        id: item.id,
-                        text: item.nama
+                        text: `${item.nama} - ${item.no_registrasi}`,
+                        id: item.id
                     };
                 })
             };
