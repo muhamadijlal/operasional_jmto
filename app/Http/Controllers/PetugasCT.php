@@ -143,7 +143,7 @@ class PetugasCT extends Controller
                 'nama_pegawai' => $request->nama_petugas,
                 'jabatan_id' => $request->jabatan,
                 'password' => $request->npp,
-                'gerbang_id' => '-',
+                'gerbang_id' => request()->gerbang_conn,
                 'kode_tugas' => $request->inisial_petugas,
                 'penempatan_gerbang' => $request->gerbang_penempatan
             ]);
