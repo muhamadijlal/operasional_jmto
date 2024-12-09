@@ -116,9 +116,12 @@ class PetugasCT extends Controller
 
     public function BuatPetugasTambah(Request $request)
     {
+
+        $gerbang_id_choosed = request()->gerbang_conn;
+
         $gerbang = DB::connection('mysql')
                         ->table('tbl_gerbang')
-                        ->where('gerbang_id', request()->gerbang_conn)
+                        ->where('gerbang_id', $gerbang_id_choosed)
                         ->first();
 
         Config::set('database.connections.mysql2.host', $gerbang->host);
@@ -143,7 +146,7 @@ class PetugasCT extends Controller
                 'nama_pegawai' => $request->nama_petugas,
                 'jabatan_id' => $request->jabatan,
                 'password' => $request->npp,
-                'gerbang_id' => request()->gerbang_conn,
+                'gerbang_id' => $gerbang_id_choosed,
                 'kode_tugas' => $request->inisial_petugas,
                 'penempatan_gerbang' => $request->gerbang_penempatan
             ]);
