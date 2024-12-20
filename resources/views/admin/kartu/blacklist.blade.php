@@ -21,7 +21,6 @@ Blacklist
         border: 1px solid #ced4da !important;
         border-radius: 0.25rem !important;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
-
     }
 </style>
 @endsection
@@ -29,12 +28,6 @@ Blacklist
 @section('content')
 <div class="d-flex flex-column gap-5">
   <div class="card">
-    <div class="d-flex flex-row-reverse m-2 gap-2">
-      <button type="button" id="btnRefresh" class="btn btn-outline-info btn-sm" data-toggle="tooltip" title="Refresh tabel">
-        <i class="menu-icon tf-icons ti ti-refresh"></i>
-      </button>
-    </div>
-
     <div class="p-3 table-responsive">
       <div class="form-group flex-grow-1">
         <input type="text" class="form-control" id="search" style="width: 25%;" placeholder="Search">
