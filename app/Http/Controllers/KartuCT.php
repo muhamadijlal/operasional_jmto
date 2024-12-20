@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -51,62 +52,6 @@ class KartuCT extends Controller
             ->addColumn('ruas', function($row) {
 
                 switch ($row->ruas) {
-                    // case 'a045':
-                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">MTN</span>';
-                    //     break;
-                    // case 'a047':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a04d':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a04f':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a050':
-                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">JKC</span>';
-                    //     break;
-                    // case 'a052':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JKC</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a024':
-                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">CSJ</span>';
-                    //     break;
-                    // case 'a02c':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">CSJ</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a075':
-                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">JORR</span>';
-                    //     break;
-                    // case 'a07f':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JORR2</span>
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JANGER</span>
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">BSD</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a077':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JORR2</span>
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JANGER</span>
-                    //             </div>';
-                    //     break;
                       case 'b001':
                             $ruas = '<div class="d-flex gap-1">
                                         <span style="background-color:blue;" class="badge rounded-pill">JMJ</span>
@@ -234,49 +179,50 @@ class KartuCT extends Controller
         ]);
     }
 
-    public function blacklist_ktp($id){
-        try{
-            DB::beginTransaction();
+    public function blacklist_ktp($id)
+    {
+        try {
+            // Gunakan DB::transaction() untuk otomatis menangani commit dan rollback
+            DB::connection('integrasi_bcds')->transaction(function () use ($id) {
 
-            $updated =  DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('id', $id)->update([
-                'status' => 2
-            ]);
-
-            if($updated) {
-                $row = DB::table('tbl_penerbitan_kartu')
+                // Ambil data terbaru dari tbl_penerbitan_kartu
+                $row = DB::connection('integrasi_bcds')
+                        ->table('tbl_penerbitan_kartu')
                         ->where('id', $id)
                         ->first();
-    
-                if ($row) {
-                    $uuid = hexdec($this->formatEndian($row->ktp_id));
-                    $currentTimestamp = strtotime(now());
-                
-                    DB::connection('integrasi_bcds')->table('tbl_blacklist')->upsert(
-                        [
-                            [
-                                'uuid' => $uuid,
-                                'no_registrasi' => $row->no_registrasi,
-                                'info' => $row->nama,
-                                'jenis_ktp' => $row->ktp_jenis_id,
-                                'tick' => $currentTimestamp,
-                                'penempatan_gerbang' => $row->penempatan_gerbang,
-                            ]
-                        ],
-                        ['uuid'],
-                        ['no_registrasi', 'info', 'jenis_ktp', 'tick', 'penempatan_gerbang']
-                    );
-                }                    
-            }
 
-            DB::commit();
+                // Proses insert ke tbl_blacklist
+                $uuid = hexdec($this->formatEndian($row->ktp_id));
+                $currentTimestamp = strtotime(now());
+
+                $inserted = DB::connection('integrasi_bcds')->table('tbl_blacklist')->insert(
+                    [
+                        'uuid' => $uuid,
+                        'no_registrasi' => $row->no_registrasi,
+                        'info' => $row->nama,
+                        'jenis_ktp' => $row->ktp_jenis_id,
+                        'tick' => $currentTimestamp,
+                        'penempatan_gerbang' => $row->penempatan_gerbang,
+                    ]
+                );
+
+                // Update tbl_penerbitan_kartu
+                DB::connection('integrasi_bcds')
+                            ->table('tbl_penerbitan_kartu')
+                            ->where('id', $id)
+                            ->update(['status' => 2]);
+
+                if (!$inserted) {
+                    throw new \Exception('Gagal menambahkan data ke tbl_blacklist.');
+                }
+            });
 
             return response(['status' => 200, 'message' => "Data berhasil di blacklist"]);
-        }catch (\Exception $e) {
-            DB::rollBack();
-        
+        } catch (\Exception $e) {
             return response(['status' => 500, 'message' => 'Gagal menyimpan data', 'error' => $e->getMessage()]);
         }
     }
+
 
     public function whitelist_ktp($id){
         try{

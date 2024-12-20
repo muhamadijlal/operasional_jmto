@@ -372,7 +372,7 @@
           success: function (response) {
             document.getElementById('loading-screen').style.display = 'none';
             table.draw();
-            sweetAlert('Berhasil!', response.message, 'success')
+            sweetAlert(response.status == 200 ? 'Berhasil!' : 'Gagal!', response.message, response.status == 200 ? 'success' : 'error')
           }
         });
       }
@@ -411,7 +411,7 @@
           success: function (response) {
             document.getElementById('loading-screen').style.display = 'none';
             table.draw();
-            sweetAlert('Berhasil!', response.message, 'success')
+            sweetAlert(response.status == 200 ? 'Berhasil!' : 'Gagal!', response.message, response.status == 200 ? 'success' : 'error')
           }
         });
       }
