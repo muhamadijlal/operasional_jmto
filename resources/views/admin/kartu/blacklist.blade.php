@@ -34,16 +34,14 @@ Blacklist
         <i class="menu-icon tf-icons ti ti-refresh"></i>
       </button>
     </div>
-    <div class="form-group mx-3">
-      <label for="gerbang">Pilih Gerbang : </label>
-      <select name="gerbang" id="gerbang_connection" style="width: 300px;" class="select2 form-control"></select>
-    </div>
 
     <div class="p-3 table-responsive">
-
+      <div class="form-group flex-grow-1">
+        <input type="text" class="form-control" id="search" style="width: 25%;" placeholder="Search">
+      </div>
       <table id="tbl_list" class="datatables-basic table table-striped table-bordered">
-          <thead>
-            <tr style="text-align: center !important">
+        <thead>
+          <tr style="text-align: center !important">
               <?php foreach($Columns as $row){ ?>
                 <th style="text-align: center !important">{{$row['name']}}</td>
               <?php } ?>
@@ -69,17 +67,23 @@ Blacklist
     table.draw();
   })
 
+  $('#search').on('change', function(){
+    console.log("searching..")
+    table.draw()
+  });
+
   table = $('#tbl_list').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
       url: baseUrl, // Ganti dengan URL yang sesuai
       type: 'GET',
-      data: function (d) {
-        d.gerbang_id = $('#gerbang_connection').val();
-      },
+      data: function(d){
+        d.search = $('#search').val();
+      }
     },
     columns: dataObject,
+    searching: false,
     displayLength: 10,
     scrollX: true,
     scrollCollapse: true,

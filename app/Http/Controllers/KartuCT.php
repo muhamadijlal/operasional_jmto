@@ -195,16 +195,16 @@ class KartuCT extends Controller
                 $uuid = hexdec($this->formatEndian($row->ktp_id));
                 $currentTimestamp = strtotime(now());
 
-                $inserted = DB::connection('integrasi_bcds')->table('tbl_blacklist')->insert(
-                    [
-                        'uuid' => $uuid,
-                        'no_registrasi' => $row->no_registrasi,
-                        'info' => $row->nama,
-                        'jenis_ktp' => $row->ktp_jenis_id,
-                        'tick' => $currentTimestamp,
-                        'penempatan_gerbang' => $row->penempatan_gerbang,
-                    ]
-                );
+                $inserted = DB::connection('integrasi_bcds')
+                                ->table('tbl_blacklist')
+                                ->insert([
+                                    'uuid' => $uuid,
+                                    'no_registrasi' => $row->no_registrasi,
+                                    'info' => $row->nama,
+                                    'jenis_ktp' => $row->ktp_jenis_id,
+                                    'tick' => $currentTimestamp,
+                                    'penempatan_gerbang' => $row->penempatan_gerbang,
+                                ]);
 
                 // Update tbl_penerbitan_kartu
                 DB::connection('integrasi_bcds')
@@ -443,12 +443,25 @@ class KartuCT extends Controller
 
     public function blacklist(){
         if (request()->ajax()) {
-
-            $q =  DB::connection('integrasi_bcds')->table('tbl_blacklist')->get();
+            $q =  DB::connection('integrasi_bcds')->table('tbl_blacklist');
+            
+            if (request()->filled('search')) {
+                $searchValue = request()->search;
+                $q->where(function($query) use ($searchValue) {
+                    $query->where('uuid', 'like', "%{$searchValue}%")
+                          ->orWhere('no_registrasi', 'like', "%{$searchValue}%")
+                          ->orWhere('info', 'like', "%{$searchValue}%")
+                          ->orWhere('jenis_ktp', 'like', "%{$searchValue}%");
+                });
+            }
+            
+            $q->get();
 
             return DataTables::of($q)
+            ->addColumn('tick', function($row){
+                return Carbon::createFromTimestamp($row->tick)->toDateTimeString();
+            })
             ->addColumn('jenis', function($row){
-
                 if ($row->jenis_ktp == 1) {
                     $jenis = 'Operasional';
                 } else if ($row->jenis_ktp == 2) {
@@ -462,7 +475,6 @@ class KartuCT extends Controller
                 return $jenis;
             })
             ->make();
-
         }
 
         return view('admin.kartu.blacklist', [
