@@ -22,6 +22,7 @@ Route::prefix('manajemen-tarif')->group(function () {
       Route::post('import', 'importcloseStore');
       Route::post('tambah', 'tambahExit');
       Route::post('update', 'updateExit');
+      Route::post('failed/import/list/pdf', 'pdfFailedImport');
       Route::get('export/{id_gerbang}', 'exportClose');
       Route::get('view/{id_gerbang}', 'viewClose');
       Route::get('delete/{id_tarif}/{id_gerbang}', 'delete');

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Config;
 
 class TarifExitImport implements ToCollection
 {
+    private $errors = [];
     private $gerbang;
     private $request;
 
@@ -19,12 +20,20 @@ class TarifExitImport implements ToCollection
         $this->request = $request;
     }
 
+    public function getErrors($gerbang)
+    {
+        $this->errors[] = $gerbang;
+    }
+
+    public function getFailed()
+    {
+        return $this->errors;
+    }
 
     public function collection(Collection $rows)
     {
 
         $investors = [];
-
 
         for ($i = 0; $i < count($rows); $i++) {
             if ($i == 0) {
@@ -123,6 +132,8 @@ class TarifExitImport implements ToCollection
                     $model->aktif = 1;
                     $model->tarif_inv = '[' . implode(',', str_replace('"', '', $investors)) . ']';
                     $model->save();
+                } else {
+                    $this->getErrors($asal_gerbang);
                 }
             }
         }

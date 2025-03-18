@@ -347,20 +347,21 @@ class ManajemenTarifCT extends Controller
 
             $failed = $import->getFailed();
 
-            $array = [
-                'gerbang' => $failed
-            ];
-
-            // $pdf = Pdf::loadView('admin.pdfFailedClose', $array)->setPaper('a4', 'landscape');
-
-            // return response($pdf->output(), 200)
-            //     ->header('Content-Type', 'application/pdf')
-            //     ->header('Content-Disposition', 'attachment; filename="Table Tarif GT ' . $gerbang->gerbang_nama . '.pdf"');
-
-
-            return response()->json(['code' => 200, 'message' => 'Success Import Data']);
+            return response()->json(['code' => 200, 'message' => 'Success Import Data', 'failedGerbang' => $failed]);
         } catch (Exception $e) {
             return response()->json(['code' => 400, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function pdfFailedImport(Request $request)
+    {
+        if(!empty($request->failedGerbang))
+        {
+            $pdf = Pdf::loadView('admin.pdfFailedClose', ['failed' => $request->failedGerbang])->setPaper('A4', 'landscape');
+
+            return response($pdf->output(), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="FailedImportGerbang.pdf"');
         }
     }
 
