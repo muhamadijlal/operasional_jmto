@@ -1760,8 +1760,16 @@
                                         // Limit to 5 messages
                                         const limitedMessages = response.data.failedGerbang.slice(0, 5);
                                         let listItems = limitedMessages.map(message => `<li>${message}</li>`).join('');
-                                        let htmlString = `<p>Berikut ini merupakan list gerbang yang gagal import, list gerbang sudah berhasil di export.</p>
-                                                            <ol>${listItems}</ol>
+                                        let htmlString = `
+                                            <p>Total Data : ${response.data.totalData}</p>
+                                            <p>Sukses Import Data : ${response.data.totalSuccessData}</p>
+                                            <p>Gagal Import Data : ${response.data.failedGerbang.length}</p>
+                                            </br>
+                                            <p>Berikut ini merupakan list gerbang yang gagal import, list gerbang sudah berhasil di export.</p>
+                                            <ol>
+                                                ${listItems}
+                                                <li>Dan lain lain.</li>
+                                            </ol>
                                         `;
 
 
