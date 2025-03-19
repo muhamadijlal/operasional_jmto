@@ -1509,8 +1509,6 @@
             }
         });
 
-
-
         $('#btnExportTarif').click(function () {
             var gerbang = $('#gerbang').val()
             // var gerbang = '01'

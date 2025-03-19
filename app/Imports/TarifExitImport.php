@@ -144,7 +144,7 @@ class TarifExitImport implements ToCollection
                     $model->id_dasar_tarif = $this->request->dasartarifmodal;
                     $model->aktif = 1;
                     $model->tarif_inv = '[' . implode(',', str_replace('"', '', $investors)) . ']';
-                    // $model->save();
+                    $model->save();
                 } else {
                     $this->getErrors($asal_gerbang);
                 }
