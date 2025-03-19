@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ManajemenTarifCT extends Controller
@@ -345,9 +346,18 @@ class ManajemenTarifCT extends Controller
             $import = new TarifExitImport($gerbang, $request);
             Excel::import($import, $request->file('file'));
 
+            // here
             $failed = $import->getFailed();
+            $totalData = $import->getTotalData();
+            $successImport = $import->getSuccessImport();
 
-            return response()->json(['code' => 200, 'message' => 'Success Import Data', 'failedGerbang' => $failed]);
+            $data = [
+                'failedGerbang' => $failed,
+                'totalData' => $totalData,
+                'totalSuccessData' => $successImport
+            ];
+
+            return response()->json(['code' => 200, 'message' => 'Success Import Data', 'data' => $data]);
         } catch (Exception $e) {
             return response()->json(['code' => 400, 'message' => $e->getMessage()]);
         }

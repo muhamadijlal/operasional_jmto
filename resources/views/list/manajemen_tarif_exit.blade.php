@@ -77,7 +77,7 @@
     <div class="card-datatable table-responsive pt-0">
         <div class="card-body">
 
-            @if ($message = Session::get('error'))
+            @if ($message = Session::get('error')) 
             <div class="alert alert-danger alert-dismissible" role="alert">
                 {{ $message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -1680,6 +1680,7 @@
                 } else {
                     var fileName = file.name;
                     var fileExtension = fileName.split('.').pop().toLowerCase();
+                    let failedData;
 
                     if (fileExtension == 'xlsx' || fileExtension == 'xls') {
 
@@ -1703,61 +1704,79 @@
                             },
                             success: function (response) {
                                 if (response.code == 200) {
-                                    $.ajax({
-                                        type: "POST",
-                                        url: '/admin/manajemen-tarif/close/failed/import/list/pdf',
-                                        data: {
-                                            failedGerbang: response.failedGerbang,
-                                            _token: '{{ csrf_token() }}'
-                                        },
-                                        xhrFields: {
-                                            responseType: 'blob' // Set responseType to 'blob'
-                                        },
-                                        beforeSend: function () {
-                                            document.getElementById('loading-screen').style.display = 'block';
-                                        },
-                                        success: function (response, status, xhr) {
-                    
-                                            var contentDisposition = xhr.getResponseHeader(
-                                                'content-disposition');
-                                            var fileName = '';
-
-                                            if (contentDisposition) {
-                                                var matches = contentDisposition.match(/filename="(.+)"/);
-                                                if (matches && matches.length > 1) {
-                                                    fileName = matches[1];
+                                    if(response.data.failedGerbang.length){
+                                        $.ajax({
+                                            type: "POST",
+                                            url: '/admin/manajemen-tarif/close/failed/import/list/pdf',
+                                            data: {
+                                                failedGerbang: response.data.failedGerbang,
+                                                _token: '{{ csrf_token() }}'
+                                            },
+                                            xhrFields: {
+                                                responseType: 'blob' // Set responseType to 'blob'
+                                            },
+                                            beforeSend: function () {
+                                                document.getElementById('loading-screen').style.display = 'block';
+                                            },
+                                            success: function (response, status, xhr) {
+                                                var contentDisposition = xhr.getResponseHeader(
+                                                    'content-disposition');
+                                                var fileName = '';
+    
+                                                if (contentDisposition) {
+                                                    var matches = contentDisposition.match(/filename="(.+)"/);
+                                                    if (matches && matches.length > 1) {
+                                                        fileName = matches[1];
+                                                    }
                                                 }
+    
+                                                // Buat objek blob dari respons
+                                                var blob = new Blob([response], {
+                                                    type: 'application/pdf'
+                                                });
+                        
+                                                // Buat URL objek blob
+                                                var blobUrl = URL.createObjectURL(blob);
+                        
+                                                // Buat elemen <a> untuk mengunduh file
+                                                var link = document.createElement('a');
+                                                link.href = blobUrl;
+                                                link.download = fileName || 'FailedImportGerbang.pdf';
+                        
+                                                // Sisipkan elemen <a> ke dokumen dan klik otomatis
+                                                document.body.appendChild(link);
+                                                link.click();
+                        
+                                                // Hapus elemen <a> setelah di-klik
+                                                document.body.removeChild(link);
+                                                document.getElementById('loading-screen').style.display = 'none';
+    
+                                                $("#modalImportTarifClose").modal('hide')
+                                                dt_filter.ajax.reload();
+                                            },
+                                            error: function (xhr, textStatus, errorThrown) {
+                                                document.getElementById('loading-screen').style.display = 'none';
                                             }
+                                        });
 
-                                            // Buat objek blob dari respons
-                                            var blob = new Blob([response], {
-                                                type: 'application/pdf'
-                                            });
-                    
-                                            // Buat URL objek blob
-                                            var blobUrl = URL.createObjectURL(blob);
-                    
-                                            // Buat elemen <a> untuk mengunduh file
-                                            var link = document.createElement('a');
-                                            link.href = blobUrl;
-                                            link.download = fileName || 'FailedImportGerbang.pdf';
-                    
-                                            // Sisipkan elemen <a> ke dokumen dan klik otomatis
-                                            document.body.appendChild(link);
-                                            link.click();
-                    
-                                            // Hapus elemen <a> setelah di-klik
-                                            document.body.removeChild(link);
-                                            document.getElementById('loading-screen').style.display = 'none';
+                                        // Limit to 5 messages
+                                        const limitedMessages = response.data.failedGerbang.slice(0, 5);
+                                        let listItems = limitedMessages.map(message => `<li>${message}</li>`).join('');
+                                        let htmlString = `<p>Berikut ini merupakan list gerbang yang gagal import, list gerbang sudah berhasil di export.</p>
+                                                            <ol>${listItems}</ol>
+                                        `;
 
-                                            $("#modalImportTarifClose").modal('hide')
-                                            dt_filter.ajax.reload();
-                                            sweetAlert('Berhasil!', response.message, 'success')
-                                        },
-                                        error: function (xhr, textStatus, errorThrown) {
-                                            document.getElementById('loading-screen').style.display = 'none';
-                                        }
-                                    });
+
+                                        Swal.fire({
+                                            title: 'Info!',
+                                            html: htmlString,
+                                            icon: 'info',
+                                            showCancelButton: false,
+                                            showConfirmButton: false,
+                                        });
+                                    } else {
+                                        sweetAlert('Berhasil!', response.message, 'success')
+                                    }
                                 } else {
                                     $("#modalImportTarifClose").modal('hide')
                                     dt_filter.ajax.reload();

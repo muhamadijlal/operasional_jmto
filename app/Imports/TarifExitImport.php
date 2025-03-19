@@ -13,6 +13,8 @@ class TarifExitImport implements ToCollection
     private $errors = [];
     private $gerbang;
     private $request;
+    private $totalData = 0;
+    private $successImport = 0;
 
     public function __construct($gerbang, $request)
     {
@@ -30,10 +32,20 @@ class TarifExitImport implements ToCollection
         return $this->errors;
     }
 
+    public function getTotalData()
+    {
+        return $this->totalData;
+    }
+
+    public function getSuccessImport()
+    {
+        return $this->successImport;
+    }
+
     public function collection(Collection $rows)
     {
-
-        $investors = [];
+        $startRow = 2; // start row data in excel in row 3
+        $this->totalData = count($rows) - $startRow;
 
         for ($i = 0; $i < count($rows); $i++) {
             if ($i == 0) {
@@ -115,6 +127,7 @@ class TarifExitImport implements ToCollection
                     $model->ruas_id = $this->gerbang->ruas_id;
                     $model->gerbang_id = $this->gerbang->gerbang_id;
                     $model->asal_gerbang =  $modelAsalGerbang->gerbang_id;
+
                     $model->jenis = $jenis;
                     $model->gol1 = $gol1;
                     $model->gol1_d =  '[' . implode(',', $gol1_d) . ']';
@@ -131,11 +144,14 @@ class TarifExitImport implements ToCollection
                     $model->id_dasar_tarif = $this->request->dasartarifmodal;
                     $model->aktif = 1;
                     $model->tarif_inv = '[' . implode(',', str_replace('"', '', $investors)) . ']';
-                    $model->save();
+                    // $model->save();
                 } else {
                     $this->getErrors($asal_gerbang);
                 }
             }
         }
+
+        // get total success import row with (totalData - error data)
+        $this->successImport = (int)$this->totalData - count($this->errors);
     }
 }
