@@ -31,6 +31,7 @@ Route::prefix('kartu')->group(function () {
 
     // blacklist kartu routes
     Route::get('/blacklist', 'blacklist');
+    Route::post('/blacklist/sync', 'sync_blacklist');
 
     // select 2
     Route::get('/get-unit', 'getUnit');

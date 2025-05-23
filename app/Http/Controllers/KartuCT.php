@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\InsertBlacklistToGerbangJob;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class KartuCT extends Controller
@@ -223,35 +226,188 @@ class KartuCT extends Controller
         }
     }
 
+    public function sync_blacklist()
+    {
+        $maxRecords = 500;
+        $processed = 0;
 
-    public function whitelist_ktp($id){
-        try{
+        try {
+            // Ambil data blacklist dari DB integrasi_bcds
+            DB::connection('integrasi_bcds')
+                ->table('tbl_blacklist')
+                ->where('sync', 0)
+                ->orderBy('no_registrasi')
+                ->chunk(50, function ($dataBlacklist) use (&$processed, $maxRecords) {
+                    foreach ($dataBlacklist as $blacklist) {
+                        if ($processed >= $maxRecords) {
+                            return false; // Stop chunking
+                        }
+
+                        $gerbangIds = explode(',', $blacklist->penempatan_gerbang);
+
+                        // Track database tujuan yang sudah diinsert agar tidak insert ulang
+                        $insertedDbs = [];
+
+                        foreach ($gerbangIds as $gerbangId) {
+                            // Ambil credential berdasarkan gerbang ID
+                            $credential = DB::connection('integrasi_bcds')
+                                ->table('tbl_gerbang')
+                                ->where('gerbang_id', $gerbangId)
+                                ->first();
+
+                            if (!$credential) {
+                                Log::warning("Credential tidak ditemukan untuk gerbang $gerbangId");
+                                continue;
+                            }
+
+                            // Identifikasi database tujuan unik berdasarkan host:port:database
+                            $dbKey = "{$credential->host}:{$credential->port}:{$credential->database}";
+
+                            if (in_array($dbKey, $insertedDbs)) {
+                                continue; // Lewati jika sudah pernah insert ke DB ini
+                            }
+
+                            // Set koneksi dinamis mysql2
+                            Config::set('database.connections.mysql2', [
+                                'driver' => 'mysql',
+                                'host' => $credential->host,
+                                'port' => $credential->port,
+                                'database' => $credential->database,
+                                'username' => $credential->user,
+                                'password' => $credential->pass,
+                            ]);
+
+                            // Bersihkan dan konek ulang mysql2
+                            DB::purge('mysql2');
+                            DB::reconnect('mysql2');
+
+                            try {
+                                // Gunakan updateOrInsert untuk hindari duplikat key
+                                DB::connection('mysql2')
+                                    ->table('tbl_blacklist')
+                                    ->updateOrInsert(
+                                        ['no_registrasi' => $blacklist->no_registrasi],
+                                        [
+                                            'uuid' => $blacklist->uuid,
+                                            'info' => $blacklist->info,
+                                            'jenis_ktp' => $blacklist->jenis_ktp,
+                                            'tick' => $blacklist->tick,
+                                            'penempatan_gerbang' => $blacklist->penempatan_gerbang,
+                                        ]
+                                    );
+
+                                $insertedDbs[] = $dbKey; // Tandai bahwa DB ini sudah diproses
+
+                            } catch (\Exception $e) {
+                                Log::error("Gagal insert ke gerbang {$gerbangId} ({$dbKey}): {$e->getMessage()}");
+                            }
+                        }
+
+                        // Tandai data sudah disinkronisasi
+                        DB::connection('integrasi_bcds')->table('tbl_blacklist')
+                            ->where('uuid', $blacklist->uuid)
+                            ->update(['sync' => 1]);
+
+                        $processed++;
+                    }
+
+                    if ($processed >= $maxRecords) {
+                        return false;
+                    }
+                });
+
+            return response()->json([
+                'status' => 'success',
+                'message' => "Berhasil memproses $processed data blacklist",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+
+
+    public function whitelist_ktp($id)
+    {
+        try {
             DB::beginTransaction();
 
-            $updated =  DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('id', $id)->update([
-                'status' => 1
-            ]);
-    
-            if($updated) {
-    
-                $row =  DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')
-                            ->where('id', $id)
-                            ->first();
-    
+            // Update status whitelist
+            $updated = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')
+                ->where('id', $id)
+                ->update(['status' => 1]);
+
+            if ($updated) {
+                $row = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')
+                    ->where('id', $id)
+                    ->first();
+
                 if ($row) {
-                    DB::connection('integrasi_bcds')->table('tbl_blacklist')->where('no_registrasi', $row->no_registrasi)->delete();
-                }                    
+                    // Hapus dari blacklist di integrasi_bcds
+                    DB::connection('integrasi_bcds')->table('tbl_blacklist')
+                        ->where('no_registrasi', $row->no_registrasi)
+                        ->delete();
+
+                    // Ambil semua gerbang tujuan dari penempatan
+                    $gerbangIds = explode(',', $row->penempatan_gerbang);
+                    $deletedDbs = [];
+
+                    foreach ($gerbangIds as $gerbangId) {
+                        $credential = DB::connection('integrasi_bcds')->table('tbl_gerbang')
+                            ->where('gerbang_id', $gerbangId)
+                            ->first();
+
+                        if (!$credential) {
+                            Log::warning("Credential tidak ditemukan untuk gerbang $gerbangId");
+                            continue;
+                        }
+
+                        $dbKey = "{$credential->host}:{$credential->port}:{$credential->database}";
+                        if (in_array($dbKey, $deletedDbs)) {
+                            continue; // Hindari hapus 2x dari DB yang sama
+                        }
+
+                        // Atur koneksi dinamis
+                        Config::set('database.connections.mysql2', [
+                            'driver' => 'mysql',
+                            'host' => $credential->host,
+                            'port' => $credential->port,
+                            'database' => $credential->database,
+                            'username' => $credential->user,
+                            'password' => $credential->pass,
+                        ]);
+
+                        DB::purge('mysql2');
+                        DB::reconnect('mysql2');
+
+                        try {
+                            DB::connection('mysql2')->table('tbl_blacklist')
+                                ->where('no_registrasi', $row->no_registrasi)
+                                ->delete();
+
+                            $deletedDbs[] = $dbKey;
+                        } catch (\Exception $e) {
+                            Log::error("Gagal menghapus no_registrasi {$row->no_registrasi} dari DB {$dbKey}: {$e->getMessage()}");
+                        }
+                    }
+                }
             }
 
             DB::commit();
-    
-            return response(['status' => 200, 'message' => "Data berhasil di whitelist"]);
-        }catch (\Exception $e) {
+            return response(['status' => 200, 'message' => "Data berhasil di-whitelist"]);
+        } catch (\Exception $e) {
             DB::rollBack();
-        
-            return response(['status' => 500, 'message' => 'Gagal menyimpan data', 'error' => $e->getMessage()]);
+            return response([
+                'status' => 500,
+                'message' => 'Gagal menyimpan data',
+                'error' => $e->getMessage(),
+            ]);
         }
     }
+
 
     private function formatEndian($endian, $format = 'N') {
         $endian = intval($endian, 16);      // convert string to hex

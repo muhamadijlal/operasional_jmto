@@ -29,8 +29,12 @@ Blacklist
 <div class="d-flex flex-column gap-5">
   <div class="card">
     <div class="p-3 table-responsive">
-      <div class="form-group flex-grow-1">
+      <div class="d-flex justify-content-between">
         <input type="text" class="form-control" id="search" style="width: 25%;" placeholder="Search">
+
+        <button type="button" id="btnSync" class="btn btn-outline-info btn-sm" data-toggle="tooltip" title="Refresh tabel">
+            <i class="menu-icon tf-icons ti ti-refresh"></i>
+        </button>
       </div>
       <table id="tbl_list" class="datatables-basic table table-striped table-bordered">
         <thead>
@@ -95,6 +99,43 @@ Blacklist
 
   $("#btnRefresh").on('click', function() {
     table.draw();
+  })
+
+  $("#btnSync").on('click', function(){
+    Swal.fire({
+      title: 'Sync KTP',
+      text: "KTP blacklist akan di sync seluruh gerbang.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sync',
+      cancelButtonText: 'Batal',
+      customClass: {
+        confirmButton: 'btn btn-primary me-3',
+        cancelButton: 'btn btn-label-secondary'
+      },
+      buttonsStyling: false
+    }).then(function (result) {
+      if(result.isConfirmed){
+        $.ajax({
+          url: baseUrl+'/sync',
+          method: "POST",
+          headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          },
+          contentType: false,
+          cache: false,
+          processData: false,
+          beforeSend: function(){
+            document.getElementById('loading-screen').style.display = 'block';
+          },
+          success: function (response) {
+            document.getElementById('loading-screen').style.display = 'none';
+            table.draw();
+            sweetAlert(response.status == 200 ? 'Berhasil!' : 'Gagal!', response.message, response.status == 200 ? 'success' : 'error')
+          }
+        });
+      }
+    });
   })
 </script>
 @endsection
