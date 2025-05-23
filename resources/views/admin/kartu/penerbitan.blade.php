@@ -34,7 +34,7 @@
       <div class="form-group" style="width: 15%;">
         <select name="jenis-ktp" id="jenis-ktp" class="form-control">
           <option value="" disabled selected>-- Pilih Jenis KTP --</option>
-          <option value="999">ALL</option>                       
+          <option value="*">ALL</option>                       
           <option value="1">KTP OPERASIONAL</option>
           <option value="2">KTP KARYAWAN</option>			
           <option value="3">KTP MITRA</option>  
@@ -43,7 +43,7 @@
       <div class="form-group" style="width: 15%;">
         <select name="status-ktp" id="status-ktp" class="form-control">
           <option value="" disabled selected>-- Pilih Status KTP --</option>
-          <option value="999">ALL</option>                       
+          <option value="*">ALL</option>                       
           <option value="1">AKTIF</option>	
           <option value="2">BLACKLIST</option>
           <option value="3">DRAFT</option>
@@ -57,7 +57,7 @@
       </div>
 
       <div class="col">
-        <button type="button" id="submit-btn" class="btn btn-primary">
+        <button type="button" id="filter-btn" class="btn btn-primary">
           <i class="menu-icon tf-icons ti ti-filter"></i>
         </button>
       </div>
@@ -196,7 +196,7 @@
   }
 
   $(document).ready(function () {
-    $('#submit-btn').on('click', function () {
+    $('#filter-btn').on('click', function () {
       table.ajax.reload();
     });
   });

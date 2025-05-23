@@ -16,15 +16,26 @@ class KartuCT extends Controller
         if (request()->ajax()) {
             $q = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu');
 
-            if(request()->filled('ruas') && request()->filled('ktp_jenis_id') && request()->filled('status') && request()->filled('tgl_terbit') && request()->filled('tgl_kadaluarsa')) {
-                $tgl_terbit = date('Y-m-d', strtotime(request()->tgl_terbit));
-                $tgl_kadaluarsa = date('Y-m-d', strtotime(request()->tgl_kadaluarsa));
+            if( request()->filled('ruas')){
+                $q->where('ruas', strtolower(request()->ruas));
+            }
 
-                $q->where('ruas', strtolower(request()->ruas))
-                    ->where('ktp_jenis_id', request()->ktp_jenis_id)
-                    ->where('status', request()->status)
-                    ->where('tgl_terbit',  $tgl_terbit)
-                    ->where('tgl_kadaluarsa', $tgl_kadaluarsa);
+            if(request()->filled('ktp_jenis_id') && request()->status != '*'){
+                $q->where('ktp_jenis_id', request()->ktp_jenis_id);
+            }
+
+            if(request()->filled('status') && request()->status != '*'){
+                $q->where('status', request()->status);
+            }
+
+            if(request()->filled('tgl_terbit')){
+                $tgl_terbit = date('Y-m-d', strtotime(request()->tgl_terbit));
+                $q->where('tgl_terbit', $tgl_terbit);
+            }
+
+            if(request()->filled('tgl_kadaluarsa')){
+                $tgl_kadaluarsa = date('Y-m-d', strtotime(request()->tgl_kadaluarsa));
+                $q->where('tgl_kadaluarsa', $tgl_kadaluarsa);
             }
 
             if (request()->filled('search')) {
