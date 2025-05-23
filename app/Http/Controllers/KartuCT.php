@@ -641,6 +641,14 @@ class KartuCT extends Controller
 
                 return $jenis;
             })
+            ->addColumn('sync', function($row) {
+                if ($row->sync == 0) {
+                    return '<span class="badge bg-warning rounded-pill">Belum Dikirim</span>';
+                } else {
+                    return '<span class="badge  bg-primary rounded-pill">Sudah Dikirim</span>';
+                }
+            })
+            ->rawColumns(['sync'])
             ->make();
         }
 
@@ -671,6 +679,11 @@ class KartuCT extends Controller
                     'title' => 'Tick',
                     'data' => 'tick',
                     'name' => 'tbl_blacklist.tick',
+                ],
+                [
+                    'title' => 'Sync',
+                    'data' => 'sync',
+                    'name' => 'tbl_blacklist.sync',
                 ],
             ]
         ]);

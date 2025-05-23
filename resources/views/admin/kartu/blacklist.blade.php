@@ -33,7 +33,7 @@ Blacklist
         <input type="text" class="form-control" id="search" style="width: 25%;" placeholder="Search">
 
         <button type="button" id="btnSync" class="btn btn-outline-info btn-sm" data-toggle="tooltip" title="Refresh tabel">
-            <i class="menu-icon tf-icons ti ti-refresh"></i>
+            Sync <i class="menu-icon tf-icons ti ti-refresh"></i>
         </button>
       </div>
       <table id="tbl_list" class="datatables-basic table table-striped table-bordered">
