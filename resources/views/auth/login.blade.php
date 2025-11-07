@@ -26,7 +26,7 @@ Login
                 <h3 class="mb-1 fw-bold">
                     Login JMTO Operasional
                     <br>
-                    Ruas {{ $ruas->ruas_nama }}
+                    Ruas {{ $ruas->ruas_nama ?? "Unknown" }}
                 </h3>
 
 
