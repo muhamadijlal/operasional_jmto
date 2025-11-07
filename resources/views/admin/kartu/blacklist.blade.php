@@ -21,7 +21,6 @@ Blacklist
         border: 1px solid #ced4da !important;
         border-radius: 0.25rem !important;
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
-
     }
 </style>
 @endsection
@@ -29,16 +28,17 @@ Blacklist
 @section('content')
 <div class="d-flex flex-column gap-5">
   <div class="card">
-    <div class="d-flex flex-row-reverse m-2 gap-2">
-      <button type="button" id="btnRefresh" class="btn btn-outline-info btn-sm" data-toggle="tooltip" title="Refresh tabel">
-        <i class="menu-icon tf-icons ti ti-refresh"></i>
-      </button>
-    </div>
-
     <div class="p-3 table-responsive">
+      <div class="d-flex justify-content-between">
+        <input type="text" class="form-control" id="search" style="width: 25%;" placeholder="Search">
+
+        <button type="button" id="btnSync" class="btn btn-outline-info btn-sm" data-toggle="tooltip" title="Refresh tabel">
+            Sync <i class="menu-icon tf-icons ti ti-refresh"></i>
+        </button>
+      </div>
       <table id="tbl_list" class="datatables-basic table table-striped table-bordered">
-          <thead>
-            <tr style="text-align: center !important">
+        <thead>
+          <tr style="text-align: center !important">
               <?php foreach($Columns as $row){ ?>
                 <th style="text-align: center !important">{{$row['name']}}</td>
               <?php } ?>
@@ -53,13 +53,21 @@ Blacklist
 @section('js')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script src="{{ asset('assets/js/admin/kartu.js') }}"></script>
+<script src="{{ asset('assets/js/admin/blacklist.js') }}"></script>
 <script>
   baseUrl = '{{ url()->current() }}'
 
-
   var dataObject = eval('<?php echo json_encode($Columns); ?>')
   var table = ''
+
+  $("#gerbang_connection").on('change', function(){
+    table.draw();
+  })
+
+  $('#search').on('change', function(){
+    console.log("searching..")
+    table.draw()
+  });
 
   table = $('#tbl_list').DataTable({
     processing: true,
@@ -67,8 +75,12 @@ Blacklist
     ajax: {
       url: baseUrl, // Ganti dengan URL yang sesuai
       type: 'GET',
+      data: function(d){
+        d.search = $('#search').val();
+      }
     },
     columns: dataObject,
+    searching: false,
     displayLength: 10,
     scrollX: true,
     scrollCollapse: true,
@@ -87,6 +99,43 @@ Blacklist
 
   $("#btnRefresh").on('click', function() {
     table.draw();
+  })
+
+  $("#btnSync").on('click', function(){
+    Swal.fire({
+      title: 'Sync KTP',
+      text: "KTP blacklist akan di sync seluruh gerbang.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sync',
+      cancelButtonText: 'Batal',
+      customClass: {
+        confirmButton: 'btn btn-primary me-3',
+        cancelButton: 'btn btn-label-secondary'
+      },
+      buttonsStyling: false
+    }).then(function (result) {
+      if(result.isConfirmed){
+        $.ajax({
+          url: baseUrl+'/sync',
+          method: "POST",
+          headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          },
+          contentType: false,
+          cache: false,
+          processData: false,
+          beforeSend: function(){
+            document.getElementById('loading-screen').style.display = 'block';
+          },
+          success: function (response) {
+            document.getElementById('loading-screen').style.display = 'none';
+            table.draw();
+            sweetAlert(response.status == 200 ? 'Berhasil!' : 'Gagal!', response.message, response.status == 200 ? 'success' : 'error')
+          }
+        });
+      }
+    });
   })
 </script>
 @endsection

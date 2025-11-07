@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ManajemenTarifCT extends Controller
@@ -345,22 +346,32 @@ class ManajemenTarifCT extends Controller
             $import = new TarifExitImport($gerbang, $request);
             Excel::import($import, $request->file('file'));
 
+            // here
             $failed = $import->getFailed();
+            $totalData = $import->getTotalData();
+            $successImport = $import->getSuccessImport();
 
-            $array = [
-                'gerbang' => $failed
+            $data = [
+                'failedGerbang' => $failed,
+                'totalData' => $totalData,
+                'totalSuccessData' => $successImport
             ];
 
-            // $pdf = Pdf::loadView('admin.pdfFailedClose', $array)->setPaper('a4', 'landscape');
-
-            // return response($pdf->output(), 200)
-            //     ->header('Content-Type', 'application/pdf')
-            //     ->header('Content-Disposition', 'attachment; filename="Table Tarif GT ' . $gerbang->gerbang_nama . '.pdf"');
-
-
-            return response()->json(['code' => 200, 'message' => 'Success Import Data']);
+            return response()->json(['code' => 200, 'message' => 'Success Import Data', 'data' => $data]);
         } catch (Exception $e) {
             return response()->json(['code' => 400, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function pdfFailedImport(Request $request)
+    {
+        if(!empty($request->failedGerbang))
+        {
+            $pdf = Pdf::loadView('admin.pdfFailedClose', ['failed' => $request->failedGerbang])->setPaper('A4', 'landscape');
+
+            return response($pdf->output(), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="FailedImportGerbang.pdf"');
         }
     }
 

@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\InsertBlacklistToGerbangJob;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class KartuCT extends Controller
@@ -12,19 +16,39 @@ class KartuCT extends Controller
         if (request()->ajax()) {
             $q = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu');
 
-            if(request()->filled('ruas') && request()->filled('ktp_jenis_id') && request()->filled('status') && request()->filled('tgl_terbit') && request()->filled('tgl_kadaluarsa')) {
-                $tgl_terbit = date('Y-m-d', strtotime(request()->tgl_terbit));
-                $tgl_kadaluarsa = date('Y-m-d', strtotime(request()->tgl_kadaluarsa));
+            if( request()->filled('ruas')){
+                $q->where('ruas', strtolower(request()->ruas));
+            }
 
-                $q->where('ruas', strtolower(request()->ruas))
-                    ->where('ktp_jenis_id', request()->ktp_jenis_id)
-                    ->where('status', request()->status)
-                    ->where('tgl_terbit',  $tgl_terbit)
-                    ->where('tgl_kadaluarsa', $tgl_kadaluarsa);
+            if(request()->filled('ktp_jenis_id') && request()->status != '*'){
+                $q->where('ktp_jenis_id', request()->ktp_jenis_id);
+            }
+
+            if(request()->filled('status') && request()->status != '*'){
+                $q->where('status', request()->status);
+            }
+
+            if(request()->filled('tgl_terbit')){
+                $tgl_terbit = date('Y-m-d', strtotime(request()->tgl_terbit));
+                $q->where('tgl_terbit', $tgl_terbit);
+            }
+
+            if(request()->filled('tgl_kadaluarsa')){
+                $tgl_kadaluarsa = date('Y-m-d', strtotime(request()->tgl_kadaluarsa));
+                $q->where('tgl_kadaluarsa', $tgl_kadaluarsa);
+            }
+
+            if (request()->filled('search')) {
+                $searchValue = request()->search;
+                $q->where(function($query) use ($searchValue) {
+                    $query->where('nama', 'like', "%{$searchValue}%")
+                          ->orWhere('no_registrasi', 'like', "%{$searchValue}%")
+                          ->orWhere('no_referensi', 'like', "%{$searchValue}%");
+                });
             }
 
             $query = $q->get();
-
+            
             return DataTables::of($query)
             ->addColumn('jenis', function($row){
                 if ($row->ktp_jenis_id == 1) {
@@ -42,62 +66,6 @@ class KartuCT extends Controller
             ->addColumn('ruas', function($row) {
 
                 switch ($row->ruas) {
-                    // case 'a045':
-                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">MTN</span>';
-                    //     break;
-                    // case 'a047':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a04d':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a04f':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">MTN</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a050':
-                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">JKC</span>';
-                    //     break;
-                    // case 'a052':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JKC</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">JANGER</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a024':
-                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">CSJ</span>';
-                    //     break;
-                    // case 'a02c':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">CSJ</span>
-                    //                 <span style="background-color:red;" class="badge rounded-pill">BSD</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a075':
-                    //     $ruas = '<span style="background-color:blue;" class="badge rounded-pill">JORR</span>';
-                    //     break;
-                    // case 'a07f':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JORR2</span>
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JANGER</span>
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">BSD</span>
-                    //             </div>';
-                    //     break;
-                    // case 'a077':
-                    //     $ruas = '<div class="d-flex gap-1">
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JORR2</span>
-                    //                 <span style="background-color:blue;" class="badge rounded-pill">JANGER</span>
-                    //             </div>';
-                    //     break;
                       case 'b001':
                             $ruas = '<div class="d-flex gap-1">
                                         <span style="background-color:blue;" class="badge rounded-pill">JMJ</span>
@@ -225,78 +193,232 @@ class KartuCT extends Controller
         ]);
     }
 
-    public function blacklist_ktp($id){
-        try{
-            DB::beginTransaction();
+    public function blacklist_ktp($id)
+    {
+        try {
+            // Gunakan DB::transaction() untuk otomatis menangani commit dan rollback
+            DB::connection('integrasi_bcds')->transaction(function () use ($id) {
 
-            $updated =  DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('id', $id)->update([
-                'status' => 2
-            ]);
-
-            if($updated) {
-                $row = DB::table('tbl_penerbitan_kartu')
+                // Ambil data terbaru dari tbl_penerbitan_kartu
+                $row = DB::connection('integrasi_bcds')
+                        ->table('tbl_penerbitan_kartu')
                         ->where('id', $id)
                         ->first();
-    
-                if ($row) {
-                    $uuid = hexdec($this->formatEndian($row->ktp_id));
-                    $currentTimestamp = strtotime(now());
-                
-                    DB::connection('integrasi_bcds')->table('tbl_blacklist')->upsert(
-                        [
-                            [
-                                'uuid' => $uuid,
-                                'no_registrasi' => $row->no_registrasi,
-                                'info' => $row->nama,
-                                'jenis_ktp' => $row->ktp_jenis_id,
-                                'tick' => $currentTimestamp,
-                                'penempatan_gerbang' => $row->penempatan_gerbang,
-                            ]
-                        ],
-                        ['uuid'],
-                        ['no_registrasi', 'info', 'jenis_ktp', 'tick', 'penempatan_gerbang']
-                    );
-                }                    
-            }
 
-            DB::commit();
+                // Proses insert ke tbl_blacklist
+                $uuid = hexdec($this->formatEndian($row->ktp_id));
+                $currentTimestamp = strtotime(now());
+
+                $inserted = DB::connection('integrasi_bcds')
+                                ->table('tbl_blacklist')
+                                ->insert([
+                                    'uuid' => $uuid,
+                                    'no_registrasi' => $row->no_registrasi,
+                                    'info' => $row->nama,
+                                    'jenis_ktp' => $row->ktp_jenis_id,
+                                    'tick' => $currentTimestamp,
+                                    'penempatan_gerbang' => $row->penempatan_gerbang,
+                                ]);
+
+                // Update tbl_penerbitan_kartu
+                DB::connection('integrasi_bcds')
+                            ->table('tbl_penerbitan_kartu')
+                            ->where('id', $id)
+                            ->update(['status' => 2]);
+
+                if (!$inserted) {
+                    throw new \Exception('Gagal menambahkan data ke tbl_blacklist.');
+                }
+            });
 
             return response(['status' => 200, 'message' => "Data berhasil di blacklist"]);
-        }catch (\Exception $e) {
-            DB::rollBack();
-        
+        } catch (\Exception $e) {
             return response(['status' => 500, 'message' => 'Gagal menyimpan data', 'error' => $e->getMessage()]);
         }
     }
 
-    public function whitelist_ktp($id){
-        try{
+    public function sync_blacklist()
+    {
+        $maxRecords = 500;
+        $processed = 0;
+
+        try {
+            // Ambil data blacklist dari DB integrasi_bcds
+            DB::connection('integrasi_bcds')
+                ->table('tbl_blacklist')
+                ->where('sync', 0)
+                ->orderBy('no_registrasi')
+                ->chunk(50, function ($dataBlacklist) use (&$processed, $maxRecords) {
+                    foreach ($dataBlacklist as $blacklist) {
+                        if ($processed >= $maxRecords) {
+                            return false; // Stop chunking
+                        }
+
+                        $gerbangIds = explode(',', $blacklist->penempatan_gerbang);
+
+                        // Track database tujuan yang sudah diinsert agar tidak insert ulang
+                        $insertedDbs = [];
+
+                        foreach ($gerbangIds as $gerbangId) {
+                            // Ambil credential berdasarkan gerbang ID
+                            $credential = DB::connection('integrasi_bcds')
+                                ->table('tbl_gerbang')
+                                ->where('gerbang_id', $gerbangId)
+                                ->first();
+
+                            if (!$credential) {
+                                Log::warning("Credential tidak ditemukan untuk gerbang $gerbangId");
+                                continue;
+                            }
+
+                            // Identifikasi database tujuan unik berdasarkan host:port:database
+                            $dbKey = "{$credential->host}:{$credential->port}:{$credential->database}";
+
+                            if (in_array($dbKey, $insertedDbs)) {
+                                continue; // Lewati jika sudah pernah insert ke DB ini
+                            }
+
+                            // Set koneksi dinamis mysql2
+                            Config::set('database.connections.mysql2', [
+                                'driver' => 'mysql',
+                                'host' => $credential->host,
+                                'port' => $credential->port,
+                                'database' => $credential->database,
+                                'username' => $credential->user,
+                                'password' => $credential->pass,
+                            ]);
+
+                            // Bersihkan dan konek ulang mysql2
+                            DB::purge('mysql2');
+                            DB::reconnect('mysql2');
+
+                            try {
+                                // Gunakan updateOrInsert untuk hindari duplikat key
+                                DB::connection('mysql2')
+                                    ->table('tbl_blacklist')
+                                    ->updateOrInsert(
+                                        ['no_registrasi' => $blacklist->no_registrasi],
+                                        [
+                                            'uuid' => $blacklist->uuid,
+                                            'info' => $blacklist->info,
+                                            'jenis_ktp' => $blacklist->jenis_ktp,
+                                            'tick' => $blacklist->tick,
+                                            'penempatan_gerbang' => $blacklist->penempatan_gerbang,
+                                        ]
+                                    );
+
+                                $insertedDbs[] = $dbKey; // Tandai bahwa DB ini sudah diproses
+
+                            } catch (\Exception $e) {
+                                Log::error("Gagal insert ke gerbang {$gerbangId} ({$dbKey}): {$e->getMessage()}");
+                            }
+                        }
+
+                        // Tandai data sudah disinkronisasi
+                        DB::connection('integrasi_bcds')->table('tbl_blacklist')
+                            ->where('uuid', $blacklist->uuid)
+                            ->update(['sync' => 1]);
+
+                        $processed++;
+                    }
+
+                    if ($processed >= $maxRecords) {
+                        return false;
+                    }
+                });
+
+            return response()->json([
+                'status' => 'success',
+                'message' => "Berhasil memproses $processed data blacklist",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+
+
+    public function whitelist_ktp($id)
+    {
+        try {
             DB::beginTransaction();
 
-            $updated =  DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('id', $id)->update([
-                'status' => 1
-            ]);
-    
-            if($updated) {
-    
-                $row =  DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')
-                            ->where('id', $id)
-                            ->first();
-    
+            // Update status whitelist
+            $updated = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')
+                ->where('id', $id)
+                ->update(['status' => 1]);
+
+            if ($updated) {
+                $row = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')
+                    ->where('id', $id)
+                    ->first();
+
                 if ($row) {
-                    DB::connection('integrasi_bcds')->table('tbl_blacklist')->where('no_registrasi', $row->no_registrasi)->delete();
-                }                    
+                    // Hapus dari blacklist di integrasi_bcds
+                    DB::connection('integrasi_bcds')->table('tbl_blacklist')
+                        ->where('no_registrasi', $row->no_registrasi)
+                        ->delete();
+
+                    // Ambil semua gerbang tujuan dari penempatan
+                    $gerbangIds = explode(',', $row->penempatan_gerbang);
+                    $deletedDbs = [];
+
+                    foreach ($gerbangIds as $gerbangId) {
+                        $credential = DB::connection('integrasi_bcds')->table('tbl_gerbang')
+                            ->where('gerbang_id', $gerbangId)
+                            ->first();
+
+                        if (!$credential) {
+                            Log::warning("Credential tidak ditemukan untuk gerbang $gerbangId");
+                            continue;
+                        }
+
+                        $dbKey = "{$credential->host}:{$credential->port}:{$credential->database}";
+                        if (in_array($dbKey, $deletedDbs)) {
+                            continue; // Hindari hapus 2x dari DB yang sama
+                        }
+
+                        // Atur koneksi dinamis
+                        Config::set('database.connections.mysql2', [
+                            'driver' => 'mysql',
+                            'host' => $credential->host,
+                            'port' => $credential->port,
+                            'database' => $credential->database,
+                            'username' => $credential->user,
+                            'password' => $credential->pass,
+                        ]);
+
+                        DB::purge('mysql2');
+                        DB::reconnect('mysql2');
+
+                        try {
+                            DB::connection('mysql2')->table('tbl_blacklist')
+                                ->where('no_registrasi', $row->no_registrasi)
+                                ->delete();
+
+                            $deletedDbs[] = $dbKey;
+                        } catch (\Exception $e) {
+                            Log::error("Gagal menghapus no_registrasi {$row->no_registrasi} dari DB {$dbKey}: {$e->getMessage()}");
+                        }
+                    }
+                }
             }
 
             DB::commit();
-    
-            return response(['status' => 200, 'message' => "Data berhasil di whitelist"]);
-        }catch (\Exception $e) {
+            return response(['status' => 200, 'message' => "Data berhasil di-whitelist"]);
+        } catch (\Exception $e) {
             DB::rollBack();
-        
-            return response(['status' => 500, 'message' => 'Gagal menyimpan data', 'error' => $e->getMessage()]);
+            return response([
+                'status' => 500,
+                'message' => 'Gagal menyimpan data',
+                'error' => $e->getMessage(),
+            ]);
         }
     }
+
 
     private function formatEndian($endian, $format = 'N') {
         $endian = intval($endian, 16);      // convert string to hex
@@ -488,12 +610,25 @@ class KartuCT extends Controller
 
     public function blacklist(){
         if (request()->ajax()) {
-
-            $q =  DB::connection('integrasi_bcds')->table('tbl_blacklist')->get();
+            $q =  DB::connection('integrasi_bcds')->table('tbl_blacklist');
+            
+            if (request()->filled('search')) {
+                $searchValue = request()->search;
+                $q->where(function($query) use ($searchValue) {
+                    $query->where('uuid', 'like', "%{$searchValue}%")
+                          ->orWhere('no_registrasi', 'like', "%{$searchValue}%")
+                          ->orWhere('info', 'like', "%{$searchValue}%")
+                          ->orWhere('jenis_ktp', 'like', "%{$searchValue}%");
+                });
+            }
+            
+            $q->get();
 
             return DataTables::of($q)
+            ->addColumn('tick', function($row){
+                return Carbon::createFromTimestamp($row->tick)->toDateTimeString();
+            })
             ->addColumn('jenis', function($row){
-
                 if ($row->jenis_ktp == 1) {
                     $jenis = 'Operasional';
                 } else if ($row->jenis_ktp == 2) {
@@ -506,8 +641,15 @@ class KartuCT extends Controller
 
                 return $jenis;
             })
+            ->addColumn('sync', function($row) {
+                if ($row->sync == 0) {
+                    return '<span class="badge bg-warning rounded-pill">Belum Dikirim</span>';
+                } else {
+                    return '<span class="badge  bg-primary rounded-pill">Sudah Dikirim</span>';
+                }
+            })
+            ->rawColumns(['sync'])
             ->make();
-
         }
 
         return view('admin.kartu.blacklist', [
@@ -537,6 +679,11 @@ class KartuCT extends Controller
                     'title' => 'Tick',
                     'data' => 'tick',
                     'name' => 'tbl_blacklist.tick',
+                ],
+                [
+                    'title' => 'Sync',
+                    'data' => 'sync',
+                    'name' => 'tbl_blacklist.sync',
                 ],
             ]
         ]);
@@ -713,9 +860,13 @@ class KartuCT extends Controller
         }
     }
 
-    public function getOptionNama($tipe = '0')
+    public function getOptionNama(Request $request, $tipe = '0')
     {
-        $data = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('isdeleted', 0);
+        $data = DB::connection('integrasi_bcds')
+                ->table('tbl_penerbitan_kartu')
+                ->select(['nama','id','no_registrasi'])
+                ->where('isdeleted', 0)
+                ->where('nama', 'LIKE', '%' . $request->get('q') . '%');
 
         if ($tipe == '0') {
 			//$data->whereIn('ruas', ['a07f', 'a075', 'a077', 'A052', 'A050', 'A04F', 'A04D', 'A047', 'A045', 'A02C', 'A024'])->get();
@@ -732,7 +883,7 @@ class KartuCT extends Controller
 		}
 
         $results = $data->get();
-        
-        return $results;
+
+        return response()->json($results);
     }
 }
