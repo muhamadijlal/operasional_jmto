@@ -165,6 +165,12 @@
                                   <div>Dashboards</div>
                                 </a>
                             </li>
+                            <li class="menu-item {{ request()->is('admin/durasi*') ? 'active' : '' }}">
+                                <a href="/admin/durasi" class="menu-link" >
+                                  <i class="menu-icon tf-icons ti ti-clock"></i>
+                                  <div>Durasi</div>
+                                </a>
+                            </li>
                             <li class="menu-item {{ request()->is('admin/tarif/*') ? 'active' : '' }}">
                                 <a href="#" class="menu-link menu-toggle" >
                                   <i class="menu-icon tf-icons ti ti-file"></i>

@@ -9943,13 +9943,13 @@
             "time": "2023-02-21T06:57:59+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                },
                 "laravel": {
                     "providers": [
                         "Yajra\\DataTables\\EditorServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
                 }
             },
             "installation-source": "dist",
@@ -10100,13 +10100,13 @@
             "time": "2023-02-07T03:46:04+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "10.0-dev"
-                },
                 "laravel": {
                     "providers": [
                         "Yajra\\DataTables\\FractalServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-master": "10.0-dev"
                 }
             },
             "installation-source": "dist",
