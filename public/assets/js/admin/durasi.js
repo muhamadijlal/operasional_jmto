@@ -198,7 +198,22 @@ $(document).ready(function () {
             var optionText = $("#gerbang option:selected").text();
             $('#gerbangmodal').append(
                 `<option value="${optionValue}"> ${optionText}</option>`);
-            $("#DurasiModal").modal('show');
+
+            // Isi dropdown Asal Gerbang dari tbl_gerbang database tujuan
+            $.ajax({
+                url: UrlCurrent + '/asal-gerbang/' + $('#gerbang').val(),
+                method: 'get',
+                success: function (data) {
+                    var $asal = $('#asal_gerbang');
+                    $asal.find('option').remove().end();
+                    $asal.append('<option value="">Pilih Asal Gerbang</option>');
+                    $.each(data, function (i, item) {
+                        $asal.append(
+                            `<option value="${item.gerbang_id}">${item.gerbang_nama} (${item.gerbang_id})</option>`);
+                    });
+                    $("#DurasiModal").modal('show');
+                }
+            });
         }
     });
 
@@ -226,11 +241,31 @@ $(document).ready(function () {
         }
     });
 
-    $("#form-tambah-Durasi").validate()
-    $("#form-edit-Durasi").validate()
+    // Aturan validasi: nilai durasi per golongan tidak boleh 0 (minimal 1)
+    var golRules = {};
+    var golMessages = {};
+    ['gol1', 'gol2', 'gol3', 'gol4', 'gol5'].forEach(function (g) {
+        golRules[g] = { required: true, min: 1 };
+        golMessages[g] = {
+            required: 'Nilai durasi wajib diisi',
+            min: 'Nilai durasi tidak boleh 0'
+        };
+    });
+
+    $("#form-tambah-Durasi").validate({
+        rules: Object.assign({ asal_gerbang: { required: true } }, golRules),
+        messages: Object.assign({ asal_gerbang: { required: 'Asal gerbang wajib dipilih' } }, golMessages)
+    })
+    $("#form-edit-Durasi").validate({
+        rules: golRules,
+        messages: golMessages
+    })
 
     $("#form-tambah-Durasi").submit(function (e) {
         e.preventDefault()
+        if (!$("#form-tambah-Durasi").valid()) {
+            return;
+        }
         var url = UrlCurrent + '/tambah';
         var formData = new FormData($("#form-tambah-Durasi")[0]);
 
@@ -262,6 +297,9 @@ $(document).ready(function () {
 
     $("#form-edit-Durasi").submit(function (e) {
         e.preventDefault()
+        if (!$("#form-edit-Durasi").valid()) {
+            return;
+        }
         var url = UrlCurrent + '/update';
         var formData = new FormData($("#form-edit-Durasi")[0]);
 

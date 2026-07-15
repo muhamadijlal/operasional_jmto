@@ -148,6 +148,32 @@ class DurasiCT extends Controller
         );
     }
 
+    /**
+     * Daftar gerbang (dari tbl_gerbang di database tujuan) untuk pilihan
+     * Asal Gerbang saat menambah durasi. Kode asal yang sudah punya durasi
+     * dikecualikan agar tidak bentrok primary key (gerbang_id + asal_gerbang).
+     */
+    public function getAsalGerbang($id_gerbang)
+    {
+        $this->setKoneksiGerbang($id_gerbang);
+
+        $sudahAda = DB::connection('mysql2')->table('tbl_durasi')
+            ->where('gerbang_id', $id_gerbang)
+            ->pluck('asal_gerbang')
+            ->toArray();
+
+        // Kecualikan gerbang itu sendiri (asal = gerbang tujuan tidak relevan)
+        $sudahAda[] = $id_gerbang;
+
+        $data = DB::connection('mysql2')->table('tbl_gerbang')
+            ->select('gerbang_id', 'gerbang_nama')
+            ->whereNotIn('gerbang_id', $sudahAda)
+            ->orderBy('gerbang_nama', 'asc')
+            ->get();
+
+        return response()->json($data);
+    }
+
     public function tambah(Request $request)
     {
         $this->setKoneksiGerbang($request->gerbangmodal);
