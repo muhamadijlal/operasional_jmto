@@ -5,11 +5,22 @@ namespace App\Imports;
 use App\Models\tbl_gerbang;
 use App\Models\tbl_tarif_exit;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 
-class TarifExitImport implements ToCollection
+class TarifExitImport implements ToCollection, WithMultipleSheets
 {
+    public function sheets(): array
+    {
+        // File template biasanya punya sheet kedua yang kosong (bawaan Excel
+        // saat file dibuat) -- cuma proses sheet pertama yang benar-benar
+        // berisi data tarif, supaya collection() tidak dipanggil lagi untuk
+        // sheet kosong tadi (yang sebelumnya bikin error "Undefined variable
+        // $investors").
+        return [0 => $this];
+    }
+
     private $errors = [];
     private $gerbang;
     private $request;
@@ -124,7 +135,6 @@ class TarifExitImport implements ToCollection
                     Config::set('database.connections.mysql2.password', $this->gerbang->pass);
 
                     $model = new tbl_tarif_exit();
-                    $model->ruas_id = $this->gerbang->ruas_id;
                     $model->gerbang_id = $this->gerbang->gerbang_id;
                     $model->asal_gerbang =  $modelAsalGerbang->gerbang_id;
 
