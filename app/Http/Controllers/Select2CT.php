@@ -167,4 +167,18 @@ class Select2CT extends Controller
 
         return $data;
     }
+
+    public function getRuasKTP()
+    {
+        $data = DB::connection('mysql')->table('tbl_ktp_ruas_kartu')->get();
+
+        return response()->json($data);
+    }
+
+    public function getRuasKTPNama()
+    {
+        $data = DB::connection('mysql')->table('tbl_ruas')->get();
+
+        return response()->json($data);
+    }
 }

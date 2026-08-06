@@ -241,6 +241,14 @@ class PetugasCT extends Controller
         return view("admin.petugas.BuatKartuOps");
     }
 
+    public function BuatPetugasSycron()
+    {
+        // Route ini terdaftar tapi belum ada spesifikasi/UI yang memanggilnya.
+        // Dikembalikan sebagai respons aman (bukan 500) sampai kebutuhan sinkronisasi
+        // petugas yang sesungguhnya didefinisikan.
+        return response()->json(['code' => 501, 'message' => 'Fitur sinkronisasi petugas belum diimplementasikan']);
+    }
+
     public function DataPetugas(){
         // dd(request()->gerbang_id, request()->jabatan_id);
         if (request()->ajax()) {
