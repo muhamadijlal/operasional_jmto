@@ -563,6 +563,8 @@ $(document).ready(function() {
 
   function tipeRuas(id) {
     var kartu = '';
+    var RUAS_ID = @json(config('ruas.id'));
+    var RUAS_NAME = @json(config('ruas.name'));
     switch (id.toUpperCase()) {
       // case 'A045':
       //   kartu = 'MTN';
@@ -600,8 +602,8 @@ $(document).ready(function() {
       // case 'A077':
       //   kartu = 'JORR 2 + JANGER';
       //   break;
-      case 'B001':
-        kartu = 'JMJ';
+      case RUAS_ID.toUpperCase():
+        kartu = RUAS_NAME;
         break;
       default:
         kartu = 'Unknown1';

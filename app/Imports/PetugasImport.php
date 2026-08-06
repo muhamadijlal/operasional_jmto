@@ -34,7 +34,7 @@ class PetugasImport implements ToCollection
         Config::set('database.connections.mysql2.database', $gerbang->database);
         Config::set('database.connections.mysql2.username', $gerbang->user);
         Config::set('database.connections.mysql2.password', $gerbang->pass);
-        dd($$rows);
+
         for ($i = 1; $i < count($rows); $i++) {
             $jabatan_id = $this->getJabatanId($rows[$i][1]);
 

@@ -1,66 +1,54 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Operasional JMTO
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi operasional untuk pengelolaan kartu tol (kartu dinas/operasional, penerbitan, blacklist/whitelist), manajemen tarif (open/exit), durasi, dan petugas gerbang jalan tol.
 
-## About Laravel
+Aplikasi ini **di-deploy satu instance per ruas jalan tol**. Ruas mana yang dilayani oleh sebuah instance diatur lewat environment variable, bukan hardcode di kode — lihat `config/ruas.php`.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Konfigurasi Ruas (`RUAS_ID` / `RUAS_NAME`)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Variable | Contoh | Keterangan |
+|---|---|---|2
+| `RUAS_ID` | `b001` | Kode ruas (kolom `ruas`/`ruas_id` di database) yang datanya ditampilkan/difilter oleh instance ini. |
+| `RUAS_NAME` | `JMJ` | Label/nama ruas yang ditampilkan di badge UI (daftar kartu, dsb). |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Dipakai di `Select2CT::getOptionNama()`, `KartuCT::getOptionNama()`, badge ruas di `KartuCT`, dan helper JS `tipeRuas()` pada view `bacaKartu`, `perpanjangKartu`, `whitelist_update`.
 
-## Learning Laravel
+## Deploy ke Ruas Baru
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Aplikasi ini memakai 3 koneksi database (lihat `config/database.php`):
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **`mysql`** — DB pusat instance ruas ini: `tbl_ruas`, `tbl_gerbang` (termasuk kredensial DB tiap gerbang), `tbl_pegawai`, `tbl_jabatan`, `tbl_log_operasional`.
+- **`mysql2`** — koneksi dinamis, di-set runtime dari kredensial `tbl_gerbang` (di DB `mysql`) sesuai gerbang yang aktif dipilih user. Ini adalah DB lokal milik gerbang tersebut (`tbl_pegawai`, `tbl_dasar_tarif`, `tbl_tarif_open`, `tbl_tarif_exit`, `tbl_durasi`, `tbl_blacklist`).
+- **`integrasi_bcds`** — DB integrasi pusat/nasional (`tbl_penerbitan_kartu`, `tbl_blacklist` master, `tbl_ruas`, `tbl_ktp_*`) yang dipakai bersama oleh semua ruas.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Catatan penting**: tabel-tabel di atas adalah tabel legacy/eksternal, **tidak ada migration Laravel untuk skema ini** (`database/migrations` hanya berisi tabel default Laravel seperti `users`/`jobs`). Deploy ke ruas baru berarti mengimpor dump SQL skema+data tersebut, bukan sekadar `php artisan migrate`.
 
-## Laravel Sponsors
+Langkah-langkah:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+1. Clone/pull kode ke server ruas baru, `composer install`, `npm install && npm run build` (jika ada aset front-end yang di-build).
+2. Copy `.env.example` → `.env`, lalu `php artisan key:generate`.
+3. Set `RUAS_ID` dan `RUAS_NAME` sesuai ruas tujuan.
+4. Siapkan database `DB_DATABASE` (koneksi `mysql`) untuk ruas ini: import dump skema `tbl_ruas`, `tbl_gerbang`, `tbl_pegawai`, `tbl_jabatan`, `tbl_log_operasional`, `tbl_dasar_tarif`. Pastikan `tbl_ruas` punya baris dengan `ruas_id` yang sama dengan `RUAS_ID`.
+5. Isi `tbl_gerbang` dengan seluruh gerbang milik ruas ini beserta kredensial DB lokal masing-masing gerbang (`host`, `port`, `database`, `user`, `pass`) — ini dipakai untuk koneksi `mysql2` dinamis. Pastikan DB fisik di tiap gerbang sudah ada (`tbl_pegawai`, `tbl_dasar_tarif`, `tbl_tarif_open`, `tbl_tarif_exit`, `tbl_durasi`, `tbl_blacklist`).
+6. Set `DB_INTEGRASI_HOST`/`PORT`/`DATABASE`/`USERNAME`/`PASSWORD` ke DB integrasi nasional (`integrasi_bcds`), dan pastikan bersama tim pusat bahwa `RUAS_ID` ruas ini sudah terdaftar di `tbl_ruas` serta gerbang-gerbangnya di `tbl_gerbang` pada DB integrasi tersebut (dibutuhkan untuk sinkronisasi blacklist kartu).
+7. Set `PUBLIC_KEY`/`PRIVATE_KEY` (kunci RSA enkripsi data kartu RFID) — koordinasikan dengan tim pusat apakah kunci ini shared atau unik per ruas.
+8. `php artisan migrate` (hanya untuk tabel default Laravel), `php artisan config:cache`, `php artisan storage:link` bila perlu.
+9. Buat satu baris `tbl_pegawai` dengan `jabatan_id = 1` dan `activated = 1` — hanya jabatan ini yang diizinkan login ke aplikasi (lihat `AuthCT::loginAction`).
+10. Siapkan service pembaca kartu RFID lokal (WebSocket `ws://localhost:4949`, lihat `public/assets/js/admin/clientapi.js`) di komputer yang tersambung ke reader kartu.
+11. Uji: login, cek dashboard, cek dropdown ruas/gerbang menampilkan data yang benar, dan cek badge ruas di modul kartu menampilkan `RUAS_NAME` yang sesuai.
 
-### Premium Partners
+> Dokumentasi lebih lengkap (PRD, ERD, arsitektur, dan catatan teknis) ada di Notion — lihat link yang dibagikan tim.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## Changelog
 
-## Contributing
+Semua perubahan penting pada aplikasi ini didokumentasikan di sini. Format mengikuti [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan penomoran versi mengikuti [Semantic Versioning](https://semver.org/).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### [1.1.0] - 2026-08-06
 
-## Code of Conduct
+#### Ditambahkan
+- Environment variable `RUAS_ID` dan `RUAS_NAME` beserta `config/ruas.php`, sehingga ruas jalan tol yang dilayani oleh sebuah instance diatur lewat `.env`, bukan hardcode di kode.
+- Environment variable `APP_VERSION` dan `config('app.version')` untuk melacak versi aplikasi yang di-deploy.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### Diubah
+- `Select2CT::getOptionNama()` dan `KartuCT::getOptionNama()` kini memfilter berdasarkan `config('ruas.id')`, bukan nilai hardcode `'b001'`.
+- Render badge ruas di `KartuCT` serta helper JS `tipeRuas()` (view `bacaKartu`, `perpanjangKartu`, `whitelist_update`) kini dibandingkan terhadap `config('ruas.id')`/`config('ruas.name')`, bukan case hardcode `'B001'`/`'JMJ'`.
