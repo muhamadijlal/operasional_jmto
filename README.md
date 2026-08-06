@@ -140,12 +140,11 @@ Dokumentasi lebih dalam (PRD, ERD/skema database, arsitektur teknis, dan catatan
 
 Semua perubahan penting pada aplikasi ini didokumentasikan di sini. Format mengikuti [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan penomoran versi mengikuti [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+### [1.3.1] - 2026-08-06
 
-Fix berikut sudah selesai & teruji, tapi sengaja dijaga di branch terpisah (belum di-merge ke `main`) menunggu review/PR:
-
-- **`fix/uid-kosong-buat-kartu`** — UID kartu tersimpan kosong di database saat "Buat Kartu": `getDetailData` menimpa balik field UID dengan `ktp_id` dari database (selalu kosong untuk kartu baru), menghapus UID yang sudah terbaca dari reader RFID kalau kartu ditempel sebelum memilih profil.
-- **`fix/nomor-registrasi-duplikat`** — Nomor registrasi kartu baru selalu duplikat/ditolak. `nomor_kartu` dari frontend cuma prefix (institusi+ruas+unit) yang tidak unik per kartu; sekarang backend menambahkan suffix urut 3 digit per prefix (total 9 digit, sesuai pola data produksi).
+#### Diperbaiki
+- **UID kartu tersimpan kosong di database saat "Buat Kartu"** — `getDetailData` menimpa balik field UID dengan `ktp_id` dari database (selalu kosong untuk kartu baru), menghapus UID yang sudah terbaca dari reader RFID kalau kartu ditempel sebelum memilih profil.
+- **Nomor registrasi kartu baru selalu duplikat/ditolak** — `nomor_kartu` dari frontend cuma prefix (institusi+ruas+unit) yang tidak unik per kartu; backend sekarang menambahkan suffix urut 3 digit per prefix (total 9 digit, sesuai pola data produksi).
 
 ### [1.3.0] - 2026-08-06
 
