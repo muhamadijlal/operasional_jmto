@@ -140,6 +140,18 @@ Dokumentasi lebih dalam (PRD, ERD/skema database, arsitektur teknis, dan catatan
 
 Semua perubahan penting pada aplikasi ini didokumentasikan di sini. Format mengikuti [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan penomoran versi mengikuti [Semantic Versioning](https://semver.org/).
 
+### [1.2.0] - 2026-08-06
+
+#### Ditambahkan
+- Migration Laravel untuk seluruh tabel yang dipakai aplikasi di 3 koneksi (`mysql`, `mysql2`, `integrasi_bcds`), direkonstruksi dari skema database live. Sebelumnya tabel-tabel ini tidak punya migration sama sekali.
+
+#### Diubah
+- Pembersihan tabel yang tidak dipakai aplikasi di database `jpb_bcds` dan `integrasi_bcds` (tabel milik sistem lain yang berbagi database yang sama tidak disentuh — hanya tabel legacy/backup yang benar-benar tidak dirujuk kode yang dihapus).
+- Penyesuaian kode di modul `KartuCT` (format & pembaruan minor).
+
+#### Keamanan
+- Rotasi `APP_KEY` dan password database lokal, karena sebelumnya pernah tercatat di history git (lihat entri [1.1.0]).
+
 ### [1.1.0] - 2026-08-06
 
 #### Ditambahkan
