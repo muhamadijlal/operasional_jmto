@@ -65,18 +65,15 @@ class KartuCT extends Controller
             })
             ->addColumn('ruas', function($row) {
 
-                switch ($row->ruas) {
-                      case 'b001':
-                            $ruas = '<div class="d-flex gap-1">
-                                        <span style="background-color:blue;" class="badge rounded-pill">JMJ</span>
-                                    </div>';
-                      break;
-                    default:
-                        $ruas = '<span style="background-color:blue;" class="badge rounded-pill">Unknown</span>';
-                        break;
-                    }
+                if (strcasecmp($row->ruas, config('ruas.id')) === 0) {
+                    $ruas = '<div class="d-flex gap-1">
+                                <span style="background-color:blue;" class="badge rounded-pill">' . config('ruas.name') . '</span>
+                            </div>';
+                } else {
+                    $ruas = '<span style="background-color:blue;" class="badge rounded-pill">Unknown</span>';
+                }
 
-                    return $ruas;
+                return $ruas;
             })
             ->addColumn('tgl_terbit', function($row){
                 $date_formatted = date('d F Y', strtotime($row->tgl_terbit));
@@ -866,21 +863,8 @@ class KartuCT extends Controller
                 ->table('tbl_penerbitan_kartu')
                 ->select(['nama','id','no_registrasi'])
                 ->where('isdeleted', 0)
-                ->where('nama', 'LIKE', '%' . $request->get('q') . '%');
-
-        if ($tipe == '0') {
-			//$data->whereIn('ruas', ['a07f', 'a075', 'a077', 'A052', 'A050', 'A04F', 'A04D', 'A047', 'A045', 'A02C', 'A024'])->get();
-            $data->whereIn('ruas', ['b001'])->get();
-		} else if ($tipe == '1') {
-			//$data->whereIn('ruas', ['a045', 'a047', 'a04d', 'a04f', '86'])->get();
-            $data->whereIn('ruas', ['b001'])->get();
-		} else if ($tipe == '2') {
-			//$data->whereIn('ruas', ['a024', 'a02c'])->get();
-            $data->whereIn('ruas', ['b001'])->get();
-		} else if ($tipe == '3') {
-			//$data->whereIn('ruas', ['a050', 'a052'])->get();
-            $data->whereIn('ruas', ['b001'])->get();
-		}
+                ->where('nama', 'LIKE', '%' . $request->get('q') . '%')
+                ->where('ruas', config('ruas.id'));
 
         $results = $data->get();
 

@@ -14,7 +14,7 @@ class DurasiCT extends Controller
 
     /**
      * Set koneksi database gerbang (mysql2) berdasarkan data koneksi
-     * yang tersimpan di tbl_gerbang pada database pusat (jmj_bcds).
+     * yang tersimpan di tbl_gerbang pada database pusat.
      */
     private function setKoneksiGerbang($gerbangId)
     {

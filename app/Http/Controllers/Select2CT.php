@@ -152,24 +152,13 @@ class Select2CT extends Controller
 
     public function getOptionNama($tipe = '0')
     {
-        $data = DB::connection('mysql')->table('tbl_penerbitan_kartu')->where('isdeleted', 0);
-
-        if ($tipe == '0') {
-			//$data->whereIn('ruas', ['a07f', 'a075', 'a077', 'A052', 'A050', 'A04F', 'A04D', 'A047', 'A045', 'A02C', 'A024'])->get();
-            $data->whereIn('ruas', ['b001'])->get();
-		} else if ($tipe == '1') {
-			//$data->whereIn('ruas', ['a045', 'a047', 'a04d', 'a04f', '86'])->get();
-            $data->whereIn('ruas', ['b001'])->get();
-		} else if ($tipe == '2') {
-			//$data->whereIn('ruas', ['a024', 'a02c'])->get();
-            $data->whereIn('ruas', ['b001'])->get();
-		} else if ($tipe == '3') {
-			//$data->whereIn('ruas', ['a050', 'a052'])->get();
-            $data->whereIn('ruas', ['b001'])->get();
-		}
+        $data = DB::connection('mysql')
+                ->table('tbl_penerbitan_kartu')
+                ->where('isdeleted', 0)
+                ->where('ruas', config('ruas.id'));
 
         $results = $data->get();
-        
+
         return $results;
     }
 

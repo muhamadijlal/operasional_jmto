@@ -58,13 +58,13 @@ Baca Kartu
         </button>
       </div>
     </div>
-    
+
 
     <hr class="my-4">
 
     <div class="row">
       <h1 class="text-center">Tempelkan Kartu</h1>
-      
+
       <div class="col-12 text-center">
         <img src="{{ asset('assets/img/rfid.png') }}"></img>
       </div>
@@ -217,7 +217,7 @@ $(document).ready(function() {
         var nokartu = response.data.nokartu;
         var uid = (response.data.uid).toUpperCase();
         var namaa = (response.ktpNama[0].nama).toUpperCase();
-        var nama;       
+        var nama;
 
         Swal.fire({
           title: 'Data Kartu Tol Perusahaan',
@@ -248,7 +248,7 @@ $(document).ready(function() {
             }
             .tble{
               background-color:#add5e3;
-              color:black; font-weight:bold;  
+              color:black; font-weight:bold;
             }
             </style>
             <thead>
@@ -258,13 +258,13 @@ $(document).ready(function() {
               <td width="2%" style="text-align:left;">:</td>
               <td width="" style="text-align:left;">` + uid + `</td>
             </tr>
-        
+
             <tr>
               <td style="text-align:left;">Registrasi</td>
               <td style="text-align:left;">:</th>
               <td style="text-align:left;">` + nokartu + `</td>
             </tr>
-        
+
             <tr>
               <td style="text-align:left;">Nama</td>
               <td style="text-align:left;">:</th>
@@ -346,7 +346,7 @@ $(document).ready(function() {
     });
   })
 
-  $("#btnService").on('click', function(){         
+  $("#btnService").on('click', function(){
     var fileUrl = "{{ asset('assets/file/ClientService.exe') }}";
     // Now you can use this URL in JavaScript
     location.href = fileUrl;
@@ -375,48 +375,14 @@ $(document).ready(function() {
   function tipeRuas(id) {
     console.log("TIPE RUAS : "+ id)
     var kartu = '';
+    var RUAS_ID = @json(config('ruas.id'));
+    var RUAS_NAME = @json(config('ruas.name'));
     switch (id.toUpperCase()) {
-      // case 'A045':
-      //   kartu = 'MTN';
-      //   break;
-      // case 'A047':
-      //   kartu = 'MTN + JANGER';
-      //   break;
-      // case 'A04D':
-      //   kartu = 'MTN + BSD';
-      //   break;
-      // case 'A04F':
-      //   kartu = 'MTN + JANGER + BSD';
-      //   break;
-      // case 'A050':
-      //   kartu = 'JKC';
-      //   break;
-      // case 'A052':
-      //   kartu = 'JKC + JANGER';
-      //   break;
-      // case 'A024':
-      //   kartu = 'CSJ';
-      //   break;
-      // case 'A02C':
-      //   kartu = 'CSJ+BSD';
-      //   break;
-      // case 'A07F':
-      //   kartu = 'JORR 2 + BSD + JANGER';
-      //   break;
-      // case 'A075':
-      //   kartu = 'MTN + CSJ + JKC';
-      //   break;
-      // case 'A047':
-      //   kartu = 'MTN + JANGER';
-      //   break;
-      // case 'A077':
-      //   kartu = 'JORR 2 + JANGER';
-      //   break;
-      case 'B001':
-        kartu = 'JMJ';
+      case RUAS_ID.toUpperCase():
+        kartu = RUAS_NAME;
         break;
       default:
-        kartu = 'Unknown1';
+        kartu = 'Unknown!';
         break;
     }
 
