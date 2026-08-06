@@ -140,6 +140,11 @@ Dokumentasi lebih dalam (PRD, ERD/skema database, arsitektur teknis, dan catatan
 
 Semua perubahan penting pada aplikasi ini didokumentasikan di sini. Format mengikuti [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan penomoran versi mengikuti [Semantic Versioning](https://semver.org/).
 
+### [1.2.1] - 2026-08-06
+
+#### Diperbaiki
+- `KartuCT::tambah_kartu()` sekarang memvalidasi `no_registrasi` harus unik, sehingga tidak bisa lagi menerbitkan kartu dengan nomor registrasi yang sudah dipakai kartu lain. Perbaikan di sisi backend saja, skema database tidak diubah.
+
 ### [1.2.0] - 2026-08-06
 
 #### Ditambahkan
