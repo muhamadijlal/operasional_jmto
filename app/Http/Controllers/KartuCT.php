@@ -435,25 +435,33 @@ class KartuCT extends Controller
         $ruas = DB::connection('integrasi_bcds')->table('tbl_ktp_ruas_kartu')->where("id", $request->ruas)->first();
 
         $request->validate([
-            'nomor_kartu' => 'required|unique:integrasi_bcds.tbl_penerbitan_kartu,no_registrasi',
+            'nomor_kartu' => 'required',
             'pemilik_kartu' => 'required',
             'ruas' => 'required',
             'jenis_ktp' => 'required',
             'institusi' => 'required',
             'unit' => 'required',
             'tgl_kadaluarsa' => 'required',
-        ], [
-            'nomor_kartu.unique' => 'No registrasi/nomor kartu ini sudah dipakai, gunakan nomor lain.',
         ]);
 
         try {
             DB::beginTransaction();
 
+            // nomor_kartu dari frontend cuma prefix (institusi+ruas+unit), belum
+            // menjamin unik. Tambahkan suffix urut 3 digit per prefix supaya
+            // no_registrasi akhir selalu unik (format: prefix + 001, 002, dst).
+            $prefix = $request->nomor_kartu;
+            $urutan = DB::connection('integrasi_bcds')
+                ->table('tbl_penerbitan_kartu')
+                ->where('no_registrasi', 'like', $prefix . '%')
+                ->count() + 1;
+            $noRegistrasi = $prefix . str_pad($urutan, 3, '0', STR_PAD_LEFT);
+
             DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->insert([
                 'ktp_id' => '',
                 'no_referensi' => $request->no_ref,
                 'ruas' =>  $ruas->fisik_kartu,
-                'no_registrasi' => $request->nomor_kartu,
+                'no_registrasi' => $noRegistrasi,
                 'ktp_jenis_id' => $request->jenis_ktp,
                 'model_operasi' => 0,
                 'tgl_terbit' => date('Y-m-d'),
