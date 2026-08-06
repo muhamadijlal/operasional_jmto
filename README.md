@@ -140,6 +140,24 @@ Dokumentasi lebih dalam (PRD, ERD/skema database, arsitektur teknis, dan catatan
 
 Semua perubahan penting pada aplikasi ini didokumentasikan di sini. Format mengikuti [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan penomoran versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+Fix berikut sudah selesai & teruji, tapi sengaja dijaga di branch terpisah (belum di-merge ke `main`) menunggu review/PR:
+
+- **`fix/uid-kosong-buat-kartu`** — UID kartu tersimpan kosong di database saat "Buat Kartu": `getDetailData` menimpa balik field UID dengan `ktp_id` dari database (selalu kosong untuk kartu baru), menghapus UID yang sudah terbaca dari reader RFID kalau kartu ditempel sebelum memilih profil.
+- **`fix/nomor-registrasi-duplikat`** — Nomor registrasi kartu baru selalu duplikat/ditolak. `nomor_kartu` dari frontend cuma prefix (institusi+ruas+unit) yang tidak unik per kartu; sekarang backend menambahkan suffix urut 3 digit per prefix (total 9 digit, sesuai pola data produksi).
+
+### [1.3.0] - 2026-08-06
+
+#### Diperbaiki
+- `ManajemenTarifCT::tambahExit()`/`updateExit()` — insert/update ke kolom `ruas_id` yang tidak ada di tabel `tbl_tarif_exit`, menyebabkan "Tambah/Update Tarif Exit" selalu gagal (500).
+- Migration `tbl_durasi` — kolom `durasi` diubah dari `int` ke `varchar(50)`, karena kode menyimpan string gabungan 5 golongan (`gabungDurasi()`/`pecahDurasi()`), sebelumnya selalu gagal "Data truncated" saat tambah durasi.
+- `PetugasCT::BuatPetugasSycron`, `Select2CT::getRuasKTP`, `getRuasKTPNama` — route terdaftar tapi method tidak pernah dibuat (500 kalau diakses langsung; tidak ada UI yang memanggilnya). `getRuasKTP`/`getRuasKTPNama` diisi mengikuti pola `getRuasKartu`/`getRuas` yang sudah ada; `BuatPetugasSycron` dikembalikan respons aman (501) karena belum ada spesifikasi untuk fitur sinkronisasi ini.
+- `PetugasImport` — kolom `password` saat import Excel petugas salah ambil dari kolom JABATAN, seharusnya NPP.
+- `TarifExitImport` — import Excel Tarif Exit selalu gagal karena dua bug independen: (1) insert ke kolom `ruas_id` yang tidak ada di `tbl_tarif_exit` (pola sama dengan `tambahExit`/`updateExit`), dan (2) file template Excel punya sheet kedua kosong (bawaan Excel) yang ikut diproses tanpa pembatasan sheet, menyebabkan error "Undefined variable $investors" — sekarang dibatasi cuma proses sheet pertama lewat `WithMultipleSheets`.
+
+Semua fix di atas ditemukan lewat pengujian end-to-end manual terhadap seluruh fitur aplikasi, dan sudah diverifikasi ulang setelah diperbaiki.
+
 ### [1.2.1] - 2026-08-06
 
 #### Diperbaiki
