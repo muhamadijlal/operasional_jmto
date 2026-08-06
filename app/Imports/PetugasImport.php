@@ -43,7 +43,7 @@ class PetugasImport implements ToCollection
                 'jabatan_id' => $jabatan_id,              // JABATAN PETUGAS
                 'nama_pegawai' => $rows[$i][2],           // NAMA PETUGAS
                 'gerbang_id' => $this->gerbang_id,        // GERBANG ID
-                'password' => $rows[$i][1],               // PASSWORD PETUGAS = NPP_NO
+                'password' => $rows[$i][0],               // PASSWORD PETUGAS = NPP_NO
             ]);
         }
     }
