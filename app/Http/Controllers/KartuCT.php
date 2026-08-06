@@ -12,125 +12,129 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KartuCT extends Controller
 {
-    public function index(){
+    public function index()
+    {
         if (request()->ajax()) {
             $q = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu');
 
-            if( request()->filled('ruas')){
+            if (request()->filled('ruas')) {
                 $q->where('ruas', strtolower(request()->ruas));
             }
 
-            if(request()->filled('ktp_jenis_id') && request()->status != '*'){
+            if (request()->filled('ktp_jenis_id') && request()->status != '*') {
                 $q->where('ktp_jenis_id', request()->ktp_jenis_id);
             }
 
-            if(request()->filled('status') && request()->status != '*'){
+            if (request()->filled('status') && request()->status != '*') {
                 $q->where('status', request()->status);
             }
 
-            if(request()->filled('tgl_terbit')){
+            if (request()->filled('tgl_terbit')) {
                 $tgl_terbit = date('Y-m-d', strtotime(request()->tgl_terbit));
                 $q->where('tgl_terbit', $tgl_terbit);
             }
 
-            if(request()->filled('tgl_kadaluarsa')){
+            if (request()->filled('tgl_kadaluarsa')) {
                 $tgl_kadaluarsa = date('Y-m-d', strtotime(request()->tgl_kadaluarsa));
                 $q->where('tgl_kadaluarsa', $tgl_kadaluarsa);
             }
 
             if (request()->filled('search')) {
                 $searchValue = request()->search;
-                $q->where(function($query) use ($searchValue) {
+                $q->where(function ($query) use ($searchValue) {
                     $query->where('nama', 'like', "%{$searchValue}%")
-                          ->orWhere('no_registrasi', 'like', "%{$searchValue}%")
-                          ->orWhere('no_referensi', 'like', "%{$searchValue}%");
+                        ->orWhere('no_registrasi', 'like', "%{$searchValue}%")
+                        ->orWhere('no_referensi', 'like', "%{$searchValue}%");
                 });
             }
 
             $query = $q->get();
-            
+
             return DataTables::of($query)
-            ->addColumn('jenis', function($row){
-                if ($row->ktp_jenis_id == 1) {
-                    $jenis = 'Operasional';
-                } else if ($row->ktp_jenis_id == 2) {
-                    $jenis = 'Karyawan';
-                } else if ($row->ktp_jenis_id == 3) {
-                    $jenis = 'Mitra';
-                } else {
-                    $jenis = 'UNKNOWN';
-                }
+                ->addColumn('jenis', function ($row) {
+                    if ($row->ktp_jenis_id == 1) {
+                        $jenis = 'Operasional';
+                    } else if ($row->ktp_jenis_id == 2) {
+                        $jenis = 'Karyawan';
+                    } else if ($row->ktp_jenis_id == 3) {
+                        $jenis = 'Mitra';
+                    } else {
+                        $jenis = 'UNKNOWN';
+                    }
 
-                return $jenis;
-            })
-            ->addColumn('ruas', function($row) {
+                    return $jenis;
+                })
+                ->addColumn('ruas', function ($row) {
 
-                if (strcasecmp($row->ruas, config('ruas.id')) === 0) {
-                    $ruas = '<div class="d-flex gap-1">
-                                <span style="background-color:blue;" class="badge rounded-pill">' . config('ruas.name') . '</span>
-                            </div>';
-                } else {
-                    $ruas = '<span style="background-color:blue;" class="badge rounded-pill">Unknown</span>';
-                }
+                    switch ($row->ruas) {
+                        case 'b001':
+                            $ruas = '<div class="d-flex gap-1">
+                                        <span style="background-color:blue;" class="badge rounded-pill">JMJ</span>
+                                    </div>';
+                            break;
+                        default:
+                            $ruas = '<span style="background-color:blue;" class="badge rounded-pill">Unknown</span>';
+                            break;
+                    }
 
-                return $ruas;
-            })
-            ->addColumn('tgl_terbit', function($row){
-                $date_formatted = date('d F Y', strtotime($row->tgl_terbit));
+                    return $ruas;
+                })
+                ->addColumn('tgl_terbit', function ($row) {
+                    $date_formatted = date('d F Y', strtotime($row->tgl_terbit));
 
-                return $date_formatted;
-            })
-            ->addColumn('tgl_kadaluarsa', function($row){
-                $date_formatted = date('d F Y', strtotime($row->tgl_kadaluarsa));
+                    return $date_formatted;
+                })
+                ->addColumn('tgl_kadaluarsa', function ($row) {
+                    $date_formatted = date('d F Y', strtotime($row->tgl_kadaluarsa));
 
-                return $date_formatted;
-            })
-            ->addColumn('no_ref', function($row){
-               $no_ref =  $row->no_referensi ? $row->no_referensi : '';
+                    return $date_formatted;
+                })
+                ->addColumn('no_ref', function ($row) {
+                    $no_ref =  $row->no_referensi ? $row->no_referensi : '';
 
-                return $no_ref;
-            })
-            ->addColumn('status', function($row){
-                switch($row->status){
-                    case 1:
-                        $status = '<span class="badge rounded-pill bg-success">Aktif</span>';
-                        break;
-                    case 2:
-                        $status = '<span class="badge rounded-pill bg-danger">Blacklist</span>';
-                        break;
-                    case 3:
-                        $status = '<span class="badge rounded-pill bg-warning">Draft</span>';
-                        break;
-                    default:
-                        $status = '<span class="badge rounded-pill bg-warning">UNKNOWN</span>';
-                        break;
-                }
+                    return $no_ref;
+                })
+                ->addColumn('status', function ($row) {
+                    switch ($row->status) {
+                        case 1:
+                            $status = '<span class="badge rounded-pill bg-success">Aktif</span>';
+                            break;
+                        case 2:
+                            $status = '<span class="badge rounded-pill bg-danger">Blacklist</span>';
+                            break;
+                        case 3:
+                            $status = '<span class="badge rounded-pill bg-warning">Draft</span>';
+                            break;
+                        default:
+                            $status = '<span class="badge rounded-pill bg-warning">UNKNOWN</span>';
+                            break;
+                    }
 
-                return $status;
-            })
-            ->addColumn('action', function ($row) {
-                if($row->status == 2){
-                    $btn = '
+                    return $status;
+                })
+                ->addColumn('action', function ($row) {
+                    if ($row->status == 2) {
+                        $btn = '
                         <div class="d-flex">
                             <div class="d-flex">
                                 <a href="#" class="btn m-1 btn-success btn-sm" id="whitelist" data-id="' . $row->id . '"><i class="fa-solid fa-check"></i></a>
-                                <a href="#" class="btn m-1 btn-warning btn-sm" onclick="handleEdit('.$row->id.')"><i class="fa-solid fa-pencil"></i></a>
+                                <a href="#" class="btn m-1 btn-warning btn-sm" onclick="handleEdit(' . $row->id . ')"><i class="fa-solid fa-pencil"></i></a>
                             </div>
                         </div>
                     ';
-                }else{
-                    $btn = '
+                    } else {
+                        $btn = '
                         <div class="d-flex">
                             <a href="#" class="btn m-1 btn-danger btn-sm" id="blacklist" data-id="' . $row->id . '"><i class="fa-solid fa-ban"></i></a>
-                            <a href="#" class="btn m-1 btn-warning btn-sm" onclick="handleEdit('.$row->id.')"><i class="fa-solid fa-pencil"></i></a>
+                            <a href="#" class="btn m-1 btn-warning btn-sm" onclick="handleEdit(' . $row->id . ')"><i class="fa-solid fa-pencil"></i></a>
                         </div>
                     ';
-                }
+                    }
 
-                return $btn;
-            })
-            ->rawColumns(['ruas', 'status', 'action'])
-            ->make();
+                    return $btn;
+                })
+                ->rawColumns(['ruas', 'status', 'action'])
+                ->make();
         }
 
         return view('admin.kartu.penerbitan', [
@@ -198,30 +202,30 @@ class KartuCT extends Controller
 
                 // Ambil data terbaru dari tbl_penerbitan_kartu
                 $row = DB::connection('integrasi_bcds')
-                        ->table('tbl_penerbitan_kartu')
-                        ->where('id', $id)
-                        ->first();
+                    ->table('tbl_penerbitan_kartu')
+                    ->where('id', $id)
+                    ->first();
 
                 // Proses insert ke tbl_blacklist
                 $uuid = hexdec($this->formatEndian($row->ktp_id));
                 $currentTimestamp = strtotime(now());
 
                 $inserted = DB::connection('integrasi_bcds')
-                                ->table('tbl_blacklist')
-                                ->insert([
-                                    'uuid' => $uuid,
-                                    'no_registrasi' => $row->no_registrasi,
-                                    'info' => $row->nama,
-                                    'jenis_ktp' => $row->ktp_jenis_id,
-                                    'tick' => $currentTimestamp,
-                                    'penempatan_gerbang' => $row->penempatan_gerbang,
-                                ]);
+                    ->table('tbl_blacklist')
+                    ->insert([
+                        'uuid' => $uuid,
+                        'no_registrasi' => $row->no_registrasi,
+                        'info' => $row->nama,
+                        'jenis_ktp' => $row->ktp_jenis_id,
+                        'tick' => $currentTimestamp,
+                        'penempatan_gerbang' => $row->penempatan_gerbang,
+                    ]);
 
                 // Update tbl_penerbitan_kartu
                 DB::connection('integrasi_bcds')
-                            ->table('tbl_penerbitan_kartu')
-                            ->where('id', $id)
-                            ->update(['status' => 2]);
+                    ->table('tbl_penerbitan_kartu')
+                    ->where('id', $id)
+                    ->update(['status' => 2]);
 
                 if (!$inserted) {
                     throw new \Exception('Gagal menambahkan data ke tbl_blacklist.');
@@ -417,15 +421,17 @@ class KartuCT extends Controller
     }
 
 
-    private function formatEndian($endian, $format = 'N') {
+    private function formatEndian($endian, $format = 'N')
+    {
         $endian = intval($endian, 16);      // convert string to hex
         $endian = pack('L', $endian);       // pack hex to binary sting (unsinged long, machine byte order)
         $endian = unpack($format, $endian); // convert binary sting to specified endian format
-    
+
         return sprintf("%'.08x", $endian[1]); // return endian as a hex string (with padding zero)
     }
 
-    public function tambah_kartu(Request $request) {
+    public function tambah_kartu(Request $request)
+    {
         $ruas = DB::connection('integrasi_bcds')->table('tbl_ktp_ruas_kartu')->where("id", $request->ruas)->first();
 
         $request->validate([
@@ -438,7 +444,7 @@ class KartuCT extends Controller
             'tgl_kadaluarsa' => 'required',
         ]);
 
-        try{
+        try {
             DB::beginTransaction();
 
             DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->insert([
@@ -465,32 +471,35 @@ class KartuCT extends Controller
                 // 'gerbang_id' => auth()->user()->gerbang_id,
             ]);
 
-             // Commit transaction
+            // Commit transaction
             DB::commit();
 
             return response(['status' => 200, 'message' => "Data berhasil ditambahkan"]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-        
+
             return response(['status' => 500, 'message' => 'Gagal menyimpan data', 'error' => $e->getMessage()]);
         }
     }
 
-    public function buat(){
+    public function buat()
+    {
         return view('admin.kartu.buatKartu');
     }
 
-    public function getDetailData(Request $request){
+    public function getDetailData(Request $request)
+    {
         $data =  DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')
-                    ->select('tbl_penerbitan_kartu.*','tbl_ruas.nama_ruas')
-                    ->join('tbl_ruas', 'tbl_ruas.ruas_id', '=', 'tbl_penerbitan_kartu.ruas')
-                    ->where('tbl_penerbitan_kartu.id', $request->id)
-                    ->first();
+            ->select('tbl_penerbitan_kartu.*', 'tbl_ruas.nama_ruas')
+            ->join('tbl_ruas', 'tbl_ruas.ruas_id', '=', 'tbl_penerbitan_kartu.ruas')
+            ->where('tbl_penerbitan_kartu.id', $request->id)
+            ->first();
 
         return $data;
     }
 
-    public function generateDataKartu(Request $request){
+    public function generateDataKartu(Request $request)
+    {
         $nomor = $request->no_ktp;
         $ruas = $request->kode_ruas;
         $expire = $request->masa_berlaku;
@@ -502,12 +511,12 @@ class KartuCT extends Controller
 
         try {
             DB::beginTransaction();
-        
+
             // Update data penerbitan kartu
             DB::connection("integrasi_bcds")->table("tbl_penerbitan_kartu")->where("id", $id)->update([
                 'ktp_id' => $uid,
             ]);
-        
+
             // Menyimpan log operasional
             DB::connection('integrasi_bcds')->table('tbl_log_operasional')->insert([
                 // Uncomment and use if needed
@@ -520,27 +529,27 @@ class KartuCT extends Controller
                 'event' => 'encode kartu',
                 'keterangan' => json_encode($nomor), // Pastikan $nomor adalah variabel yang valid
             ]);
-        
+
             DB::commit();
-        
+
             return response()->json([
                 'status' => 200,
                 'message' => "Data kartu berhasil di-generate",
                 'data' => $data // Pastikan $data adalah variabel yang valid
             ]);
-        
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'status' => 500,
                 'message' => 'Gagal menyimpan data',
                 'error' => $e->getMessage()
             ]);
-        }        
+        }
     }
 
-    public function updateUID(Request $request) {
+    public function updateUID(Request $request)
+    {
         $uid = $request->uid;
         $no_registrasi = $request->registrasi;
 
@@ -565,10 +574,9 @@ class KartuCT extends Controller
             DB::commit();
 
             return response(['status' => 200, 'message' => "Data kartu berhasil generate", 'data' => $data]);
-
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-        
+
             return response(['status' => 500, 'message' => 'Gagal menyimpan data', 'error' => $e->getMessage()]);
         }
     }
@@ -579,74 +587,76 @@ class KartuCT extends Controller
             DB::beginTransaction();
 
             $res = DB::connection('integrasi_bcds')
-                    ->table('tbl_penerbitan_kartu')
-                    ->where('no_registrasi', $no_registrasi)
-                    ->update([
-                        'ktp_id' => $uid,
-                        'status' => 1
-                    ]);
+                ->table('tbl_penerbitan_kartu')
+                ->where('no_registrasi', $no_registrasi)
+                ->update([
+                    'ktp_id' => $uid,
+                    'status' => 1
+                ]);
 
             return $res;
-                    
+
             DB::commit();
-                        
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-        
+
             return response(['status' => 500, 'message' => 'Gagal!', 'error' => $e->getMessage()]);
         }
     }
 
-    public function baca(){
+    public function baca()
+    {
         return view('admin.kartu.bacaKartu');
     }
 
-    public function perpanjang(){
+    public function perpanjang()
+    {
         return view('admin.kartu.perpanjangKartu');
     }
 
-    public function blacklist(){
+    public function blacklist()
+    {
         if (request()->ajax()) {
             $q =  DB::connection('integrasi_bcds')->table('tbl_blacklist');
-            
+
             if (request()->filled('search')) {
                 $searchValue = request()->search;
-                $q->where(function($query) use ($searchValue) {
+                $q->where(function ($query) use ($searchValue) {
                     $query->where('uuid', 'like', "%{$searchValue}%")
-                          ->orWhere('no_registrasi', 'like', "%{$searchValue}%")
-                          ->orWhere('info', 'like', "%{$searchValue}%")
-                          ->orWhere('jenis_ktp', 'like', "%{$searchValue}%");
+                        ->orWhere('no_registrasi', 'like', "%{$searchValue}%")
+                        ->orWhere('info', 'like', "%{$searchValue}%")
+                        ->orWhere('jenis_ktp', 'like', "%{$searchValue}%");
                 });
             }
-            
+
             $q->get();
 
             return DataTables::of($q)
-            ->addColumn('tick', function($row){
-                return Carbon::createFromTimestamp($row->tick)->toDateTimeString();
-            })
-            ->addColumn('jenis', function($row){
-                if ($row->jenis_ktp == 1) {
-                    $jenis = 'Operasional';
-                } else if ($row->jenis_ktp == 2) {
-                    $jenis = 'Karyawan';
-                } else if ($row->jenis_ktp == 3) {
-                    $jenis = 'Mitra';
-                } else {
-                    $jenis = 'UNKNOWN';
-                }
+                ->addColumn('tick', function ($row) {
+                    return Carbon::createFromTimestamp($row->tick)->toDateTimeString();
+                })
+                ->addColumn('jenis', function ($row) {
+                    if ($row->jenis_ktp == 1) {
+                        $jenis = 'Operasional';
+                    } else if ($row->jenis_ktp == 2) {
+                        $jenis = 'Karyawan';
+                    } else if ($row->jenis_ktp == 3) {
+                        $jenis = 'Mitra';
+                    } else {
+                        $jenis = 'UNKNOWN';
+                    }
 
-                return $jenis;
-            })
-            ->addColumn('sync', function($row) {
-                if ($row->sync == 0) {
-                    return '<span class="badge bg-warning rounded-pill">Belum Dikirim</span>';
-                } else {
-                    return '<span class="badge  bg-primary rounded-pill">Sudah Dikirim</span>';
-                }
-            })
-            ->rawColumns(['sync'])
-            ->make();
+                    return $jenis;
+                })
+                ->addColumn('sync', function ($row) {
+                    if ($row->sync == 0) {
+                        return '<span class="badge bg-warning rounded-pill">Belum Dikirim</span>';
+                    } else {
+                        return '<span class="badge  bg-primary rounded-pill">Sudah Dikirim</span>';
+                    }
+                })
+                ->rawColumns(['sync'])
+                ->make();
         }
 
         return view('admin.kartu.blacklist', [
@@ -686,17 +696,20 @@ class KartuCT extends Controller
         ]);
     }
 
-    private function ktp_datalen($input,$len){
-        return strtolower(str_pad(substr($input,0,$len), $len, "0", STR_PAD_LEFT));
+    private function ktp_datalen($input, $len)
+    {
+        return strtolower(str_pad(substr($input, 0, $len), $len, "0", STR_PAD_LEFT));
     }
 
-    private function ktp_enc($pbk, $pvk, $clear){
+    private function ktp_enc($pbk, $pvk, $clear)
+    {
         $block = $this->bchexdec($clear);
         return $this->bcdechex(bcpowmod($block, $this->bchexdec($pvk), $this->bchexdec($pbk)));
     }
 
-    private function bchexdec($hex) {
-        if(strlen($hex) == 1) {
+    private function bchexdec($hex)
+    {
+        if (strlen($hex) == 1) {
             return hexdec($hex);
         } else {
             $remain = substr($hex, 0, -1);
@@ -705,81 +718,86 @@ class KartuCT extends Controller
         }
     }
 
-    private function bcdechex($dec) {
+    private function bcdechex($dec)
+    {
         $last = bcmod($dec, 16);
         $remain = bcdiv(bcsub($dec, $last), 16);
-    
-        if($remain == 0) {
+
+        if ($remain == 0) {
             return dechex($last);
         } else {
-            return $this->bcdechex($remain).dechex($last);
+            return $this->bcdechex($remain) . dechex($last);
         }
     }
 
-    public function getDetailKTP(Request $request) {
+    public function getDetailKTP(Request $request)
+    {
         $_PUB = env('PUBLIC_KEY');
 
-		$blok0 = $request->blok0;
-		$blok1 = $request->blok1;
-		$blok2 = $request->blok2;
+        $blok0 = $request->blok0;
+        $blok1 = $request->blok1;
+        $blok2 = $request->blok2;
 
-		$datax = $this->ktp_read($_PUB, $blok0, $blok1, $blok2);
-		$data['data'] = $datax;
-		$ktpNama = $this->getOptionKTPnama($datax['uid']);
+        $datax = $this->ktp_read($_PUB, $blok0, $blok1, $blok2);
+        $data['data'] = $datax;
+        $ktpNama = $this->getOptionKTPnama($datax['uid']);
 
-		if ($ktpNama) {
-			$data['ktpNama'] = $ktpNama;
-		} else {
-			$x	= [array('nama' => 'Not Found / Data Hilang')];
-			$data['ktpNama'] = $x;
-		}
+        if ($ktpNama) {
+            $data['ktpNama'] = $ktpNama;
+        } else {
+            $x    = [array('nama' => 'Not Found / Data Hilang')];
+            $data['ktpNama'] = $x;
+        }
 
-		return $data;
+        return $data;
     }
 
     private function getOptionKTPnama($id)
-	{
+    {
         $data = DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('ktp_id', $id)->get();
 
         return $data;
-	}
-
-    function ktp_dec($pbk, $cipher){
-        return $this->bcdechex(bcpowmod($this->bchexdec($cipher), $this->bchexdec('10001'),$this->bchexdec($pbk)));
     }
 
-    function ktp_read($pbk, $block0, $block1, $block2){
-        $cipher="{$block0}{$block1}{$block2}";
+    function ktp_dec($pbk, $cipher)
+    {
+        return $this->bcdechex(bcpowmod($this->bchexdec($cipher), $this->bchexdec('10001'), $this->bchexdec($pbk)));
+    }
+
+    function ktp_read($pbk, $block0, $block1, $block2)
+    {
+        $cipher = "{$block0}{$block1}{$block2}";
         $clear = $this->ktp_dec($pbk, $cipher);
-        if (strlen($clear)!=48)  return false;
-        if (substr($clear,0,2)!='fe') return false;
+        if (strlen($clear) != 48)  return false;
+        if (substr($clear, 0, 2) != 'fe') return false;
 
         return array(
-            'ruas'=>substr($clear,2,4),
-            'expire'=>substr($clear,6,8),
-            'tipe'=>substr($clear,14,2),
-            'nokartu'=>substr($clear,16,16),
-            'uid'=>substr($clear,32,8),
-            'crc32'=>substr($clear,40,8),
-            'packed'=>$clear
+            'ruas' => substr($clear, 2, 4),
+            'expire' => substr($clear, 6, 8),
+            'tipe' => substr($clear, 14, 2),
+            'nokartu' => substr($clear, 16, 16),
+            'uid' => substr($clear, 32, 8),
+            'crc32' => substr($clear, 40, 8),
+            'packed' => $clear
         );
     }
 
-    private function ktp_write($nomor, $ruas, $expire, $tipe, $uid){
+    private function ktp_write($nomor, $ruas, $expire, $tipe, $uid)
+    {
 
         $expiredDate = str_replace('-', '', $expire);
         $pbk        = env("PUBLIC_KEY");
         $pvk        = env("PRIVATE_KEY");
-        $nomor      = $this->ktp_datalen($nomor,16);
-        $ruas       = $this->ktp_datalen($ruas,4);
-        $expire     = $this->ktp_datalen($expiredDate,8);
-        $tipe       = $this->ktp_datalen($tipe,2);
-        $uid        = $this->ktp_datalen($uid,8);
+        $nomor      = $this->ktp_datalen($nomor, 16);
+        $ruas       = $this->ktp_datalen($ruas, 4);
+        $expire     = $this->ktp_datalen($expiredDate, 8);
+        $tipe       = $this->ktp_datalen($tipe, 2);
+        $uid        = $this->ktp_datalen($uid, 8);
         $data       = "fe{$ruas}{$expire}{$tipe}{$nomor}{$uid}";
-        $cksum      = sprintf("%08x",crc32($data));
-        $clear		= "{$data}{$cksum}";
-        $cipher		= $this->ktp_datalen($this->ktp_enc($pbk, $pvk, $clear),96);
-        
+        $cksum      = sprintf("%08x", crc32($data));
+        $clear        = "{$data}{$cksum}";
+        $cipher        = $this->ktp_datalen($this->ktp_enc($pbk, $pvk, $clear), 96);
+
         return array(
             substr($cipher, 0, 32),
             substr($cipher, 32, 32),
@@ -790,45 +808,46 @@ class KartuCT extends Controller
     public function getUnit()
     {
         $data = DB::connection('integrasi_bcds')->table('tbl_ktp_unit')->get();
-        
+
         return response()->json($data);
     }
 
     public function getRuas()
     {
         $data = DB::connection('integrasi_bcds')->table('tbl_ruas')->get();
-        
+
         return response()->json($data);
     }
 
     public function getKtpOpr()
     {
         $data = DB::connection('integrasi_bcds')->table('tbl_jenis_ktp')->get();
-        
+
         return response()->json($data);
     }
 
     public function getInstitusi()
     {
         $data = DB::connection('integrasi_bcds')->table('tbl_ktp_institusi')->get();
-        
+
         return response()->json($data);
     }
 
     public function getRuasKartu()
     {
         $data = DB::connection('integrasi_bcds')->table('tbl_ktp_ruas_kartu')->get();
-        
+
         return response()->json($data);
     }
 
-    public function edit_kartu(Request $request) {
+    public function edit_kartu(Request $request)
+    {
         $request->validate([
             'pemilik_kartu' => 'required',
             'jenis_ktp' => 'required',
         ]);
 
-        try{
+        try {
             DB::beginTransaction();
 
             DB::connection('integrasi_bcds')->table('tbl_penerbitan_kartu')->where('id', $request->id)->update([
@@ -846,13 +865,13 @@ class KartuCT extends Controller
                 'keterangan' => json_encode($request->all()),
             ]);
 
-             // Commit transaction
+            // Commit transaction
             DB::commit();
 
             return response(['status' => 200, 'message' => "Data berhasil diupdate"]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-        
+
             return response(['status' => 500, 'message' => 'Gagal update data', 'error' => $e->getMessage()]);
         }
     }
@@ -860,11 +879,24 @@ class KartuCT extends Controller
     public function getOptionNama(Request $request, $tipe = '0')
     {
         $data = DB::connection('integrasi_bcds')
-                ->table('tbl_penerbitan_kartu')
-                ->select(['nama','id','no_registrasi'])
-                ->where('isdeleted', 0)
-                ->where('nama', 'LIKE', '%' . $request->get('q') . '%')
-                ->where('ruas', config('ruas.id'));
+            ->table('tbl_penerbitan_kartu')
+            ->select(['nama', 'id', 'no_registrasi'])
+            ->where('isdeleted', 0)
+            ->where('nama', 'LIKE', '%' . $request->get('q') . '%');
+
+        if ($tipe == '0') {
+            //$data->whereIn('ruas', ['a07f', 'a075', 'a077', 'A052', 'A050', 'A04F', 'A04D', 'A047', 'A045', 'A02C', 'A024'])->get();
+            $data->whereIn('ruas', ['b001'])->get();
+        } else if ($tipe == '1') {
+            //$data->whereIn('ruas', ['a045', 'a047', 'a04d', 'a04f', '86'])->get();
+            $data->whereIn('ruas', ['b001'])->get();
+        } else if ($tipe == '2') {
+            //$data->whereIn('ruas', ['a024', 'a02c'])->get();
+            $data->whereIn('ruas', ['b001'])->get();
+        } else if ($tipe == '3') {
+            //$data->whereIn('ruas', ['a050', 'a052'])->get();
+            $data->whereIn('ruas', ['b001'])->get();
+        }
 
         $results = $data->get();
 
