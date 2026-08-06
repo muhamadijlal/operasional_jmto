@@ -260,7 +260,6 @@ $(document).ready(function() {
         document.getElementById('loading-screen').style.display = 'block';
       },
       success: function(response) {
-        $('#uid_ktp').val(response.ktp_id);
         $('#no_ktp').val(response.no_registrasi);
         $('#kode_ruas').val(response.ruas);
         $('#tipe_ktp').val(tipeKartu(response.ktp_jenis_id));
