@@ -461,7 +461,6 @@ class ManajemenTarifCT extends Controller
         }
 
         DB::connection('mysql2')->table('tbl_tarif_exit')->insert([
-            'ruas_id' => $gerbang->ruas_id,
             'gerbang_id' => $request->gerbangmodal,
             'asal_gerbang' => $request->asal_gerbang,
             'jenis' => $request->jenis,
@@ -578,7 +577,6 @@ class ManajemenTarifCT extends Controller
         }
 
         DB::connection('mysql2')->table('tbl_tarif_exit')->where('id', $request->id)->update([
-            'ruas_id' => $gerbang->ruas_id,
             'gerbang_id' => $request->gerbangmodal,
             'asal_gerbang' => $request->asal_gerbang,
             'jenis' => $request->jenis,

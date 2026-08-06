@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->string('gerbang_id', 2);
             $table->string('asal_gerbang', 2);
-            $table->integer('durasi')->default(0);
+            $table->string('durasi', 50)->nullable()->default('0');
             $table->primary(['gerbang_id', 'asal_gerbang']);
         });
     }
