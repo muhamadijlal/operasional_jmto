@@ -435,13 +435,15 @@ class KartuCT extends Controller
         $ruas = DB::connection('integrasi_bcds')->table('tbl_ktp_ruas_kartu')->where("id", $request->ruas)->first();
 
         $request->validate([
-            'nomor_kartu' => 'required',
+            'nomor_kartu' => 'required|unique:integrasi_bcds.tbl_penerbitan_kartu,no_registrasi',
             'pemilik_kartu' => 'required',
             'ruas' => 'required',
             'jenis_ktp' => 'required',
             'institusi' => 'required',
             'unit' => 'required',
             'tgl_kadaluarsa' => 'required',
+        ], [
+            'nomor_kartu.unique' => 'No registrasi/nomor kartu ini sudah dipakai, gunakan nomor lain.',
         ]);
 
         try {
